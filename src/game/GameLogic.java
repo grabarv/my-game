@@ -22,7 +22,7 @@ import engine.loaders.assimp.StaticMeshesLoader;
 
 import java.lang.Math;
 
-public class DummyGame implements IGameLogic {
+public class GameLogic implements IGameLogic {
 
     private static final float MOUSE_SENSITIVITY = 0.2f;
 
@@ -50,7 +50,7 @@ public class DummyGame implements IGameLogic {
 
     private AnimGameItem animItem;
 
-    public DummyGame() {
+    public GameLogic() {
         renderer = new Renderer();
         hud = new Hud();
         camera = new Camera();
