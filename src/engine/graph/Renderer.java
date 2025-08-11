@@ -244,7 +244,9 @@ public class Renderer {
         }
 
         SceneLight sceneLight = scene.getSceneLight();
-        renderLights(viewMatrix, sceneLight);
+        if(sceneLight != null) {
+            renderLights(viewMatrix, sceneLight);
+        }
 
         sceneShaderProgram.setUniform("fog", scene.getFog());
         sceneShaderProgram.setUniform("texture_sampler", 0);

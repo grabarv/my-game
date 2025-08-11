@@ -70,19 +70,24 @@ public class ShadowCascade {
             minZ = Math.min(minZ, corner.z);
             maxZ = Math.max(maxZ, corner.z);
         }
+        if (light != null) {
 
-        // Go back from the centroid up to max.z - min.z in the direction of light
-        Vector3f lightDirection = light.getDirection();
-        Vector3f lightPosInc = new Vector3f().set(lightDirection);
-        float distance = maxZ - minZ;
-        lightPosInc.mul(distance);
-        Vector3f lightPosition = new Vector3f();
-        lightPosition.set(centroid);
-        lightPosition.add(lightPosInc);
 
-        updateLightViewMatrix(lightDirection, lightPosition);
+            // Go back from the centroid up to max.z - min.z in the direction of light
+            Vector3f lightDirection = light.getDirection();
+            Vector3f lightPosInc = new Vector3f().set(lightDirection);
+            float distance = maxZ - minZ;
+            lightPosInc.mul(distance);
+            Vector3f lightPosition = new Vector3f();
+            lightPosition.set(centroid);
+            lightPosition.add(lightPosInc);
 
-        updateLightProjectionMatrix();
+            updateLightViewMatrix(lightDirection, lightPosition);
+
+            updateLightProjectionMatrix();
+        }
+
+
     }
 
     private void updateLightViewMatrix(Vector3f lightDirection, Vector3f lightPosition) {
