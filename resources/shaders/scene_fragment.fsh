@@ -134,15 +134,15 @@ vec4 calcSpotLight(SpotLight light, vec3 position, vec3 normal)
     vec3 to_light_dir  = normalize(light_direction);
     vec3 from_light_dir  = -to_light_dir;
     float spot_alfa = dot(from_light_dir, normalize(light.conedir));
-    
+
     vec4 colour = vec4(0, 0, 0, 0);
-    
-    if ( spot_alfa > light.cutoff ) 
+
+    if ( spot_alfa > light.cutoff )
     {
         colour = calcPointLight(light.pl, position, normal);
         colour *= (1.0 - (1.0 - spot_alfa)/(1.0 - light.cutoff));
     }
-    return colour;    
+    return colour;
 }
 
 vec4 calcDirectionalLight(DirectionalLight light, vec3 position, vec3 normal)
@@ -206,18 +206,18 @@ float calcShadow(vec4 position, int idx)
             float textDepth;
             if (idx == 0)
             {
-                textDepth = texture(shadowMap_0, projCoords.xy + vec2(row, col) * inc).r; 
+                textDepth = texture(shadowMap_0, projCoords.xy + vec2(row, col) * inc).r;
             }
             else if (idx == 1)
             {
-                textDepth = texture(shadowMap_1, projCoords.xy + vec2(row, col) * inc).r; 
+                textDepth = texture(shadowMap_1, projCoords.xy + vec2(row, col) * inc).r;
             }
             else
             {
-                textDepth = texture(shadowMap_2, projCoords.xy + vec2(row, col) * inc).r; 
+                textDepth = texture(shadowMap_2, projCoords.xy + vec2(row, col) * inc).r;
             }
-            shadowFactor += projCoords.z - bias > textDepth ? 1.0 : 0.0;        
-        }    
+            shadowFactor += projCoords.z - bias > textDepth ? 1.0 : 0.0;
+        }
     }
     shadowFactor /= 9.0;
 
@@ -227,7 +227,7 @@ float calcShadow(vec4 position, int idx)
     }
 
     return 1 - shadowFactor;
-} 
+}
 
 void main()
 {
@@ -241,7 +241,7 @@ void main()
     {
         if ( pointLights[i].intensity > 0 )
         {
-            diffuseSpecularComp += calcPointLight(pointLights[i], mvVertexPos, currNomal); 
+            diffuseSpecularComp += calcPointLight(pointLights[i], mvVertexPos, currNomal);
         }
     }
 
@@ -263,12 +263,15 @@ void main()
     }
     float shadow = calcShadow(mlightviewVertexPos[idx], idx);
     fragColor = clamp(ambientC * vec4(ambientLight, 1) + diffuseSpecularComp * shadow, 0, 1);
-    if ( fog.activeFog == 1 ) 
+    if ( fog.activeFog == 1 )
     {
         fragColor = calcFog(mvVertexPos, fragColor, fog, ambientLight, directionalLight);
     }
 
     if ( outSelected > 0 ) {
         fragColor = vec4(fragColor.x, fragColor.y, 1, 1);
+    }
+    if(fragColor.a < 0.1) {
+        discard;
     }
 }

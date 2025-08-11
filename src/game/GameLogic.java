@@ -2,6 +2,7 @@ package game;
 
 import org.joml.*;
 
+import static engine.Utils.eulerToQuaternion;
 import static org.lwjgl.glfw.GLFW.*;
 import engine.IGameLogic;
 import engine.MouseInput;
@@ -34,7 +35,7 @@ public class GameLogic implements IGameLogic {
 
     private Scene scene;
 
-//    private Hud hud;
+    private Hud hud;
 
     private static final float CAMERA_POS_STEP = 0.40f;
 
@@ -54,7 +55,7 @@ public class GameLogic implements IGameLogic {
 
     public GameLogic() {
         renderer = new Renderer();
-//        hud = new Hud();
+        hud = new Hud();
         camera = new Camera();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
         angleInc = 0;
@@ -64,7 +65,7 @@ public class GameLogic implements IGameLogic {
 
     @Override
     public void init(Window window) throws Exception {
-//        hud.init(window);
+        hud.init(window);
         renderer.init(window);
 
         scene = new Scene();
@@ -77,9 +78,6 @@ public class GameLogic implements IGameLogic {
 //        animItem.setScale(0.05f);
 //        animation = animItem.getCurrentAnimation();
 
-        playerItem = new MainPlayer();
-
-        scene.setGameItems(new GameItem[] {playerItem});
 
 
 //        scene.setGameItems(new GameItem[]{animItem, terrain});
@@ -93,33 +91,37 @@ public class GameLogic implements IGameLogic {
 
         // Setup  SkyBox
         float skyBoxScale = 100.0f;
-        SkyBox skyBox = new SkyBox("resources/models/skybox.obj", new Vector4f(0.65f, 0.65f, 0.65f, 1.0f));
+        SkyBox skyBox = new SkyBox("resources/models/examples/skybox.obj", new Vector4f(0.1f, 0.1f, 1.0f, 1.0f));
         skyBox.setScale(skyBoxScale);
-//        scene.setSkyBox(skyBox);
+        scene.setSkyBox(skyBox);
 
         // Setup Lights
         setupLights();
 
-        camera.getPosition().x = -1.5f;
-        camera.getPosition().y = 3.0f;
+        playerItem = new MainPlayer();
+
+        scene.setGameItems(new GameItem[] {playerItem});
+
+        camera.getPosition().x = 0f;
+        camera.getPosition().y = 0f;
         camera.getPosition().z = 4.5f;
-        camera.getRotation().x = 15.0f;
-        camera.getRotation().y = 390.0f;
+        camera.getRotation().x = 0.0f;
+        camera.getRotation().y = 0.0f;
     }
 
     private void setupLights() {
         SceneLight sceneLight = new SceneLight();
-//        scene.setSceneLight(sceneLight);
+        scene.setSceneLight(sceneLight);
 
         // Ambient Light
-//        sceneLight.setAmbientLight(new Vector3f(0.3f, 0.3f, 0.3f));
-//        sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
+        sceneLight.setAmbientLight(new Vector3f(1f, 1f, 1f));
+        sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
         float lightIntensity = 1.0f;
         Vector3f lightDirection = new Vector3f(0, 1, 1);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
-//        sceneLight.setDirectionalLight(directionalLight);
+        sceneLight.setDirectionalLight(directionalLight);
     }
 
     @Override
@@ -166,15 +168,27 @@ public class GameLogic implements IGameLogic {
 
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
-        if (mouseInput.isRightButtonPressed()) {
-            // Update camera based on mouse            
-            Vector2f rotVec = mouseInput.getDisplVec();
-            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-            sceneChanged = true;
+//        if (mouseInput.isRightButtonPressed()) {
+//            // Update camera based on mouse
+//            Vector2f rotVec = mouseInput.getDisplVec();
+//            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+//            sceneChanged = true;
+//        }
+        if(cameraInc.x == 1) {
+            Quaternionf q = eulerToQuaternion(0,1,0);
+            playerItem.setRotation(q);
+            System.out.println(playerItem.getRotation().y);
+        }
+        if(cameraInc.x == -1) {
+            Quaternionf q = eulerToQuaternion(0,0,0);
+            playerItem.setRotation(q);
+            System.out.println(playerItem.getRotation().y);
+
         }
 
+
         // Update camera position
-        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+//        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
         /*
         lightAngle += angleInc;
         if (lightAngle < 0) {
@@ -201,7 +215,7 @@ public class GameLogic implements IGameLogic {
             firstTime = false;
         }
         renderer.render(window, camera, scene, sceneChanged);
-//        hud.render(window);
+        hud.render(window);
 
     }
 

@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import org.joml.Quaternionf;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 
@@ -67,6 +69,7 @@ public class Utils {
         ByteBuffer buffer;
 
         Path path = Paths.get(resource);
+
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
                 buffer = MemoryUtil.memAlloc((int) fc.size() + 1);
@@ -75,6 +78,7 @@ public class Utils {
         } else {
             try (
                 InputStream source = Utils.class.getResourceAsStream(resource);
+
                 ReadableByteChannel rbc = Channels.newChannel(source)) {
                 buffer = MemoryUtil.memAlloc(bufferSize);
 
@@ -99,6 +103,34 @@ public class Utils {
         buffer.flip();
         newBuffer.put(buffer);
         return newBuffer;
+    }
+
+    /**
+     * Converts Euler angles (in degrees) for rotations around X, Y, and Z axes
+     * into a quaternion representing the combined rotation.
+     *
+     * @param xDegrees rotation angle around the X axis in degrees
+     * @param yDegrees rotation angle around the Y axis in degrees
+     * @param zDegrees rotation angle around the Z axis in degrees
+     * @return Quaternionf representing the rotation
+     */
+    public static Quaternionf eulerToQuaternion(float xDegrees, float yDegrees, float zDegrees) {
+        // Convert degrees to radians since JOML uses radians
+        float xRad = (float) Math.toRadians(xDegrees);
+        float yRad = (float) Math.toRadians(yDegrees);
+        float zRad = (float) Math.toRadians(zDegrees);
+
+        // Create quaternions for rotation around each axis
+        Quaternionf qx = new Quaternionf().rotationX(xRad);
+        Quaternionf qy = new Quaternionf().rotationY(yRad);
+        Quaternionf qz = new Quaternionf().rotationZ(zRad);
+
+        // Combine rotations: order matters (here Z * Y * X)
+        // This means rotation around Z first, then Y, then X
+        Quaternionf q = new Quaternionf();
+        qz.mul(qy).mul(qx, q);
+
+        return q;
     }
 
 }
