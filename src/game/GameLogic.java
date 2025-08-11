@@ -50,6 +50,8 @@ public class GameLogic implements IGameLogic {
 
     private AnimGameItem animItem;
 
+    private MainPlayer playerItem;
+
     public GameLogic() {
         renderer = new Renderer();
 //        hud = new Hud();
@@ -67,14 +69,19 @@ public class GameLogic implements IGameLogic {
 
         scene = new Scene();
 
-        Mesh[] terrainMesh = StaticMeshesLoader.load("resources/models/terrain/terrain.obj", "models/terrain");
-        GameItem terrain = new GameItem(terrainMesh);
-        terrain.setScale(100.0f);
+//        Mesh[] terrainMesh = StaticMeshesLoader.load("resources/models/terrain/terrain.obj", "models/terrain");
+//        GameItem terrain = new GameItem(terrainMesh);
+//        terrain.setScale(100.0f);
+//
+//        animItem = AnimMeshesLoader.loadAnimGameItem("resources/models/bob/boblamp.md5mesh", "");
+//        animItem.setScale(0.05f);
+//        animation = animItem.getCurrentAnimation();
 
-        animItem = AnimMeshesLoader.loadAnimGameItem("resources/models/bob/boblamp.md5mesh", "");
-        animItem.setScale(0.05f);
-        animation = animItem.getCurrentAnimation();
-        
+        playerItem = new MainPlayer();
+
+        scene.setGameItems(new GameItem[] {playerItem});
+
+
 //        scene.setGameItems(new GameItem[]{animItem, terrain});
 
         // Shadows
