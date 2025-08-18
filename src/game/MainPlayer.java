@@ -13,14 +13,15 @@ public class MainPlayer extends GameItem {
     private final String modelPath = "resources/models/main_player.obj";
 
     public MainPlayer() throws Exception {
-        super();
+        super(true);
         Mesh playerMesh = StaticMeshesLoader.load(modelPath, "", 0)[0];
         Texture texture = new Texture(texturePath);
         Material material = new Material(texture, 0);
         playerMesh.setMaterial(material);
         setMesh(playerMesh);
-        setPosition(0, 0, 0);
+        setPosition(0, 0, 2f);
         setScale(0.5f);
+
     }
 
 

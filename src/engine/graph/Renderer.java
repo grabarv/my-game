@@ -282,7 +282,12 @@ public class Renderer {
 
             mesh.renderList(mapMeshes.get(mesh), (GameItem gameItem) -> {
                 sceneShaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
-                Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
+                Matrix4f modelMatrix;
+                if(gameItem.usingEulerRotation()) {
+                    modelMatrix = transformation.buildModelMatrixEuler(gameItem);
+                } else {
+                    modelMatrix = transformation.buildModelMatrix(gameItem);
+                }
                 sceneShaderProgram.setUniform("modelNonInstancedMatrix", modelMatrix);
                 if (gameItem instanceof AnimGameItem) {
                     AnimGameItem animGameItem = (AnimGameItem) gameItem;

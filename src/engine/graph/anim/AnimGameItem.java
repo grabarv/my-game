@@ -13,7 +13,7 @@ public class AnimGameItem extends GameItem {
     private Animation currentAnimation;
 
     public AnimGameItem(Mesh[] meshes, Map<String, Animation> animations) {
-        super(meshes);
+        super(meshes, false);
         this.animations = animations;
         Optional<Map.Entry<String, Animation>> entry = animations.entrySet().stream().findFirst();
         currentAnimation = entry.isPresent() ? entry.get().getValue() : null;

@@ -14,6 +14,9 @@ public class GameItem {
 
     private float scale;
 
+    /**
+     * if isEulerRotation = true then x,y,z means rotation along axes and w is always 0
+     */
     private final Quaternionf rotation;
 
     private int textPos;
@@ -22,7 +25,10 @@ public class GameItem {
 
     private boolean insideFrustum;
 
-    public GameItem() {
+    private final boolean usingEulerRotation;
+
+    public GameItem(boolean isEulerRotation) {
+        this.usingEulerRotation = isEulerRotation;
         selected = false;
         position = new Vector3f();
         scale = 1;
@@ -32,13 +38,13 @@ public class GameItem {
         disableFrustumCulling = false;
     }
 
-    public GameItem(Mesh mesh) {
-        this();
+    public GameItem(Mesh mesh, boolean isEulerRotation) {
+        this(isEulerRotation);
         this.meshes = new Mesh[]{mesh};
     }
 
-    public GameItem(Mesh[] meshes) {
-        this();
+    public GameItem(Mesh[] meshes, boolean isEulerRotation) {
+        this(isEulerRotation);
         this.meshes = meshes;
     }
 
@@ -121,5 +127,9 @@ public class GameItem {
 
     public void setDisableFrustumCulling(boolean disableFrustumCulling) {
         this.disableFrustumCulling = disableFrustumCulling;
-    }    
+    }
+
+    public  boolean usingEulerRotation() {
+        return usingEulerRotation;
+    }
 }

@@ -121,7 +121,12 @@ public class ShadowRenderer {
         Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
             mesh.renderList(mapMeshes.get(mesh), (GameItem gameItem) -> {
-                Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
+                        Matrix4f modelMatrix;
+                        if(gameItem.usingEulerRotation()) {
+                            modelMatrix = transformation.buildModelMatrixEuler(gameItem);
+                        } else  {
+                            modelMatrix = transformation.buildModelMatrix(gameItem);
+                        }
                 depthShaderProgram.setUniform("modelNonInstancedMatrix", modelMatrix);
                 if (gameItem instanceof AnimGameItem) {
                     AnimGameItem animGameItem = (AnimGameItem) gameItem;

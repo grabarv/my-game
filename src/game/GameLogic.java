@@ -1,5 +1,6 @@
 package game;
 
+import engine.graph.Material;
 import org.joml.*;
 
 import static engine.Utils.eulerToQuaternion;
@@ -53,6 +54,8 @@ public class GameLogic implements IGameLogic {
 
     private MainPlayer playerItem;
 
+    private int x,y,z,w = 0;
+
     public GameLogic() {
         renderer = new Renderer();
         hud = new Hud();
@@ -61,6 +64,7 @@ public class GameLogic implements IGameLogic {
         angleInc = 0;
         lightAngle = 90;
         firstTime = true;
+
     }
 
     @Override
@@ -100,7 +104,12 @@ public class GameLogic implements IGameLogic {
 
         playerItem = new MainPlayer();
 
-        scene.setGameItems(new GameItem[] {playerItem});
+        GameItem gameItem = new GameItem(StaticMeshesLoader.load("resources/models/main_player.obj", "", 0)[0], true);
+        gameItem.getMesh().setMaterial(new Material(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 0.0f));
+
+        scene.setGameItems(new GameItem[] {gameItem, playerItem});
+
+
 
         camera.getPosition().x = 0f;
         camera.getPosition().y = 0f;
@@ -126,44 +135,47 @@ public class GameLogic implements IGameLogic {
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
+        x = 0;
+        y = 0;
+        z = 0;
         sceneChanged = false;
         cameraInc.set(0, 0, 0);
-        if (window.isKeyPressed(GLFW_KEY_W)) {
+        if (window.isKeyPressed(GLFW_KEY_Q)) {
             sceneChanged = true;
-            cameraInc.z = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_S)) {
+            x = -1;
+        } else if (window.isKeyPressed(GLFW_KEY_W)) {
             sceneChanged = true;
-            cameraInc.z = 1;
+            x = 1;
         }
-        if (window.isKeyPressed(GLFW_KEY_A)) {
+        if (window.isKeyPressed(GLFW_KEY_E)) {
             sceneChanged = true;
-            cameraInc.x = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_D)) {
+            y = -1;
+        } else if (window.isKeyPressed(GLFW_KEY_R)) {
             sceneChanged = true;
-            cameraInc.x = 1;
+            y = 1;
         }
-        if (window.isKeyPressed(GLFW_KEY_Z)) {
+        if (window.isKeyPressed(GLFW_KEY_T)) {
             sceneChanged = true;
-            cameraInc.y = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_X)) {
+            z = -1;
+        } else if (window.isKeyPressed(GLFW_KEY_Y)) {
             sceneChanged = true;
-            cameraInc.y = 1;
+            z = 1;
         }
         if (window.isKeyPressed(GLFW_KEY_LEFT)) {
-            sceneChanged = true;
-            angleInc -= 0.05f;
+               sceneChanged = true;
+            w = -1;
         } else if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
             sceneChanged = true;
-            angleInc += 0.05f;
+            w = 1;
         } else {
-            angleInc = 0;            
+            w = 0;
         }
-        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
-            sceneChanged = true;
-            if (animation != null) {
-                animation.nextFrame();
-            }
-        }
+//        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+//            sceneChanged = true;
+//            if (animation != null) {
+//                animation.nextFrame();
+//            }
+//        }
     }
 
     @Override
@@ -174,18 +186,27 @@ public class GameLogic implements IGameLogic {
 //            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
 //            sceneChanged = true;
 //        }
-        if(cameraInc.x == 1) {
-            Quaternionf q = eulerToQuaternion(0,1,0);
-            playerItem.setRotation(q);
-            System.out.println(playerItem.getRotation().y);
-        }
-        if(cameraInc.x == -1) {
-            Quaternionf q = eulerToQuaternion(0,0,0);
-            playerItem.setRotation(q);
-            System.out.println(playerItem.getRotation().y);
+
+        if(sceneChanged) {
+
+            Quaternionf quaternionf = new Quaternionf(playerItem.getRotation().x + x* 0.5f, playerItem.getRotation().y + y*5f,
+                    playerItem.getRotation().z + z*0.5f, playerItem.getRotation().w + w*0.5f);
+//            System.out.println(quaternionf.x + "  " + quaternionf.y + "  " +  quaternionf.z + "  " + quaternionf.w);
+            playerItem.setRotation(quaternionf);
+//            System.out.println("R: " + playerItem.getRotation().x + ' ' + playerItem.getRotation().y + ' ' + playerItem.getRotation().z + ' ');
+//            if(x == -1) {
+//                Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
+//                playerItem.setRotation(q);
+//            } else if(x == 1) {
+//                Quaternionf q = new Quaternionf(0.0f, -1.0f, 0.0f, 0.0f);
+//                playerItem.setRotation(q);
+//            }
 
         }
 
+
+
+        //0.0 -1.0 0.0 0.2
 
         // Update camera position
 //        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);

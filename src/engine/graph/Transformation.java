@@ -59,8 +59,32 @@ public class Transformation {
                 gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
     }
 
+    public Matrix4f buildModelMatrixEuler(GameItem gameItem) {
+        Vector3f rotation = new Vector3f(gameItem.getRotation().x, gameItem.getRotation().y, gameItem.getRotation().z);
+//        System.out.println("T:" + gameItem.getRotation().x + ' ' + gameItem.getRotation().y + ' ' + gameItem.getRotation().z);
+        modelViewMatrix.identity().translate(gameItem.getPosition()).
+                rotateX((float)Math.toRadians(-rotation.x)).
+                rotateY((float)Math.toRadians(-rotation.y)).
+                rotateZ((float)Math.toRadians(-rotation.z)).
+                scale(gameItem.getScale());
+        return modelViewMatrix;
+    }
+
     public Matrix4f buildModelViewMatrix(GameItem gameItem, Matrix4f viewMatrix) {
         return buildModelViewMatrix(buildModelMatrix(gameItem), viewMatrix);
+    }
+
+
+    public Matrix4f buildModelViewMatrixEuler(GameItem gameItem, Matrix4f matrix) {
+
+        Vector3f rotation = new Vector3f(gameItem.getRotation().x, gameItem.getRotation().y, gameItem.getRotation().z);
+        modelMatrix.identity().translate(gameItem.getPosition()).
+                rotateX((float)Math.toRadians(-rotation.x)).
+                rotateY((float)Math.toRadians(-rotation.y)).
+                rotateZ((float)Math.toRadians(-rotation.z)).
+                scale(gameItem.getScale());
+        modelViewMatrix.set(matrix);
+        return modelViewMatrix.mul(modelMatrix);
     }
     
     public Matrix4f buildModelViewMatrix(Matrix4f modelMatrix, Matrix4f viewMatrix) {

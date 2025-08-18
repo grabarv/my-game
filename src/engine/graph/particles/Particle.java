@@ -21,7 +21,7 @@ public class Particle extends GameItem {
     private int animFrames;
     
     public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMillis) {
-        super(mesh);
+        super(mesh, false);
         this.speed = new Vector3f(speed);
         this.ttl = ttl;
         this.updateTextureMillis = updateTextureMillis;
@@ -31,7 +31,7 @@ public class Particle extends GameItem {
     }
 
     public Particle(Particle baseParticle) {
-        super(baseParticle.getMesh());
+        super(baseParticle.getMesh(), false);
         Vector3f aux = baseParticle.getPosition();
         setPosition(aux.x, aux.y, aux.z);
         setRotation(baseParticle.getRotation());
