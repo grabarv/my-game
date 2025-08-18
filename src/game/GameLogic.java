@@ -41,7 +41,7 @@ public class GameLogic implements IGameLogic {
 
     private static final float CAMERA_POS_STEP = 0.40f;
 
-    private float angleInc;
+    private Vector2f angleInc;
 
     private float lightAngle;
 
@@ -63,7 +63,7 @@ public class GameLogic implements IGameLogic {
         hud = new Hud();
         camera = new Camera();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
-        angleInc = 0;
+        angleInc = new Vector2f(0f, 0f);
         lightAngle = 90;
         firstTime = true;
 
@@ -183,9 +183,15 @@ public class GameLogic implements IGameLogic {
 
 
         if(sceneChanged) {
+            if(cameraInc.x != 0) {
+
+            }
+            camera.setRotation(cameraInc.y * 5f, cameraInc.x * 5f, 0f);
+            System.out.println(cameraInc.y * 10f +" " + cameraInc.x * 10f);
             if(cameraInc.x == -1) {
                 Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
                 playerItem.setRotation(q);
+
             } else if(cameraInc.x == 1) {
                 Quaternionf q = new Quaternionf(0.0f, 1.0f, 0.0f, 0.00f);
                 playerItem.setRotation(q);
