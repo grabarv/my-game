@@ -6,6 +6,9 @@ import engine.graph.Texture;
 import engine.items.GameItem;
 import engine.loaders.assimp.StaticMeshesLoader;
 
+/**
+ * Main player of the game
+ */
 public class MainPlayer extends GameItem {
 
     private final String texturePath = "resources/textures/player.png";
