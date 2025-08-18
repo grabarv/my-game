@@ -68,6 +68,7 @@ public class Scene {
         }
     }
 
+
     public void cleanup() {
         for (Mesh mesh : meshMap.keySet()) {
             mesh.cleanUp();

@@ -1,6 +1,7 @@
 package game;
 
 import engine.graph.Material;
+import game.world.MapManger;
 import org.joml.*;
 
 import static engine.Utils.eulerToQuaternion;
@@ -54,6 +55,8 @@ public class GameLogic implements IGameLogic {
 
     private MainPlayer playerItem;
 
+    private MapManger mapManger;
+
 
     public GameLogic() {
         renderer = new Renderer();
@@ -72,6 +75,12 @@ public class GameLogic implements IGameLogic {
         renderer.init(window);
 
         scene = new Scene();
+
+        camera.getPosition().x = 0f;
+        camera.getPosition().y = 0f;
+        camera.getPosition().z = 3.5f;
+        camera.getRotation().x = 0.0f;
+        camera.getRotation().y = 0.0f;
 
 //        Mesh[] terrainMesh = StaticMeshesLoader.load("resources/models/terrain/terrain.obj", "models/terrain");
 //        GameItem terrain = new GameItem(terrainMesh);
@@ -101,17 +110,18 @@ public class GameLogic implements IGameLogic {
         // Setup Lights
         setupLights();
 
+
         playerItem = new MainPlayer();
+
+        mapManger = new MapManger(100, 30);
+        mapManger.generateMap(scene);
+        mapManger.putPlayerOnMapCenter(camera, playerItem);
 
         scene.setGameItems(new GameItem[] { playerItem});
 
 
 
-        camera.getPosition().x = 0f;
-        camera.getPosition().y = 0f;
-        camera.getPosition().z = 4.5f;
-        camera.getRotation().x = 0.0f;
-        camera.getRotation().y = 0.0f;
+
     }
 
     private void setupLights() {
@@ -137,7 +147,7 @@ public class GameLogic implements IGameLogic {
         if (window.isKeyPressed(GLFW_KEY_W)) {
             sceneChanged = true;
             cameraInc.y = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_W)) {
+        } else if (window.isKeyPressed(GLFW_KEY_S)) {
             sceneChanged = true;
             cameraInc.y = -1;
 
@@ -150,6 +160,14 @@ public class GameLogic implements IGameLogic {
             sceneChanged = true;
             cameraInc.x = 1;
 
+        }
+        if(window.isKeyPressed(GLFW_KEY_N)) {
+            sceneChanged = true;
+            cameraInc.z = 1;
+
+        } else if(window.isKeyPressed(GLFW_KEY_M)) {
+            sceneChanged = true;
+            cameraInc.z = -1;
         }
 
 //        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
@@ -176,7 +194,7 @@ public class GameLogic implements IGameLogic {
             camera.setPosition(camPos.x + cameraInc.x*0.05f, camPos.y + cameraInc.y*0.05f, camPos.z + cameraInc.z*0.05f);
 
             Vector3f playerPos = playerItem.getPosition();
-            playerItem.setPosition(playerPos.x + cameraInc.x*0.05f, playerPos.y + cameraInc.y*0.05f, playerPos.z + cameraInc.z*0.05f);
+            playerItem.setPosition(playerPos.x + cameraInc.x*0.05f, playerPos.y + cameraInc.y*0.05f, playerPos.z );
 
 
         }

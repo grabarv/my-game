@@ -22,8 +22,8 @@ public class MainPlayer extends GameItem {
         Material material = new Material(texture, 0);
         playerMesh.setMaterial(material);
         setMesh(playerMesh);
-        setPosition(0, 0, 2f);
-        setScale(0.5f);
+        setPosition(0, 0, 1.5f);
+        setScale(0.1f);
 
     }
 

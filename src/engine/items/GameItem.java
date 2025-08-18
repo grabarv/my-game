@@ -15,7 +15,7 @@ public class GameItem {
     private float scale;
 
     /**
-     * if isEulerRotation = true then x,y,z means rotation along axes and w is always 0
+     * if usingEulerRotation = true, then x,y,z means rotation along axes and w is always 0
      */
     private final Quaternionf rotation;
 
