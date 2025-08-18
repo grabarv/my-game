@@ -189,18 +189,17 @@ public class GameLogic implements IGameLogic {
 
         if(sceneChanged) {
 
-            Quaternionf quaternionf = new Quaternionf(playerItem.getRotation().x + x* 0.5f, playerItem.getRotation().y + y*5f,
-                    playerItem.getRotation().z + z*0.5f, playerItem.getRotation().w + w*0.5f);
+//            Quaternionf quaternionf = new Quaternionf(playerItem.getRotation().x + x* 0.05f, playerItem.getRotation().y + y*0.05f,
+//                    playerItem.getRotation().z + z*0.05f, playerItem.getRotation().w + w*0.05f);
 //            System.out.println(quaternionf.x + "  " + quaternionf.y + "  " +  quaternionf.z + "  " + quaternionf.w);
-            playerItem.setRotation(quaternionf);
-//            System.out.println("R: " + playerItem.getRotation().x + ' ' + playerItem.getRotation().y + ' ' + playerItem.getRotation().z + ' ');
-//            if(x == -1) {
-//                Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
-//                playerItem.setRotation(q);
-//            } else if(x == 1) {
-//                Quaternionf q = new Quaternionf(0.0f, -1.0f, 0.0f, 0.0f);
-//                playerItem.setRotation(q);
-//            }
+//            playerItem.setRotation(quaternionf);
+            if(x == -1) {
+                Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
+                playerItem.setRotation(q);
+            } else if(x == 1) {
+                Quaternionf q = new Quaternionf(0.0f, 1.0f, 0.0f, 0.00f);
+                playerItem.setRotation(q);
+            }
 
         }
 

@@ -61,7 +61,6 @@ public class Transformation {
 
     public Matrix4f buildModelMatrixEuler(GameItem gameItem) {
         Vector3f rotation = new Vector3f(gameItem.getRotation().x, gameItem.getRotation().y, gameItem.getRotation().z);
-//        System.out.println("T:" + gameItem.getRotation().x + ' ' + gameItem.getRotation().y + ' ' + gameItem.getRotation().z);
         modelViewMatrix.identity().translate(gameItem.getPosition()).
                 rotateX((float)Math.toRadians(-rotation.x)).
                 rotateY((float)Math.toRadians(-rotation.y)).
