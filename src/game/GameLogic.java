@@ -41,7 +41,7 @@ public class GameLogic implements IGameLogic {
 
     private static final float CAMERA_POS_STEP = 0.40f;
 
-    private Vector2f angleInc;
+//    private Vector2f angleInc;
 
     private float lightAngle;
 
@@ -63,7 +63,7 @@ public class GameLogic implements IGameLogic {
         hud = new Hud();
         camera = new Camera();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
-        angleInc = new Vector2f(0f, 0f);
+//        angleInc = new Vector2f(0f, 0f);
         lightAngle = 90;
         firstTime = true;
 
@@ -82,23 +82,25 @@ public class GameLogic implements IGameLogic {
         camera.getRotation().x = 0.0f;
         camera.getRotation().y = 0.0f;
 
-//        Mesh[] terrainMesh = StaticMeshesLoader.load("resources/models/terrain/terrain.obj", "models/terrain");
-//        GameItem terrain = new GameItem(terrainMesh);
-//        terrain.setScale(100.0f);
-//
-//        animItem = AnimMeshesLoader.loadAnimGameItem("resources/models/bob/boblamp.md5mesh", "");
-//        animItem.setScale(0.05f);
-//        animation = animItem.getCurrentAnimation();
+//        angleInc = new Vector2f(0f,0f);
 
+    //        Mesh[] terrainMesh = StaticMeshesLoader.load("resources/models/terrain/terrain.obj",
+    // "models/terrain");
+    //        GameItem terrain = new GameItem(terrainMesh);
+    //        terrain.setScale(100.0f);
+    //
+    //        animItem = AnimMeshesLoader.loadAnimGameItem("resources/models/bob/boblamp.md5mesh",
+    // "");
+    //        animItem.setScale(0.05f);
+    //        animation = animItem.getCurrentAnimation();
 
+    //        scene.setGameItems(new GameItem[]{animItem, terrain});
 
-//        scene.setGameItems(new GameItem[]{animItem, terrain});
+    // Shadows
+    //        scene.setRenderShadows(true);
 
-        // Shadows
-//        scene.setRenderShadows(true);
-
-        // Fog
-        Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
+    // Fog
+    Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
 //        scene.setFog(new Fog(true, fogColour, 0.02f));
 
         // Setup  SkyBox
@@ -181,13 +183,13 @@ public class GameLogic implements IGameLogic {
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
 
+        animateCameraRotation(0.5f, 5f);
 
         if(sceneChanged) {
-            if(cameraInc.x != 0) {
 
-            }
-            camera.setRotation(cameraInc.y * 5f, cameraInc.x * 5f, 0f);
-            System.out.println(cameraInc.y * 10f +" " + cameraInc.x * 10f);
+
+
+
             if(cameraInc.x == -1) {
                 Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
                 playerItem.setRotation(q);
@@ -247,4 +249,27 @@ public class GameLogic implements IGameLogic {
 
         scene.cleanup();
     }
+
+    public void animateCameraRotation(float stepChange, float maxValue) {
+        float xRotation = camera.getRotation().x;
+        float yRotation = camera.getRotation().y;
+        if (cameraInc.x == 0) {
+            yRotation -= Math.signum(yRotation) * stepChange;
+        } else {
+            yRotation += cameraInc.x * stepChange;
+            if(Math.abs(yRotation) > maxValue) {
+                yRotation = Math.signum(yRotation) * maxValue;
+            }
+        }
+        if(cameraInc.y == 0) {
+            xRotation -= Math.signum(xRotation) * stepChange;
+        } else {
+            xRotation += cameraInc.y * stepChange;
+            if(Math.abs(yRotation) > maxValue) {
+                xRotation = maxValue;
+            }
+        }
+        camera.setRotation(xRotation, yRotation, camera.getRotation().z);
+    }
+
 }
