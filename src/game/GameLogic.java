@@ -1,6 +1,6 @@
 package game;
 
-import engine.graph.Material;
+import engine.graph.*;
 import game.world.MapManger;
 import org.joml.*;
 
@@ -11,9 +11,6 @@ import engine.MouseInput;
 import engine.Scene;
 import engine.SceneLight;
 import engine.Window;
-import engine.graph.Camera;
-import engine.graph.Mesh;
-import engine.graph.Renderer;
 import engine.graph.anim.AnimGameItem;
 import engine.graph.anim.Animation;
 import engine.graph.lights.DirectionalLight;
@@ -24,6 +21,8 @@ import engine.loaders.assimp.AnimMeshesLoader;
 import engine.loaders.assimp.StaticMeshesLoader;
 
 import java.lang.Math;
+import java.util.List;
+import java.util.Map;
 
 public class GameLogic implements IGameLogic {
 
@@ -120,6 +119,22 @@ public class GameLogic implements IGameLogic {
         mapManger.putPlayerOnMapCenter(camera, playerItem);
 
         scene.setGameItems(new GameItem[] { playerItem});
+
+//         Map<Mesh, List<GameItem>> map= scene.getGameMeshes();
+//
+//        for (Map.Entry<Mesh, List<GameItem>> entry : map.entrySet()) {
+//            System.out.println(entry.getKey() + " => " + entry.getValue().size());
+//        }
+//
+//        System.out.println("-------------");
+//
+//        Map<InstancedMesh, List<GameItem>> map2 = scene.getGameInstancedMeshes();
+//
+//        for (Map.Entry<InstancedMesh, List<GameItem>> entry : map2.entrySet()) {
+//            System.out.println(entry.getKey() + " => " + entry.getValue().size());
+//        }
+
+
 
 
 
