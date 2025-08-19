@@ -45,8 +45,8 @@ public class MapManger {
 
     public void generateMap(Scene scene) {
 
-        for(int i = 0; i < width; i++) {
-            for(int j = (int) Math.floor((double) height /2); j < height; j++){
+        for(int i = 0; i < 1 /*width*/; i++) {
+            for(int j = 0; j < 1/*(int) Math.floor((double) height /2)*/; j++){
 
                 blocks[i][j] = new Block(meshMap.get("dirt"), false, blockScale);
                 blocks[i][j].setPosition(new Vector3f(startPos.x + blockSize.x*i, startPos.y - blockSize.y* j, startPos.z));
@@ -96,5 +96,18 @@ public class MapManger {
 
     public Vector2f getBlockSize() {
         return blockSize;
+    }
+
+    /**
+     *
+     * @param x width index in map array
+     * @param y height index in map array
+     * @return true if there is a block or false if the value in that place in array is null. If specified indexes are negative or bigger then array size then returns false
+     */
+    public boolean isThereABlock(int x, int y) {
+        if(x < 0 || y < 0 || x >= blocks.length || y >= blocks[0].length) {
+            return false;
+        }
+        return blocks[x][y] != null;
     }
 }

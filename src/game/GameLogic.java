@@ -198,7 +198,7 @@ public class GameLogic implements IGameLogic {
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
 
-        animateCameraRotation(0.5f, 5f);
+//        animateCameraRotation(0.5f, 5f);
 
         if(sceneChanged) {
 
@@ -214,12 +214,13 @@ public class GameLogic implements IGameLogic {
                 playerItem.setRotation(q);
             }
             Vector3f camPos = camera.getPosition();
-            camera.setPosition(camPos.x + cameraInc.x*0.05f, camPos.y + cameraInc.y*0.05f, camPos.z + cameraInc.z*0.05f);
+//            camera.setPosition(camPos.x + cameraInc.x*0.01f, camPos.y + cameraInc.y*0.01f, camPos.z + cameraInc.z*0.01f);
+            camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
 
             Vector3f playerPos = playerItem.getPosition();
-            playerItem.setPosition(playerPos.x + cameraInc.x*0.05f, playerPos.y + cameraInc.y*0.05f, playerPos.z );
+//            playerItem.setPosition(playerPos.x + cameraInc.x*0.01f, playerPos.y + cameraInc.y*0.01f, playerPos.z );
 
-
+            System.out.println(playerItem.canMove("left", mapManger));
         }
 
 

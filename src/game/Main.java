@@ -15,6 +15,7 @@ public class Main {
             opts.showFps = true;
             opts.antialiasing = true;
             opts.frustumCulling = false;
+            opts.showTriangles = false;
             GameEngine gameEng = new GameEngine("GAME", vSync, opts, gameLogic);
             gameEng.run();
         } catch (Exception excp) {
