@@ -6,16 +6,11 @@ import engine.items.GameItem;
 
 public class Block extends GameItem {
 
-    private final Material material;
 
     private boolean isInScene = false;
 
-    public Block(Mesh[] mesh, boolean isEulerRotation, Material material, float scale) {
+    public Block(Mesh[] mesh, boolean isEulerRotation, float scale) {
         super(mesh, isEulerRotation);
-        this.material = material;
-        for (Mesh m : mesh) {
-            m.setMaterial(material);
-        }
         setScale(scale);
     }
 
@@ -26,7 +21,4 @@ public class Block extends GameItem {
         this.isInScene = isInScene;
     }
 
-    public Material getMaterial() {
-        return material;
-    }
 }

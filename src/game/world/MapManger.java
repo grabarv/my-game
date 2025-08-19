@@ -13,6 +13,8 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapManger {
 
@@ -22,7 +24,7 @@ public class MapManger {
 
     private final Block[][] blocks;
     private final String blockObjPath = "resources/models/cube.obj";
-    private Mesh[] blockMesh;
+    private Map<String, Mesh[]> meshMap;
     /**
      * The start position is in the left top corner
      */
@@ -33,16 +35,20 @@ public class MapManger {
         this.width = width;
         this.height = height;
         blocks = new Block[width][height];
-        blockMesh = StaticMeshesLoader.load(blockObjPath, "");
+        meshMap = new HashMap<>();
+        Material m = new Material(new Texture("resources/textures/dirt.png"));
+        meshMap.put("dirt", StaticMeshesLoader.load(blockObjPath, ""));
+        for (Mesh mesh : meshMap.get("dirt")) {
+            mesh.setMaterial(m);
+        }
     }
 
-    public void generateMap(Scene scene) throws Exception {
-        Material m1 = new Material(new Texture("resources/textures/dirt.png"));
-//        Material m2 = new Material();
-        for(int i = 0; i < width; i++) {
-            for(int j = (int) Math.floor(height/2); j < height; j++){
+    public void generateMap(Scene scene) {
 
-                blocks[i][j] = new Block(blockMesh, false, m1, blockScale);
+        for(int i = 0; i < width; i++) {
+            for(int j = (int) Math.floor((double) height /2); j < height; j++){
+
+                blocks[i][j] = new Block(meshMap.get("dirt"), false, blockScale);
                 blocks[i][j].setPosition(new Vector3f(startPos.x + blockSize.x*i, startPos.y - blockSize.y* j, startPos.z));
             }
 
