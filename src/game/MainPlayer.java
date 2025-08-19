@@ -54,7 +54,7 @@ public class MainPlayer extends GameItem {
             }
         } else if(direction.equalsIgnoreCase("right")) {
             for(int i = 0; i < 4; i++ ) {
-                if(map.isThereABlock(playerPosInBlockMap.x + 1, (int) (playerPosInBlockMap.y + (float) i))) {
+                if(map.isThereABlock(playerPosInBlockMap.x + 2, (int) (playerPosInBlockMap.y + (float) i))) {
                     return false;
                 }
             }
@@ -67,7 +67,7 @@ public class MainPlayer extends GameItem {
             }
         } else if(direction.equalsIgnoreCase("down")) {
             for(int i = 0; i < 3; i++ ) {
-                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + 2 ))) {
+                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + 3 ))) {
                     return false;
                 }
             }
@@ -89,6 +89,8 @@ public class MainPlayer extends GameItem {
         Vector3f mapTopLeftCorner = map.getMapTopLeftCorner();
         setPosition(mapTopLeftCorner.x + modelWidth * getScale()/2, mapTopLeftCorner.y - modelHeight * getScale()/2, getPosition().z);
     }
+
+
 
 
 
