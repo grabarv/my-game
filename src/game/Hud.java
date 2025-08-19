@@ -99,6 +99,7 @@ public class Hud {
         nvgFillColor(vg, rgba(0xe6, 0xea, 0xed, 255, colour));
         nvgText(vg, window.getWidth() - 150, window.getHeight() - 95, dateFormat.format(new Date()));
 
+
         nvgEndFrame(vg);
 
         // Restore state

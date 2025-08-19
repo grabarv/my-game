@@ -17,21 +17,19 @@ import java.util.Arrays;
  */
 public class MainPlayer extends GameItem {
 
-    private final String texturePath = "resources/textures/player.png";
-
-    private final String modelPath = "resources/models/main_player.obj";
-
-    private final float modelHeight = 1f;
-    private final float modelWidth = 0.66f;
+    private final float modelHeight = 2f;
+    private final float modelWidth = 1.33332f;
 
     public MainPlayer() throws Exception {
         super(false);
+        final String modelPath = "resources/models/main_player.obj";
         Mesh playerMesh = StaticMeshesLoader.load(modelPath, "", 0)[0];
+        final String texturePath = "resources/textures/player.png";
         Texture texture = new Texture(texturePath);
         Material material = new Material(texture, 0);
         playerMesh.setMaterial(material);
         setMesh(playerMesh);
-        setPosition(0, 0, 1.5f + 0.33f);
+        setPosition(0, 0, MapManger.worldFirstZIndex);
         setScale(0.1f);
 
     }
@@ -39,34 +37,59 @@ public class MainPlayer extends GameItem {
     /**
      * @param direction possible values: up,down,left,right. If any other value is set, returns false
      * @param map just MapManager class
-     * @return true if it can move at least 1 px forward in the selected direction
+     * @return Return true if it can move at least 1 px forward in the selected direction, otherwise return false
      */
+    // TODO: consider possible deviation
     public boolean canMove(String direction, MapManger map) {
         if (!Arrays.asList(new String[] {"up", "down", "left", "right"}).contains(direction)) {
-            System.out.println("-----------");
             return false;
         }
-        Vector2f playerTopLeftCorner = new Vector2f(getPosition().x - modelWidth * getScale()/2, getPosition().y +modelHeight * getScale()/2);
-        Vector2f positionDifference = new Vector2f(playerTopLeftCorner.x - map.getStartPos().x, map.getStartPos().y -  playerTopLeftCorner.y);
-//        System.out.println(getPosition().x + " " + getPosition().y);
-//        System.out.println(playerTopLeftCorner.x + " " + playerTopLeftCorner.y + " ");
-        setPosition(map.getStartPos().x + modelWidth * getScale()/2, playerTopLeftCorner.y - modelHeight * getScale()/2, getPosition().z);
-        Vector2i playerInBlockMapPos = new Vector2i((int) Math.floor(positionDifference.x / map.getBlockSize().x),
-                (int) Math.floor(positionDifference.y / map.getBlockSize().y));
+        Vector2i playerPosInBlockMap = getPlayerPosInBlockMap(map);
 
         if (direction.equalsIgnoreCase("left")) {
-//            System.out.println(playerInBlockMapPos.x + " " + playerInBlockMapPos.y);
+            for(int i = 0; i < 4; i++ ) {
+                if(map.isThereABlock(playerPosInBlockMap.x, (int) (playerPosInBlockMap.y + (float) i))) {
+                    return false;
+                }
+            }
+        } else if(direction.equalsIgnoreCase("right")) {
+            for(int i = 0; i < 4; i++ ) {
+                if(map.isThereABlock(playerPosInBlockMap.x + 1, (int) (playerPosInBlockMap.y + (float) i))) {
+                    return false;
+                }
+            }
 
+        } else if(direction.equalsIgnoreCase("up")) {
             for(int i = 0; i < 3; i++ ) {
-                if(map.isThereABlock(playerInBlockMapPos.x-1, playerInBlockMapPos.y +i)) {
+                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y ))) {
+                    return false;
+                }
+            }
+        } else if(direction.equalsIgnoreCase("down")) {
+            for(int i = 0; i < 3; i++ ) {
+                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + 2 ))) {
                     return false;
                 }
             }
         }
 
-        System.out.println(positionDifference.x + " " + positionDifference.y);
         return true;
     }
+
+    private Vector2i getPlayerPosInBlockMap(MapManger map) {
+        Vector2f playerTopLeftCorner = new Vector2f(getPosition().x - modelWidth * getScale()/2, getPosition().y +modelHeight * getScale()/2);
+        Vector3f mapTopLeftCorner = map.getMapTopLeftCorner();
+        Vector2f posDiff = new Vector2f(playerTopLeftCorner.x - mapTopLeftCorner.x, mapTopLeftCorner.y - playerTopLeftCorner.y);
+        Vector2i playerInBlockMapPos = new Vector2i((int) Math.floor(posDiff.x / map.getBlockSize().x),
+                (int) Math.floor(posDiff.y / map.getBlockSize().y));
+        return playerInBlockMapPos;
+    }
+
+    public void setPlayerInMapTopLeftCorner(MapManger map) {
+        Vector3f mapTopLeftCorner = map.getMapTopLeftCorner();
+        setPosition(mapTopLeftCorner.x + modelWidth * getScale()/2, mapTopLeftCorner.y - modelHeight * getScale()/2, getPosition().z);
+    }
+
 
 
 }

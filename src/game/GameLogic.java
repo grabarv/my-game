@@ -77,7 +77,7 @@ public class GameLogic implements IGameLogic {
 
         camera.getPosition().x = 0f;
         camera.getPosition().y = 0f;
-        camera.getPosition().z = 3.5f;
+        camera.getPosition().z = 2.5f;
         camera.getRotation().x = 0.0f;
         camera.getRotation().y = 0.0f;
 
@@ -214,13 +214,18 @@ public class GameLogic implements IGameLogic {
                 playerItem.setRotation(q);
             }
             Vector3f camPos = camera.getPosition();
-//            camera.setPosition(camPos.x + cameraInc.x*0.01f, camPos.y + cameraInc.y*0.01f, camPos.z + cameraInc.z*0.01f);
+            camera.setPosition(camPos.x + cameraInc.x*0.01f, camPos.y + cameraInc.y*0.01f, camPos.z + cameraInc.z*0.01f);
             camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
 
             Vector3f playerPos = playerItem.getPosition();
-//            playerItem.setPosition(playerPos.x + cameraInc.x*0.01f, playerPos.y + cameraInc.y*0.01f, playerPos.z );
-
+            playerItem.setPosition(playerPos.x + cameraInc.x*0.01f, playerPos.y + cameraInc.y*0.01f, playerPos.z );
+            System.out.println("---------------------");
             System.out.println(playerItem.canMove("left", mapManger));
+            System.out.println(playerItem.canMove("right", mapManger));
+            System.out.println(playerItem.canMove("up", mapManger));
+            System.out.println(playerItem.canMove("down", mapManger));
+
+//            playerItem.canMove("left", mapManger);
         }
 
 
