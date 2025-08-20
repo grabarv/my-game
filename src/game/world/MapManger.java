@@ -51,8 +51,8 @@ public class MapManger {
 
     public void generateMap(Scene scene) {
 
-        for(int i = 0; i < 1 /*width*/; i++) {
-            for(int j = 0; j < 1/*(int) Math.floor((double) height /2)*/; j++){
+        for(int i = 0; i < width; i++) {
+            for(int j = (int) Math.floor((double) height /2); j <  height ; j++){
                 blocks[i][j].setMeshes(meshMap.get("dirt"));
             }
 
@@ -63,7 +63,7 @@ public class MapManger {
     // TODO: method has a bug, it does not set player exactly at the center.
 
     public void putPlayerOnMapCenter(Camera camera, MainPlayer player) {
-        float xPos = getMapTopLeftCorner().x;// + width*blockSize.x/2;
+        float xPos = getMapTopLeftCorner().x + width*blocks[0][0].getBlockSize().x/2;
         float yPos = startPos.y ;
         camera.setPosition(xPos, yPos, camera.getPosition().z);
         player.setPosition(xPos, yPos, player.getPosition().z);

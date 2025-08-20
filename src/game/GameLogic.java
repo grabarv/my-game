@@ -77,7 +77,7 @@ public class GameLogic implements IGameLogic {
 
         camera.getPosition().x = 0f;
         camera.getPosition().y = 0f;
-        camera.getPosition().z = 2.5f;
+        camera.getPosition().z = 4f;
         camera.getRotation().x = 0.0f;
         camera.getRotation().y = 0.0f;
 
@@ -200,7 +200,7 @@ public class GameLogic implements IGameLogic {
 //        animateCameraRotation(0.5f, 5f);
 
         if(sceneChanged) {
-            System.out.println("--------------");
+
 //            System.out.println("left: " + playerItem.canMove("left", mapManger));
 //            System.out.println("right: " + playerItem.canMove("right", mapManger));
 //            System.out.println("up: " + playerItem.canMove("up", mapManger));
@@ -209,12 +209,12 @@ public class GameLogic implements IGameLogic {
             switch ((int) cameraInc.x) {
                 case -1:
                     b = playerItem.canMove("left", mapManger);
-                    System.out.println("left: " + b);
+
                     if(!b) cameraInc.x = 0f;
                     break;
                 case 1:
                     b = playerItem.canMove("right", mapManger);
-                    System.out.println("right: " + b);
+
                     if(!b) cameraInc.x = 0f;
                     break;
             }
@@ -222,12 +222,12 @@ public class GameLogic implements IGameLogic {
             switch ((int) cameraInc.y) {
                 case -1:
                     b = playerItem.canMove("down", mapManger);
-                    System.out.println("down: " + b);
+
                     if(!b) cameraInc.y = 0f;
                     break;
                 case 1:
                     b = playerItem.canMove("up", mapManger);
-                    System.out.println("up: " + b);
+
                     if(!b) cameraInc.y = 0f;
                     break;
             }
