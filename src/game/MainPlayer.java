@@ -89,9 +89,9 @@ public class MainPlayer extends GameItem {
                 boolean result = map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y ));
                 if(result) {
                     if(i == 0) {
-                        firstElementResult = result;
-                    } else if(i == heightInBlocks) {
-                        lastElementResult = result;
+                        firstElementResult = true;
+                    } else if(i == widthInBlocks) {
+                        lastElementResult = true;
                     } else {
                         return false;
                     }
@@ -103,13 +103,13 @@ public class MainPlayer extends GameItem {
             if(!firstElementResult) {
                 Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y];
 
-            } else if(!lastElementResult) {
-                Block block = map.getBlocks()[playerPosInBlockMap.x + ][playerPosInBlockMap.y];
+            } else {
+                Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y];
             }
 
         } else if(direction.equalsIgnoreCase("down")) {
             for(int i = 0; i < widthInBlocks+1; i++ ) {
-                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + heightInBlocks ))) {
+                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + widthInBlocks ))) {
                     return false;
                 }
             }
