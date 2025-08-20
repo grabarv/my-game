@@ -187,10 +187,6 @@ public class GameLogic implements IGameLogic {
             cameraInc.z = -1;
         }
 
-        if(window.isKeyPressed(GLFW_KEY_Q)) {
-            sceneChanged = true;
-            MainPlayer.a = 1;
-        }
 
 //        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
 //            sceneChanged = true;

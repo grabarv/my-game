@@ -23,7 +23,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
  */
 public class MainPlayer extends GameItem {
 
-    static int a = 0;
+
+    static final int heightInBlocks = 3;
+
+    static final int widthInBlocks = 2;
+
 
     public MainPlayer() throws Exception {
         super(false);
@@ -48,7 +52,6 @@ public class MainPlayer extends GameItem {
      * @return {@code true} if it can move at least 1 px forward in the selected {@code direction},
      *         otherwise {@code false}.
      */
-    // TODO: consider possible deviation
     public boolean canMove(String direction, MapManger map) {
         if(!Utils.isStringInArray(direction.toLowerCase(), new String[] {"up", "down", "left", "right"})) {
             return false;
@@ -57,8 +60,11 @@ public class MainPlayer extends GameItem {
 
         Vector2f intersection = new Vector2f();
 
+        boolean firstElementResult = false;
+        boolean lastElementResult = false;
+
         if (direction.equalsIgnoreCase("left")) {
-            for(int i = 0; i < 1/*4*/; i++ ) {
+            for(int i = 0; i < heightInBlocks+1; i++ ) {
                 if(map.isThereABlock(playerPosInBlockMap.x, (int) (playerPosInBlockMap.y + (float) i))) {
                     Block block = map.getBlocks()[playerPosInBlockMap.x][(int) (playerPosInBlockMap.y + (float) i)];
                     intersection = getBlockIntersection(block, "upright", "upleft");
@@ -68,9 +74,9 @@ public class MainPlayer extends GameItem {
                 }
             }
         } else if(direction.equalsIgnoreCase("right")) {
-            for(int i = 0; i < 1/*4*/; i++ ) {
-                if(map.isThereABlock(playerPosInBlockMap.x + 2, (int) (playerPosInBlockMap.y + (float) i))) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x + 2][(int) (playerPosInBlockMap.y + (float) i)];
+            for(int i = 0; i < heightInBlocks+1; i++ ) {
+                if(map.isThereABlock(playerPosInBlockMap.x + widthInBlocks, (int) (playerPosInBlockMap.y + (float) i))) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][(int) (playerPosInBlockMap.y + (float) i)];
                     intersection = getBlockIntersection(block, "upleft", "upright");
 
                     intersection = getBlockIntersection(block, "downleft", "downright");
@@ -79,14 +85,31 @@ public class MainPlayer extends GameItem {
             }
 
         } else if(direction.equalsIgnoreCase("up")) {
-            for(int i = 0; i < 1/*3*/; i++ ) {
-                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y ))) {
-                    return false;
+            for(int i = 0; i < widthInBlocks+1; i++ ) {
+                boolean result = map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y ));
+                if(result) {
+                    if(i == 0) {
+                        firstElementResult = result;
+                    } else if(i == heightInBlocks) {
+                        lastElementResult = result;
+                    } else {
+                        return false;
+                    }
                 }
             }
+            if(firstElementResult && lastElementResult) {
+                return false;
+            }
+            if(!firstElementResult) {
+                Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y];
+
+            } else if(!lastElementResult) {
+                Block block = map.getBlocks()[playerPosInBlockMap.x + ][playerPosInBlockMap.y];
+            }
+
         } else if(direction.equalsIgnoreCase("down")) {
-            for(int i = 0; i < 1/*3*/; i++ ) {
-                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + 3 ))) {
+            for(int i = 0; i < widthInBlocks+1; i++ ) {
+                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + heightInBlocks ))) {
                     return false;
                 }
             }
