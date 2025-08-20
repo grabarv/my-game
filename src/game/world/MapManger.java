@@ -42,7 +42,7 @@ public class MapManger {
             }
         }
         meshMap = new HashMap<>();
-        Material m = new Material(new Texture("resources/textures/dirt.png"));
+        Material m = new Material(new Texture("resources/textures/soil.png"));
         meshMap.put("dirt", StaticMeshesLoader.load(blockObjPath, ""));
         for (Mesh mesh : meshMap.get("dirt")) {
             mesh.setMaterial(m);
