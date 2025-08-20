@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -131,6 +132,10 @@ public class Utils {
         qz.mul(qy).mul(qx, q);
 
         return q;
+    }
+
+    public static boolean isStringInArray(String str, String[] array) {
+        return  Arrays.asList(array).contains(str);
     }
 
 }

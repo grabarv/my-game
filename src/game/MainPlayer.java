@@ -1,5 +1,6 @@
 package game;
 
+import engine.Utils;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
@@ -19,6 +20,7 @@ public class MainPlayer extends GameItem {
 
     private final float modelHeight = 2f;
     private final float modelWidth = 1.33332f;
+
 
     public MainPlayer() throws Exception {
         super(false);
@@ -41,7 +43,7 @@ public class MainPlayer extends GameItem {
      */
     // TODO: consider possible deviation
     public boolean canMove(String direction, MapManger map) {
-        if (!Arrays.asList(new String[] {"up", "down", "left", "right"}).contains(direction)) {
+        if(!Utils.isStringInArray(direction.toLowerCase(), new String[] {"up", "down", "left", "right"})) {
             return false;
         }
         Vector2i playerPosInBlockMap = getPlayerPosInBlockMap(map);
@@ -91,6 +93,66 @@ public class MainPlayer extends GameItem {
     }
 
 
+    /**
+     *
+     * @param map just <b>mapManager</b> class
+     * @param blockCoords a block coords in <b>blocks</b> array from <b>mapManager</b> class
+     * @param blockCorner possible values: upleft, upright, downleft, downright
+     * @return a relative value of intersection between a block corner and OPPOSITE player corner.
+     * For example: Returns 0.0f if there`s no intersection. Returns 1.0f if there`re 100% of intersection between elements
+     */
+    public Vector2f getBlockIntersection(MapManger map, Vector2i blockCoords, String blockCorner) {
+        Vector2f blockIntersection = new Vector2f(0f, 0f);
+        Vector2f blockCornerPos = new Vector2f(0f, 0f);
+        if(!Utils.isStringInArray(blockCorner.toLowerCase(), new String[]{"upleft", "upright", "downleft", "downright"})) {
+            return blockIntersection;
+        }
+
+
+
+        blockCornerPos.x = map.getMapTopLeftCorner().x + blockCoords.x * map.getBlockSize().x;
+        if(blockCorner.toLowerCase().endsWith("right")) {
+            blockCornerPos.x += map.getBlockSize().x;
+            blockIntersection.x = (blockCornerPos.x - getPlayerTopLeftCorner().x) / map.getBlockSize().x;
+        } else {
+            blockIntersection.x = (getPlayerTopLeftCorner().x +  - blockCornerPos.x) / map.getBlockSize().x;
+        }
+
+        if(blockIntersection.x < 0f) {
+            blockIntersection.x = 0f;
+        }
+
+        if (blockIntersection.x > 1f) {
+            blockIntersection.x = 1f;
+        }
+
+        blockCornerPos.y = map.getMapTopLeftCorner().y - blockCoords.y * map.getBlockSize().y;
+        if(blockCorner.toLowerCase().startsWith("down")) {
+            blockCornerPos.y -= map.getBlockSize().y;
+        } else {
+            blockIntersection.y =
+        }
+
+        if(blockIntersection.y < 0f) {
+            blockIntersection.y = 0f;
+        }
+
+        if (blockIntersection.y > 1f) {
+            blockIntersection.y = 1f;
+        }
+
+
+
+        return blockCornerPos;
+    }
+
+    public Vector3f getPlayerTopLeftCorner() {
+        return new Vector3f(getPosition().x - modelWidth * getScale() /2f, getPosition().y + modelHeight * getScale() /2f, getPosition().z);
+    }
+
+    public Vector2f getPlayerSize() {
+        return new Vector2f(modelWidth * getScale(), modelHeight * getScale())
+    }
 
 
 
