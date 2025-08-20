@@ -28,6 +28,8 @@ public class MainPlayer extends GameItem {
 
     static final int widthInBlocks = 2;
 
+    static int testVar = 0;
+
 
     public MainPlayer() throws Exception {
         super(false);
@@ -63,25 +65,92 @@ public class MainPlayer extends GameItem {
         boolean firstElementResult = false;
         boolean lastElementResult = false;
 
+        if (testVar == 1) {
+            System.out.println();
+        }
+
         if (direction.equalsIgnoreCase("left")) {
             for(int i = 0; i < heightInBlocks+1; i++ ) {
-                if(map.isThereABlock(playerPosInBlockMap.x, (int) (playerPosInBlockMap.y + (float) i))) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x][(int) (playerPosInBlockMap.y + (float) i)];
-                    intersection = getBlockIntersection(block, "upright", "upleft");
-
-                    intersection = getBlockIntersection(block, "downright", "downleft");
-                    return false;
+                boolean result = map.isThereABlock(playerPosInBlockMap.x , (int) (playerPosInBlockMap.y + (float) i));
+                if(result) {
+                    if(i == 0) {
+                        firstElementResult = true;
+                    } else if(i == heightInBlocks) {
+                        lastElementResult = true;
+                    } else {
+                        return false;
+                    }
                 }
             }
-        } else if(direction.equalsIgnoreCase("right")) {
-            for(int i = 0; i < heightInBlocks+1; i++ ) {
-                if(map.isThereABlock(playerPosInBlockMap.x + widthInBlocks, (int) (playerPosInBlockMap.y + (float) i))) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][(int) (playerPosInBlockMap.y + (float) i)];
-                    intersection = getBlockIntersection(block, "upleft", "upright");
-
-                    intersection = getBlockIntersection(block, "downleft", "downright");
-                    return false;
+            if(firstElementResult && lastElementResult) {
+                return false;
+            }
+            if(!firstElementResult && !lastElementResult) {
+                return true;
+            }
+            if(firstElementResult) {
+                if(map.checkBlockCoords(playerPosInBlockMap.x, playerPosInBlockMap.y)) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y];
+                    intersection = getBlockIntersection(block, "downleft", "upleft");
+                } else {
+                    return true;
                 }
+
+            } else {
+                if(map.checkBlockCoords(playerPosInBlockMap.x, playerPosInBlockMap.y + heightInBlocks)) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y + heightInBlocks];
+                    intersection = getBlockIntersection(block, "upleft", "downleft");
+                } else {
+                    return true;
+                }
+            }
+
+            if(intersection.y < 0.1) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if(direction.equalsIgnoreCase("right")) {
+
+            for(int i = 0; i < heightInBlocks+1; i++ ) {
+                boolean result = map.isThereABlock(playerPosInBlockMap.x + widthInBlocks, (int) (playerPosInBlockMap.y + (float) i));
+                if(result) {
+                    if(i == 0) {
+                        firstElementResult = true;
+                    } else if(i == heightInBlocks) {
+                        lastElementResult = true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            if(firstElementResult && lastElementResult) {
+                return false;
+            }
+            if(!firstElementResult && !lastElementResult) {
+                return true;
+            }
+            if(firstElementResult) {
+                if(map.checkBlockCoords(playerPosInBlockMap.x + widthInBlocks, playerPosInBlockMap.y)) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y];
+                    intersection = getBlockIntersection(block, "downleft", "upleft");
+                } else {
+                    return true;
+                }
+
+            } else {
+                if(map.checkBlockCoords(playerPosInBlockMap.x + widthInBlocks, playerPosInBlockMap.y + heightInBlocks)) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y + heightInBlocks];
+                    intersection = getBlockIntersection(block, "upleft", "downleft");
+                } else {
+                    return true;
+                }
+            }
+
+            if(intersection.y < 0.1) {
+                return true;
+            } else {
+                return false;
             }
 
         } else if(direction.equalsIgnoreCase("up")) {
@@ -100,18 +169,75 @@ public class MainPlayer extends GameItem {
             if(firstElementResult && lastElementResult) {
                 return false;
             }
-            if(!firstElementResult) {
-                Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y];
+            if(!firstElementResult && !lastElementResult) {
+                return true;
+            }
+            if(firstElementResult) {
+                if(map.checkBlockCoords(playerPosInBlockMap.x, playerPosInBlockMap.y)) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y];
+                    intersection = getBlockIntersection(block, "upright", "upleft");
+                } else {
+                    return true;
+                }
 
             } else {
-                Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y];
+                if(map.checkBlockCoords(playerPosInBlockMap.x + widthInBlocks, playerPosInBlockMap.y)) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y];
+                    intersection = getBlockIntersection(block, "upleft", "upright");
+                } else {
+                    return true;
+                }
+            }
+
+            if(intersection.x < 0.1) {
+                return true;
+            } else {
+                return false;
             }
 
         } else if(direction.equalsIgnoreCase("down")) {
+
             for(int i = 0; i < widthInBlocks+1; i++ ) {
-                if(map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + widthInBlocks ))) {
-                    return false;
+                boolean result = map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + heightInBlocks));
+                if(result) {
+                    if(i == 0) {
+                        firstElementResult = true;
+                    } else if(i == widthInBlocks) {
+                        lastElementResult = true;
+                    } else {
+                        return false;
+                    }
                 }
+            }
+            if(firstElementResult && lastElementResult) {
+                return false;
+            }
+
+            if(!firstElementResult && !lastElementResult) {
+                return true;
+            }
+
+            if(firstElementResult) {
+                if(map.checkBlockCoords(playerPosInBlockMap.x, playerPosInBlockMap.y + heightInBlocks)) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y + heightInBlocks];
+                    intersection = getBlockIntersection(block, "upright", "upleft");
+                } else {
+                    return true;
+                }
+
+            } else {
+                if(map.checkBlockCoords(playerPosInBlockMap.x + widthInBlocks, playerPosInBlockMap.y + heightInBlocks)) {
+                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y + heightInBlocks];
+                    intersection = getBlockIntersection(block, "upleft", "upright");
+                } else {
+                    return true;
+                }
+            }
+
+            if(intersection.x < 0.1) {
+                return true;
+            } else {
+                return false;
             }
         }
         return true;

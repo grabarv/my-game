@@ -188,12 +188,10 @@ public class GameLogic implements IGameLogic {
         }
 
 
-//        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
-//            sceneChanged = true;
-//            if (animation != null) {
-//                animation.nextFrame();
-//            }
-//        }
+        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+            sceneChanged = true;
+            MainPlayer.testVar = 1;
+        }
     }
 
     @Override
