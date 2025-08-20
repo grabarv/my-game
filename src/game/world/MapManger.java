@@ -38,7 +38,6 @@ public class MapManger {
             for(int j = 0; j < height; j++) {
                 blocks[i][j] = new Block(null, false, blocksScale);
                 blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getBlockSize().x *i, startPos.y -  blocks[i][j].getBlockSize().y * j, startPos.z));
-                System.out.println(blocks[i][j].getPosition().x + " " + blocks[i][j].getPosition().y);
             }
         }
         meshMap = new HashMap<>();
@@ -55,7 +54,6 @@ public class MapManger {
             for(int j = (int) Math.floor((double) height /2); j <  height ; j++){
                 blocks[i][j].setMeshes(meshMap.get("dirt"));
             }
-
         }
         addNewBlocksToScene(scene);
     }

@@ -28,8 +28,6 @@ public class MainPlayer extends GameItem {
 
     static final int widthInBlocks = 2;
 
-    static int testVar = 0;
-
 
     public MainPlayer() throws Exception {
         super(false);
@@ -65,9 +63,6 @@ public class MainPlayer extends GameItem {
         boolean firstElementResult = false;
         boolean lastElementResult = false;
 
-        if (testVar == 1) {
-            System.out.println();
-        }
 
         if (direction.equalsIgnoreCase("left")) {
             for(int i = 0; i < heightInBlocks+1; i++ ) {

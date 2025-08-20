@@ -188,16 +188,15 @@ public class GameLogic implements IGameLogic {
         }
 
 
-        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
-            sceneChanged = true;
-            MainPlayer.testVar = 1;
-        }
+//        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+//            sceneChanged = true;
+//        }
     }
 
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
 
-//        animateCameraRotation(0.5f, 5f);
+        animateCameraRotation(0.5f, 2.5f);
 
         if(sceneChanged) {
 
