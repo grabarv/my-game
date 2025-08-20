@@ -187,6 +187,11 @@ public class GameLogic implements IGameLogic {
             cameraInc.z = -1;
         }
 
+        if(window.isKeyPressed(GLFW_KEY_Q)) {
+            sceneChanged = true;
+            MainPlayer.a = 1;
+        }
+
 //        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
 //            sceneChanged = true;
 //            if (animation != null) {
@@ -202,26 +207,34 @@ public class GameLogic implements IGameLogic {
 
         if(sceneChanged) {
             System.out.println("--------------");
-            System.out.println(playerItem.canMove("left", mapManger));
-            System.out.println(playerItem.canMove("right", mapManger));
-            System.out.println(playerItem.canMove("up", mapManger));
-            System.out.println(playerItem.canMove("down", mapManger));
-
+//            System.out.println("left: " + playerItem.canMove("left", mapManger));
+//            System.out.println("right: " + playerItem.canMove("right", mapManger));
+//            System.out.println("up: " + playerItem.canMove("up", mapManger));
+//            System.out.println("down: " + playerItem.canMove("down", mapManger));
+                boolean b;
             switch ((int) cameraInc.x) {
                 case -1:
-                    if(!playerItem.canMove("left", mapManger)) cameraInc.x = 0f;
+                    b = playerItem.canMove("left", mapManger);
+                    System.out.println("left: " + b);
+                    if(!b) cameraInc.x = 0f;
                     break;
                 case 1:
-                    if(!playerItem.canMove("right", mapManger)) cameraInc.x = 0f;
+                    b = playerItem.canMove("right", mapManger);
+                    System.out.println("right: " + b);
+                    if(!b) cameraInc.x = 0f;
                     break;
             }
 
             switch ((int) cameraInc.y) {
                 case -1:
-                    if (!playerItem.canMove("down", mapManger)) cameraInc.y = 0f;
+                    b = playerItem.canMove("down", mapManger);
+                    System.out.println("down: " + b);
+                    if(!b) cameraInc.y = 0f;
                     break;
                 case 1:
-                    if(!playerItem.canMove("up", mapManger)) cameraInc.y = 0f;
+                    b = playerItem.canMove("up", mapManger);
+                    System.out.println("up: " + b);
+                    if(!b) cameraInc.y = 0f;
                     break;
             }
 
@@ -268,6 +281,8 @@ public class GameLogic implements IGameLogic {
 */
         // Update view matrix
         camera.updateViewMatrix();
+
+//        System.out.println(mapManger.getBlocks()[0][0].getPosition().x + " " + mapManger.getBlocks()[0][0].getPosition().y);
     }
 
     @Override

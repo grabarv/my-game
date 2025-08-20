@@ -1,5 +1,6 @@
 package engine.items;
 
+import engine.Utils;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import engine.graph.Mesh;
@@ -26,6 +27,9 @@ public class GameItem {
     private boolean insideFrustum;
 
     private final boolean usingEulerRotation;
+
+    protected float modelHeight = 0f;
+    protected float modelWidth = 0f;
 
     public GameItem(boolean isEulerRotation) {
         this.usingEulerRotation = isEulerRotation;
@@ -137,5 +141,35 @@ public class GameItem {
 
     public  boolean usingEulerRotation() {
         return usingEulerRotation;
+    }
+
+    /**
+     * @param corner possible values: {@code upleft}, {@code upright}, {@code downleft}, {@code downright}
+     * @return the position of the specified element {@code corner} in the world
+     */
+    public Vector3f getCorner(String corner) {
+        corner = corner.toLowerCase();
+        if(!Utils.isStringInArray(corner, new String[] {"upleft", "upright", "downleft", "downright"})){
+            throw new IllegalArgumentException("Wrong input");
+        }
+        Vector3f result = new Vector3f(getPosition().x, getPosition().y, getPosition().z);
+        if(corner.startsWith("up")) {
+            result.y += getScale() /2f * (modelHeight == 0 ? 1 : modelHeight);
+        } else {
+            result.y -= getScale() /2f * (modelHeight == 0 ? 1 : modelHeight);
+        }
+        if(corner.endsWith("left")) {
+            result.x -= getScale() /2f * (modelWidth == 0 ? 1 : modelWidth);
+        } else {
+            result.x += getScale() /2f * (modelWidth == 0 ? 1 : modelWidth);
+        }
+        return result;
+    }
+    public float getModelHeight() {
+        return modelHeight;
+    }
+
+    public float getModelWidth() {
+        return modelWidth;
     }
 }

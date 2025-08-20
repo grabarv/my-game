@@ -1,7 +1,6 @@
 package game.world;
 
 import engine.Scene;
-import engine.Utils;
 import engine.graph.Camera;
 import engine.graph.Material;
 import engine.graph.Mesh;
@@ -9,10 +8,9 @@ import engine.graph.Texture;
 import engine.items.GameItem;
 import engine.loaders.assimp.StaticMeshesLoader;
 import game.MainPlayer;
-import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,21 +23,24 @@ public class MapManger {
     private final Block[][] blocks;
     private final String blockObjPath = "resources/models/cube.obj";
     private Map<String, Mesh[]> meshMap;
-    private float blockScale =  0.03333333f;
+    private final float blocksScale =  0.03333333f;
     /**
      * The start position is in the left top corner
      */
-    private Vector3f startPos = new Vector3f(-1.0f, 1.0f, worldFirstZIndex - blockScale);
+    private Vector3f startPos = new Vector3f(-1.0f, 1.0f, worldFirstZIndex - blocksScale);
 
-    /**
-     * May be incorrect TODO: Check is blocksize mas set properly
-     */
-    private Vector2f blockSize = new Vector2f(blockScale*2, blockScale*2);
+
     public MapManger(int width, int height) throws Exception {
         this.width = width;
         this.height = height;
         blocks = new Block[width][height];
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) {
+                blocks[i][j] = new Block(null, false, blocksScale);
+                blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getBlockSize().x*i, startPos.y -  blocks[i][j].getBlockSize().y* j, startPos.z));
 
+            }
+        }
         meshMap = new HashMap<>();
         Material m = new Material(new Texture("resources/textures/dirt.png"));
         meshMap.put("dirt", StaticMeshesLoader.load(blockObjPath, ""));
@@ -52,9 +53,7 @@ public class MapManger {
 
         for(int i = 0; i < 1 /*width*/; i++) {
             for(int j = 0; j < 1/*(int) Math.floor((double) height /2)*/; j++){
-
-                blocks[i][j] = new Block(meshMap.get("dirt"), false, blockScale);
-                blocks[i][j].setPosition(new Vector3f(startPos.x + blockSize.x*i, startPos.y - blockSize.y* j, startPos.z));
+                blocks[i][j].setMeshes(meshMap.get("dirt"));
             }
 
         }
@@ -74,7 +73,7 @@ public class MapManger {
 
         for(int i = 0; i < width; i++ ) {
             for (int j = 0; j < height; j++) {
-                if(blocks[i][j] != null && !blocks[i][j].getIsInScene()) {
+                if(blocks[i][j] != null && blocks[i][j].getMeshes() != null && !blocks[i][j].getIsInScene()) {
                     scene.setGameItems(new GameItem[] {blocks[i][j]});
                 }
             }
@@ -96,13 +95,11 @@ public class MapManger {
         return startPos;
     }
 
-    public float getBlockScale() {
-        return blockScale;
+    public float getBlocksScale() {
+        return blocksScale;
     }
 
-    public Vector2f getBlockSize() {
-        return blockSize;
-    }
+
 
     /**
      *
@@ -111,15 +108,23 @@ public class MapManger {
      * @return true if there is a block or false if the value in that place in array is null. If specified indexes are negative or bigger then array size then returns false
      */
     public boolean isThereABlock(int x, int y) {
-        if(x < 0 || y < 0 || x >= blocks.length || y >= blocks[0].length) {
+        if(!checkBlockCoords(x,y)) {
             return false;
         }
 //        System.out.println(x +" " + y);
-        return blocks[x][y] != null;
+        return blocks[x][y] != null && blocks[x][y].getMeshes() != null;
     }
 
 
     public Vector3f getMapTopLeftCorner() {
-        return new Vector3f(getStartPos().x - blockSize.x/2f, getStartPos().y + blockSize.y/2f, getStartPos().z);
+        return new Vector3f(getStartPos().x - blocks[0][0].getBlockSize().x/2f, getStartPos().y + blocks[0][0].getBlockSize().y/2f, getStartPos().z);
+    }
+
+    public boolean checkBlockCoords(int x, int y) {
+        return  !(x < 0 || y < 0 || x >= getWidth() || y >= getHeight());
+    }
+
+    public boolean checkBlockCoords(Vector2i coords) {
+        return checkBlockCoords(coords.x, coords.y);
     }
 }
