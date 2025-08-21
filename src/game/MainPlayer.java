@@ -40,9 +40,8 @@ public class MainPlayer extends GameItem {
         Material material = new Material(texture, 0);
         playerMesh.setMaterial(material);
         setMesh(playerMesh);
-        setPosition(0, 0, MapManger.worldFirstZIndex);
+        setPosition(0, 0, MapManger.worldFirstZIndex + 0.01f);
         setScale(0.1f);
-
     }
 
     /**
@@ -53,104 +52,80 @@ public class MainPlayer extends GameItem {
      *         otherwise {@code false}.
      */
     public boolean canMove(String direction, MapManger map) {
+
+        /* To check can player move in selected direction or not we have to find the nearest possible block positions in selected direction
+            and then check if there are blocks.
+            Also, we need to consider the fact that if a player is overlying with one of the side blocks and the overlying percent is small,
+            it shouldn't interrupt player movement.
+         */
+
+        // Input check
         if(!Utils.isStringInArray(direction.toLowerCase(), new String[] {"up", "down", "left", "right"})) {
             return false;
         }
+
+
         Vector2i playerPosInBlockMap = getPlayerPosInBlockMap(map);
 
         Vector2f intersection = new Vector2f();
 
+        // These variables represent side block presence which can influence the result. (As it was described earlier.)
         boolean firstElementResult = false;
         boolean lastElementResult = false;
 
+        // Maximum possible intersection (in % of block size) for first and last elements
+        float intersectionThreshold = 0.33f;
 
-        if (direction.equalsIgnoreCase("left")) {
+        int widthOffset = 0;
+        int heightOffset = 0;
+        String blockCorner = "";
+        String playerCorner = "";
+
+
+
+        if(direction.equalsIgnoreCase("right") || direction.equalsIgnoreCase("left")) {
+
+            // Because we have defined player position in a block map for the top-left corner, we need to add offset to work with another sides
+            if(direction.equalsIgnoreCase("right")) {
+                widthOffset = widthInBlocks;
+            }
+
+
+            // Checking block presence for all blocks bordering with player in selected direction
             for(int i = 0; i < heightInBlocks+1; i++ ) {
-                boolean result = map.isThereABlock(playerPosInBlockMap.x , (int) (playerPosInBlockMap.y + (float) i));
+                boolean result = map.isThereABlock(playerPosInBlockMap.x + widthOffset, (int) (playerPosInBlockMap.y + (float) i));
                 if(result) {
                     if(i == 0) {
                         firstElementResult = true;
                     } else if(i == heightInBlocks) {
                         lastElementResult = true;
                     } else {
+                        // Presence of block in the middle means player cannot move despite first and last elements presence/absence
                         return false;
                     }
                 }
             }
-            if(firstElementResult && lastElementResult) {
-                return false;
+
+            // In this case we only have to check up-down direction
+            blockCorner = "downleft";
+            playerCorner = "upleft";
+
+            if(lastElementResult)  {
+                heightOffset = heightInBlocks;
+                String temp = blockCorner;
+                blockCorner = playerCorner;
+                playerCorner = temp;
             }
-            if(!firstElementResult && !lastElementResult) {
-                return true;
-            }
-            if(firstElementResult) {
-                if(map.checkBlockCoords(playerPosInBlockMap.x, playerPosInBlockMap.y)) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y];
-                    intersection = getBlockIntersection(block, "downleft", "upleft");
-                } else {
-                    return true;
+        }  else {
+
+                // Same situation like with right direction
+                if(direction.equalsIgnoreCase("down")) {
+                    heightOffset = heightInBlocks;
                 }
 
-            } else {
-                if(map.checkBlockCoords(playerPosInBlockMap.x, playerPosInBlockMap.y + heightInBlocks)) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y + heightInBlocks];
-                    intersection = getBlockIntersection(block, "upleft", "downleft");
-                } else {
-                    return true;
-                }
-            }
-
-            if(intersection.y < 0.1) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if(direction.equalsIgnoreCase("right")) {
-
-            for(int i = 0; i < heightInBlocks+1; i++ ) {
-                boolean result = map.isThereABlock(playerPosInBlockMap.x + widthInBlocks, (int) (playerPosInBlockMap.y + (float) i));
-                if(result) {
-                    if(i == 0) {
-                        firstElementResult = true;
-                    } else if(i == heightInBlocks) {
-                        lastElementResult = true;
-                    } else {
-                        return false;
-                    }
-                }
-            }
-            if(firstElementResult && lastElementResult) {
-                return false;
-            }
-            if(!firstElementResult && !lastElementResult) {
-                return true;
-            }
-            if(firstElementResult) {
-                if(map.checkBlockCoords(playerPosInBlockMap.x + widthInBlocks, playerPosInBlockMap.y)) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y];
-                    intersection = getBlockIntersection(block, "downleft", "upleft");
-                } else {
-                    return true;
-                }
-
-            } else {
-                if(map.checkBlockCoords(playerPosInBlockMap.x + widthInBlocks, playerPosInBlockMap.y + heightInBlocks)) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y + heightInBlocks];
-                    intersection = getBlockIntersection(block, "upleft", "downleft");
-                } else {
-                    return true;
-                }
-            }
-
-            if(intersection.y < 0.1) {
-                return true;
-            } else {
-                return false;
-            }
-
-        } else if(direction.equalsIgnoreCase("up")) {
+                // Almost the same as above
             for(int i = 0; i < widthInBlocks+1; i++ ) {
-                boolean result = map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y ));
+                boolean result = map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + heightOffset));
                 if(result) {
                     if(i == 0) {
                         firstElementResult = true;
@@ -161,81 +136,40 @@ public class MainPlayer extends GameItem {
                     }
                 }
             }
-            if(firstElementResult && lastElementResult) {
-                return false;
-            }
-            if(!firstElementResult && !lastElementResult) {
-                return true;
-            }
-            if(firstElementResult) {
-                if(map.checkBlockCoords(playerPosInBlockMap.x, playerPosInBlockMap.y)) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y];
-                    intersection = getBlockIntersection(block, "upright", "upleft");
-                } else {
-                    return true;
-                }
 
-            } else {
-                if(map.checkBlockCoords(playerPosInBlockMap.x + widthInBlocks, playerPosInBlockMap.y)) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y];
-                    intersection = getBlockIntersection(block, "upleft", "upright");
-                } else {
-                    return true;
-                }
+            // In this case we only have to check left-right direction
+            blockCorner = "upright";
+            playerCorner = "upleft";
+
+            if(lastElementResult)  {
+                widthOffset = widthInBlocks;
+                String temp = blockCorner;
+                blockCorner = playerCorner;
+                playerCorner = temp;
             }
 
-            if(intersection.x < 0.1) {
-                return true;
-            } else {
-                return false;
-            }
-
-        } else if(direction.equalsIgnoreCase("down")) {
-
-            for(int i = 0; i < widthInBlocks+1; i++ ) {
-                boolean result = map.isThereABlock((int) (playerPosInBlockMap.x + (float) i),  (playerPosInBlockMap.y + heightInBlocks));
-                if(result) {
-                    if(i == 0) {
-                        firstElementResult = true;
-                    } else if(i == widthInBlocks) {
-                        lastElementResult = true;
-                    } else {
-                        return false;
-                    }
-                }
-            }
-            if(firstElementResult && lastElementResult) {
-                return false;
-            }
-
-            if(!firstElementResult && !lastElementResult) {
-                return true;
-            }
-
-            if(firstElementResult) {
-                if(map.checkBlockCoords(playerPosInBlockMap.x, playerPosInBlockMap.y + heightInBlocks)) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x][playerPosInBlockMap.y + heightInBlocks];
-                    intersection = getBlockIntersection(block, "upright", "upleft");
-                } else {
-                    return true;
-                }
-
-            } else {
-                if(map.checkBlockCoords(playerPosInBlockMap.x + widthInBlocks, playerPosInBlockMap.y + heightInBlocks)) {
-                    Block block = map.getBlocks()[playerPosInBlockMap.x + widthInBlocks][playerPosInBlockMap.y + heightInBlocks];
-                    intersection = getBlockIntersection(block, "upleft", "upright");
-                } else {
-                    return true;
-                }
-            }
-
-            if(intersection.x < 0.1) {
-                return true;
-            } else {
-                return false;
-            }
         }
-        return true;
+
+        if(firstElementResult && lastElementResult) {
+            return false;
+        }
+        if(!firstElementResult && !lastElementResult) {
+            return true;
+        }
+        // Getting intersection percent
+        if(map.checkBlockCoords(playerPosInBlockMap.x + widthOffset, playerPosInBlockMap.y + heightOffset)) {
+            Block block = map.getBlocks()[playerPosInBlockMap.x + widthOffset][playerPosInBlockMap.y + heightOffset];
+            intersection = getBlockIntersection(block, blockCorner, playerCorner);
+        } else {
+            return true;
+        }
+
+    // As mentioned above of up and down direction we need to check only x axis and vice versa
+    if (direction.equalsIgnoreCase("down") || direction.equalsIgnoreCase("up")) {
+            return Utils.isValueSmallerThen(intersection.x, intersectionThreshold);
+        } else {
+            return Utils.isValueSmallerThen(intersection.y, intersectionThreshold);
+        }
     }
 
     private Vector2i getPlayerPosInBlockMap(MapManger map) {
@@ -257,7 +191,7 @@ public class MainPlayer extends GameItem {
      * @param block a block whose intersection we want to check
      * @param blockCorner possible values: {@code upleft}, {@code upright}, {@code downleft}, {@code downright}
      * @param playerCorner possible values: {@code upleft}, {@code upright}, {@code downleft}, {@code downright}
-     * @return a relative value of intersection between a block corner and the OPPOSITE player corner.
+     * @return a relative value (in % of block size) of intersection between a block corner and the OPPOSITE player corner.
      *         <p>Examples:</p>
      *         <ul>
      *           <li>Returns {@code (0.0f, 0.0f)} if {@code blockCorner} = {@code playerCorner}.</li>
@@ -288,13 +222,6 @@ public class MainPlayer extends GameItem {
             blockIntersection.x = (playerCornerPos.x - blockCornerPos.x) / block.getBlockSize().x;
         }
 
-//        if(blockIntersection.x < 0f) {
-//            blockIntersection.x = 0f;
-//        }
-//
-//        if (blockIntersection.x > 1f) {
-//            blockIntersection.x = 1f;
-//        }
 
         if(blockCorner.toLowerCase().startsWith("down")) {
 
@@ -303,14 +230,6 @@ public class MainPlayer extends GameItem {
 
             blockIntersection.y = (blockCornerPos.y  - playerCornerPos.y) / block.getBlockSize().y;
         }
-
-//        if(blockIntersection.y < 0f) {
-//            blockIntersection.y = 0f;
-//        }
-//
-//        if (blockIntersection.y > 1f) {
-//            blockIntersection.y = 1f;
-//        }
 
         return new Vector2f(blockIntersection.x, blockIntersection.y);
     }

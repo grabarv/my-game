@@ -56,6 +56,8 @@ public class GameLogic implements IGameLogic {
 
     private MapManger mapManger;
 
+    public static boolean testVar;
+
 
     public GameLogic() {
         renderer = new Renderer();
@@ -188,15 +190,16 @@ public class GameLogic implements IGameLogic {
         }
 
 
-//        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
-//            sceneChanged = true;
-//        }
+        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+            sceneChanged = true;
+            testVar = true;
+        }
     }
 
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
 
-        animateCameraRotation(0.5f, 2.5f);
+        animateCameraRotation(0.25f, 2.5f);
 
         if(sceneChanged) {
 
@@ -241,11 +244,11 @@ public class GameLogic implements IGameLogic {
                 playerItem.setRotation(q);
             }
             Vector3f camPos = camera.getPosition();
-            camera.setPosition(camPos.x + cameraInc.x*0.01f, camPos.y + cameraInc.y*0.01f, camPos.z + cameraInc.z*0.01f);
+            camera.setPosition(camPos.x + cameraInc.x*0.02f, camPos.y + cameraInc.y*0.02f, camPos.z + cameraInc.z*0.02f);
             camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
 
             Vector3f playerPos = playerItem.getPosition();
-            playerItem.setPosition(playerPos.x + cameraInc.x*0.01f, playerPos.y + cameraInc.y*0.01f, playerPos.z );
+            playerItem.setPosition(playerPos.x + cameraInc.x*0.02f, playerPos.y + cameraInc.y*0.02f, playerPos.z );
 
 
 //            playerItem.canMove("left", mapManger);
@@ -310,9 +313,9 @@ public class GameLogic implements IGameLogic {
         if(cameraInc.y == 0) {
             xRotation -= Math.signum(xRotation) * stepChange;
         } else {
-            xRotation += cameraInc.y * stepChange;
-            if(Math.abs(yRotation) > maxValue) {
-                xRotation = maxValue;
+            xRotation -= cameraInc.y * stepChange;
+            if(Math.abs(xRotation) > maxValue) {
+                xRotation = Math.signum(xRotation) * maxValue;
             }
         }
         camera.setRotation(xRotation, yRotation, camera.getRotation().z);

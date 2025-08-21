@@ -56,6 +56,11 @@ public class MapManger {
             }
         }
         addNewBlocksToScene(scene);
+//        for(int i = (int) Math.floor((double) width /2); i < (int) Math.floor((double) width /2) + 1; i++) {
+//            for(int j = (int) Math.floor((double) height /2); j <  (int) Math.floor((double) height /2) + 1 ; j++){
+//                blocks[i][j].setMeshes(meshMap.get("dirt"));
+//            }
+//        }
     }
 
     // TODO: method has a bug, it does not set player exactly at the center.
@@ -72,6 +77,7 @@ public class MapManger {
         for(int i = 0; i < width; i++ ) {
             for (int j = 0; j < height; j++) {
                 if(blocks[i][j] != null && blocks[i][j].getMeshes() != null && !blocks[i][j].getIsInScene()) {
+                    blocks[i][j].setIsInScene(true);
                     scene.setGameItems(new GameItem[] {blocks[i][j]});
                 }
             }

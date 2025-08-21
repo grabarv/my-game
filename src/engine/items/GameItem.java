@@ -28,8 +28,8 @@ public class GameItem {
 
     private final boolean usingEulerRotation;
 
-    protected float modelHeight = 0f;
-    protected float modelWidth = 0f;
+    protected float modelHeight = 1f;
+    protected float modelWidth = 1f;
 
     public GameItem(boolean isEulerRotation) {
         this.usingEulerRotation = isEulerRotation;

@@ -138,4 +138,8 @@ public class Utils {
         return  Arrays.asList(array).contains(str);
     }
 
+    public static boolean isValueSmallerThen(float value, float threshold) {
+        return value < threshold;
+    }
+
 }
