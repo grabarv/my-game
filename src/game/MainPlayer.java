@@ -9,6 +9,7 @@ import engine.items.GameItem;
 import engine.loaders.assimp.StaticMeshesLoader;
 import game.world.Block;
 import game.world.MapManger;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -39,6 +40,18 @@ public class MainPlayer extends GameItem {
         setMesh(playerMesh);
         setPosition(0, 0, MapManger.worldFirstZIndex + 0.01f);
         setScale(0.1f);
+    }
+
+    public void move(Vector2f movement) {
+        if(movement.x == -1) {
+            Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
+            setRotation(q);
+
+        } else if(movement.x == 1) {
+            Quaternionf q = new Quaternionf(0.0f, 1.0f, 0.0f, 0.00f);
+            setRotation(q);
+        }
+        setPosition(getPosition().x + movement.x* speed, getPosition().y + movement.y*speed, getPosition().z );
     }
 
 

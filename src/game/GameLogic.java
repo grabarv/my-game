@@ -76,13 +76,6 @@ public class GameLogic implements IGameLogic {
         renderer.init(window);
 
         scene = new Scene();
-
-        camera.getPosition().x = 0f;
-        camera.getPosition().y = 0f;
-        camera.getPosition().z = 4f;
-        camera.getRotation().x = 0.0f;
-        camera.getRotation().y = 0.0f;
-
 //        angleInc = new Vector2f(0f,0f);
 
     //        Mesh[] terrainMesh = StaticMeshesLoader.load("resources/models/terrain/terrain.obj",
@@ -115,7 +108,14 @@ public class GameLogic implements IGameLogic {
 
 
         playerItem = new MainPlayer();
-        playerItem.setSpeed(0.2f);
+        playerItem.setSpeed(0.02f);
+
+        camera.getPosition().x = playerItem.getPosition().x;
+        camera.getPosition().y = playerItem.getPosition().y;
+        camera.getPosition().z = 4f;
+        camera.getRotation().x = 0.0f;
+        camera.getRotation().y = 0.0f;
+
 
         mapManger = new MapManger(100, 30);
         mapManger.generateMap(scene);
@@ -203,47 +203,12 @@ public class GameLogic implements IGameLogic {
         animateCameraRotation(0.25f, 2.5f);
 
         if(sceneChanged) {
-                boolean b;
-            switch ((int) cameraInc.x) {
-                case -1:
-                    b = playerItem.canMove("left", mapManger);
-                    if(!b) cameraInc.x = 0f;
-                    break;
-                case 1:
-                    b = playerItem.canMove("right", mapManger);
-                    if(!b) cameraInc.x = 0f;
-                    break;
-            }
+            checkCameraInc();
 
-            switch ((int) cameraInc.y) {
-                case -1:
-                    b = playerItem.canMove("down", mapManger);
-                    if(!b) cameraInc.y = 0f;
-                    break;
-                case 1:
-                    b = playerItem.canMove("up", mapManger);
-                    if(!b) cameraInc.y = 0f;
-                    break;
-            }
+            playerItem.move(new Vector2f(cameraInc.x, cameraInc.y));
 
+            camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
 
-            if(cameraInc.x == -1) {
-                Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
-                playerItem.setRotation(q);
-
-            } else if(cameraInc.x == 1) {
-                Quaternionf q = new Quaternionf(0.0f, 1.0f, 0.0f, 0.00f);
-                playerItem.setRotation(q);
-            }
-            Vector3f camPos = camera.getPosition();
-            camera.setPosition(camPos.x + cameraInc.x*0.02f, camPos.y + cameraInc.y*0.02f, camPos.z + cameraInc.z*0.02f);
-//            camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
-
-            Vector3f playerPos = playerItem.getPosition();
-            playerItem.setPosition(playerPos.x + cameraInc.x*0.02f, playerPos.y + cameraInc.y*0.02f, playerPos.z );
-
-
-//            playerItem.canMove("left", mapManger);
         }
 
 
@@ -267,10 +232,8 @@ public class GameLogic implements IGameLogic {
         lightDirection.z = zValue;
         lightDirection.normalize();
 */
-        // Update view matrix
         camera.updateViewMatrix();
 
-//        System.out.println(mapManger.getBlocks()[0][0].getPosition().x + " " + mapManger.getBlocks()[0][0].getPosition().y);
     }
 
     @Override
@@ -282,6 +245,31 @@ public class GameLogic implements IGameLogic {
         renderer.render(window, camera, scene, sceneChanged);
         hud.render(window);
 
+    }
+
+    private void checkCameraInc() {
+        boolean b;
+        switch ((int) cameraInc.x) {
+            case -1:
+                b = playerItem.canMove("left", mapManger);
+                if(!b) cameraInc.x = 0f;
+                break;
+            case 1:
+                b = playerItem.canMove("right", mapManger);
+                if(!b) cameraInc.x = 0f;
+                break;
+        }
+
+        switch ((int) cameraInc.y) {
+            case -1:
+                b = playerItem.canMove("down", mapManger);
+                if(!b) cameraInc.y = 0f;
+                break;
+            case 1:
+                b = playerItem.canMove("up", mapManger);
+                if(!b) cameraInc.y = 0f;
+                break;
+        }
     }
 
     @Override
