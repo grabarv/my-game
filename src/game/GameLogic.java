@@ -115,6 +115,7 @@ public class GameLogic implements IGameLogic {
 
 
         playerItem = new MainPlayer();
+        playerItem.setSpeed(0.2f);
 
         mapManger = new MapManger(100, 30);
         mapManger.generateMap(scene);
@@ -202,21 +203,14 @@ public class GameLogic implements IGameLogic {
         animateCameraRotation(0.25f, 2.5f);
 
         if(sceneChanged) {
-
-//            System.out.println("left: " + playerItem.canMove("left", mapManger));
-//            System.out.println("right: " + playerItem.canMove("right", mapManger));
-//            System.out.println("up: " + playerItem.canMove("up", mapManger));
-//            System.out.println("down: " + playerItem.canMove("down", mapManger));
                 boolean b;
             switch ((int) cameraInc.x) {
                 case -1:
                     b = playerItem.canMove("left", mapManger);
-
                     if(!b) cameraInc.x = 0f;
                     break;
                 case 1:
                     b = playerItem.canMove("right", mapManger);
-
                     if(!b) cameraInc.x = 0f;
                     break;
             }
@@ -224,12 +218,10 @@ public class GameLogic implements IGameLogic {
             switch ((int) cameraInc.y) {
                 case -1:
                     b = playerItem.canMove("down", mapManger);
-
                     if(!b) cameraInc.y = 0f;
                     break;
                 case 1:
                     b = playerItem.canMove("up", mapManger);
-
                     if(!b) cameraInc.y = 0f;
                     break;
             }
@@ -245,7 +237,7 @@ public class GameLogic implements IGameLogic {
             }
             Vector3f camPos = camera.getPosition();
             camera.setPosition(camPos.x + cameraInc.x*0.02f, camPos.y + cameraInc.y*0.02f, camPos.z + cameraInc.z*0.02f);
-            camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
+//            camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
 
             Vector3f playerPos = playerItem.getPosition();
             playerItem.setPosition(playerPos.x + cameraInc.x*0.02f, playerPos.y + cameraInc.y*0.02f, playerPos.z );

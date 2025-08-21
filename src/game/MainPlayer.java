@@ -13,11 +13,6 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import java.util.Arrays;
-
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-
 /**
  * Main player of the game
  */
@@ -27,6 +22,8 @@ public class MainPlayer extends GameItem {
     static final int heightInBlocks = 3;
 
     static final int widthInBlocks = 2;
+
+    private float speed = 0f;
 
 
     public MainPlayer() throws Exception {
@@ -43,6 +40,8 @@ public class MainPlayer extends GameItem {
         setPosition(0, 0, MapManger.worldFirstZIndex + 0.01f);
         setScale(0.1f);
     }
+
+
 
     /**
      * @param direction possible values: {@code up}, {@code down}, {@code left}, {@code right}.
@@ -244,8 +243,16 @@ public class MainPlayer extends GameItem {
         return new Vector2f(modelWidth * getScale(), modelHeight * getScale());
     }
 
+    public void setSpeed(float newSpeed) {
+        speed = newSpeed;
+        if(speed < 0f) {
+            speed = 0f;
+        }
+    }
 
-
+    public float getSpeed() {
+        return speed;
+    }
 }
 
 
