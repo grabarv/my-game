@@ -25,10 +25,35 @@ public class MainPlayer extends GameItem {
     static final int widthInBlocks = 2;
 
     private float speed = 0f;
+    /**
+     * Player has 2 modes:
+     * <ul>
+     *     <li>flying - where gravity doesn't work and player can fly</li>
+     *     <li>walking - where gravity works and player can only jump instead of flying</li>
+     * </ul>
+     * Set this variable to false if you want to switch to flying mode.
+     */
+    private boolean isInWalkingMode = true;
+
+    private boolean isJumping = false;
+
+    /**
+     * Is needed for controlling that jumping key was released before the next jump
+     */
+    private boolean isReadyForJump = false;
+
+    private float jumpPower = 0.0f;
+
+    private float jumpPowerUsage = 0.05f;
+
+    private float jumpSpeed;
+
+    private final MapManger map;
 
 
-    public MainPlayer() throws Exception {
+    public MainPlayer(MapManger map) throws Exception {
         super(false);
+        this.map = map;
         modelHeight = 2f;
         modelWidth = 1.33332f;
         final String modelPath = "resources/models/main_player.obj";
@@ -42,7 +67,9 @@ public class MainPlayer extends GameItem {
         setScale(0.1f);
     }
 
-    public void move(Vector2f movement) {
+    public Vector2f move(Vector2f movement) {
+
+        // rotating player depending on his direction
         if(movement.x == -1) {
             Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
             setRotation(q);
@@ -51,7 +78,37 @@ public class MainPlayer extends GameItem {
             Quaternionf q = new Quaternionf(0.0f, 1.0f, 0.0f, 0.00f);
             setRotation(q);
         }
-        setPosition(getPosition().x + movement.x* speed, getPosition().y + movement.y*speed, getPosition().z );
+        if(isInWalkingMode) {
+
+            if(movement.y != 1 && !isJumping && !canMove("down")) {
+                isReadyForJump = true;
+            }
+
+            if(canMove("down") && !isJumping) {
+                movement.y = -1f;
+            }
+            if(!canMove("down") && !isJumping && !isReadyForJump) {
+                movement.y = 0f;
+            }
+            if (!canMove("down") && !isJumping && movement.y == 1.0f && isReadyForJump) {
+                isJumping = true;
+                jumpPower = 1.0f;
+            }
+            if(isJumping) {
+                movement.y = 1f;
+                jumpPower -= jumpPowerUsage;
+            }
+            if(jumpPower <= 0.0f && isJumping) {
+                isJumping = false;
+                isReadyForJump = false;
+            }
+            setPosition(getPosition().x + movement.x* speed, getPosition().y + movement.y*jumpSpeed, getPosition().z );
+
+        } else {
+            setPosition(getPosition().x + movement.x* speed, getPosition().y + movement.y*speed, getPosition().z );
+        }
+        // Returns the real movement that the player made. Would be the same with the method input in flying mode
+        return movement;
     }
 
 
@@ -59,11 +116,10 @@ public class MainPlayer extends GameItem {
     /**
      * @param direction possible values: {@code up}, {@code down}, {@code left}, {@code right}.
      *                  If any other value is set, the method returns {@code false}.
-     * @param map an instance of {@code MapManager}
      * @return {@code true} if it can move at least 1 px forward in the selected {@code direction},
      *         otherwise {@code false}.
      */
-    public boolean canMove(String direction, MapManger map) {
+    public boolean canMove(String direction) {
 
         /* To check can player move in selected direction or not we have to find the nearest possible block positions in selected direction
             and then check if there are blocks.
@@ -258,14 +314,32 @@ public class MainPlayer extends GameItem {
 
     public void setSpeed(float newSpeed) {
         speed = newSpeed;
+        jumpSpeed = speed*2f;
         if(speed < 0f) {
             speed = 0f;
+            jumpSpeed = 0f;
         }
     }
 
     public float getSpeed() {
         return speed;
     }
+
+    /**
+     *
+     * @return if return false it means that player is in flying mode
+     */
+    public boolean isInWalkingMode() {
+        return isInWalkingMode;
+    }
+    public void setToWalkingMode() {
+        isInWalkingMode = true;
+    }
+
+    public void setToFlyingMode() {
+        isInWalkingMode = false;
+    }
+
 }
 
 

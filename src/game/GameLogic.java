@@ -38,8 +38,6 @@ public class GameLogic implements IGameLogic {
 
     private Hud hud;
 
-    private static final float CAMERA_POS_STEP = 0.40f;
-
 //    private Vector2f angleInc;
 
     private float lightAngle;
@@ -75,6 +73,13 @@ public class GameLogic implements IGameLogic {
         hud.init(window);
         renderer.init(window);
 
+
+        camera.getPosition().x = 0f;
+        camera.getPosition().y = 0f;
+        camera.getPosition().z = 4f;
+        camera.getRotation().x = 0.0f;
+        camera.getRotation().y = 0.0f;
+
         scene = new Scene();
 //        angleInc = new Vector2f(0f,0f);
 
@@ -106,19 +111,15 @@ public class GameLogic implements IGameLogic {
         // Setup Lights
         setupLights();
 
-
-        playerItem = new MainPlayer();
-        playerItem.setSpeed(0.02f);
-
-        camera.getPosition().x = playerItem.getPosition().x;
-        camera.getPosition().y = playerItem.getPosition().y;
-        camera.getPosition().z = 4f;
-        camera.getRotation().x = 0.0f;
-        camera.getRotation().y = 0.0f;
-
-
         mapManger = new MapManger(100, 30);
         mapManger.generateMap(scene);
+
+
+        playerItem = new MainPlayer(mapManger);
+        playerItem.setSpeed(0.01f);
+
+
+
         mapManger.putPlayerOnMapCenter(camera, playerItem);
 
         scene.setGameItems(new GameItem[] { playerItem});
@@ -170,7 +171,6 @@ public class GameLogic implements IGameLogic {
         } else if (window.isKeyPressed(GLFW_KEY_S)) {
             sceneChanged = true;
             cameraInc.y = -1;
-
         }
         if (window.isKeyPressed(GLFW_KEY_A)) {
             sceneChanged = true;
@@ -179,7 +179,6 @@ public class GameLogic implements IGameLogic {
         } else if (window.isKeyPressed(GLFW_KEY_D)) {
             sceneChanged = true;
             cameraInc.x = 1;
-
         }
         if(window.isKeyPressed(GLFW_KEY_N)) {
             sceneChanged = true;
@@ -200,16 +199,26 @@ public class GameLogic implements IGameLogic {
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
 
+        sceneChanged = true;
+
+        checkCameraInc();
+
+        Vector2f realMovement = playerItem.move(new Vector2f(cameraInc.x, cameraInc.y));
+
+        cameraInc.set(realMovement, cameraInc.z);
+
         animateCameraRotation(0.25f, 2.5f);
 
-        if(sceneChanged) {
-            checkCameraInc();
+        camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
 
-            playerItem.move(new Vector2f(cameraInc.x, cameraInc.y));
-
-            camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
-
-        }
+//        if(sceneChanged) {
+//            checkCameraInc();
+//
+//            playerItem.move(new Vector2f(cameraInc.x, cameraInc.y));
+//
+//            camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
+//
+//        }
 
 
 
@@ -251,22 +260,22 @@ public class GameLogic implements IGameLogic {
         boolean b;
         switch ((int) cameraInc.x) {
             case -1:
-                b = playerItem.canMove("left", mapManger);
+                b = playerItem.canMove("left");
                 if(!b) cameraInc.x = 0f;
                 break;
             case 1:
-                b = playerItem.canMove("right", mapManger);
+                b = playerItem.canMove("right");
                 if(!b) cameraInc.x = 0f;
                 break;
         }
 
         switch ((int) cameraInc.y) {
             case -1:
-                b = playerItem.canMove("down", mapManger);
+                b = playerItem.canMove("down");
                 if(!b) cameraInc.y = 0f;
                 break;
             case 1:
-                b = playerItem.canMove("up", mapManger);
+                b = playerItem.canMove("up");
                 if(!b) cameraInc.y = 0f;
                 break;
         }
