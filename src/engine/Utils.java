@@ -56,6 +56,15 @@ public class Utils {
         return floatArr;
     }
 
+    public static String[] listToArray(List<String> list) {
+        int size = list != null ? list.size() : 0;
+        String[] stringsArr = new String[size];
+        for (int i = 0; i < size; i++) {
+            stringsArr[i] = list.get(i);
+        }
+        return stringsArr;
+    }
+
     public static boolean existsResourceFile(String fileName) {
         boolean result;
         try (InputStream is = Utils.class.getResourceAsStream(fileName)) {

@@ -78,7 +78,7 @@ public class MapManger {
 
     private void generateObject() {
         for (String object : objects) {
-            Block[] objectBlocks = GameObjectLoader.load(object);
+            Block[] objectBlocks = GameObjectLoader.load(object, meshMap, new Vector2i(0, 0));
             for (Block block : objectBlocks) {
                 blocks[block.getMapPosition().x][block.getMapPosition().y] = block;
             }

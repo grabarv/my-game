@@ -33,7 +33,7 @@ public class MainPlayer extends GameItem {
      * </ul>
      * Set this variable to false if you want to switch to flying mode.
      */
-    private boolean isInWalkingMode = true;
+    private boolean isInWalkingMode = false;
 
     private boolean isJumping = false;
 

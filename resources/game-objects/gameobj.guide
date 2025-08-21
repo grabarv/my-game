@@ -1,0 +1,32 @@
+This is a manual that explains files with .gameobj extension.
+
+Lines that start with # mean comments.
+
+Lines that start with M or m indicate some meta information like object name, object size, etc.
+The meta information in written in that way:
+m <type> <value>
+For example:
+m name house1
+Below are presented all types of meta information and their expected value:
+    name -> string with object name (same as file name without extension)
+    width -> int number with width of object in game blocks. Required field.
+    height -> int number with height of object in game blocks. Required field.
+    clearArea -> true or false. If value is set to true then all blocks that are in area of object but not mentioned in file would be set to null.
+        If value is set to false those blocks would be left. Default value is false.
+
+Then you have to specify blocks, in such way:
+b <mesh type> <x> <y>
+where:
+    <mesh type> -> stands for string that is a key for certain mesh in Map<String, Mesh[]> meshMap in MapManager class
+    <x> -> int var, representing block position along x axis relative to top left corner of object
+    <y> -> int var, representing block position along y axis relative to top left corner of object
+
+For example:
+b dirt 0 0
+stands for dirt block in top left corner of object
+
+WARNING! between every chunk of data describing one thing must be only ONE space but they must be on the same line,  and
+     chunks of data describing different things must be at different lines.
+
+    
+    
