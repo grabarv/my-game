@@ -6,13 +6,17 @@ import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.GameItem;
+import engine.loaders.GameObjectLoader;
 import engine.loaders.assimp.StaticMeshesLoader;
+import engine.loaders.obj.OBJLoader;
 import game.MainPlayer;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static engine.loaders.GameObjectLoader.load;
 
 public class MapManger {
 
@@ -21,13 +25,15 @@ public class MapManger {
 
     public static float worldFirstZIndex = 1.5f;
     private final Block[][] blocks;
-    private final String blockObjPath = "resources/models/cube.obj";
+    private final String blockObjPath = "/models/cube.obj";
     private Map<String, Mesh[]> meshMap;
     private final float blocksScale =  0.03333333f;
     /**
      * The start position is in the left top corner
      */
     private Vector3f startPos = new Vector3f(-1.0f, 1.0f, worldFirstZIndex - blocksScale);
+
+    private final String[] objects = new String[] {"house1"};
 
 
     public MapManger(int width, int height) throws Exception {
@@ -36,13 +42,13 @@ public class MapManger {
         blocks = new Block[width][height];
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
-                blocks[i][j] = new Block(null, false, blocksScale);
+                blocks[i][j] = new Block(null, false, blocksScale, new Vector2i(i, j));
                 blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getBlockSize().x *i, startPos.y -  blocks[i][j].getBlockSize().y * j, startPos.z));
             }
         }
         meshMap = new HashMap<>();
         Material m = new Material(new Texture("resources/textures/soil.png"));
-        meshMap.put("dirt", StaticMeshesLoader.load(blockObjPath, ""));
+        meshMap.put("dirt", new Mesh[]{OBJLoader.loadMesh(blockObjPath, width * height)});
         for (Mesh mesh : meshMap.get("dirt")) {
             mesh.setMaterial(m);
         }
@@ -50,11 +56,10 @@ public class MapManger {
 
     public void generateMap(Scene scene) {
 
-        for(int i = 0; i < width; i++) {
-            for(int j = (int) Math.floor((double) height /2); j <  height ; j++){
-                blocks[i][j].setMeshes(meshMap.get("dirt"));
-            }
-        }
+        addBlocksToMap();
+
+        generateObject();
+
         addNewBlocksToScene(scene);
 //        for(int i = (int) Math.floor((double) width /2); i < (int) Math.floor((double) width /2) + 1; i++) {
 //            for(int j = (int) Math.floor((double) height /2); j <  (int) Math.floor((double) height /2) + 1 ; j++){
@@ -62,6 +67,25 @@ public class MapManger {
 //            }
 //        }
     }
+
+    private void addBlocksToMap() {
+        for(int i = 0; i < width; i++) {
+            for(int j = (int) Math.floor((double) height /2); j <  height ; j++){
+                blocks[i][j].setMeshes(meshMap.get("dirt"));
+            }
+        }
+    }
+
+    private void generateObject() {
+        for (String object : objects) {
+            Block[] objectBlocks = GameObjectLoader.load(object);
+            for (Block block : objectBlocks) {
+                blocks[block.getMapPosition().x][block.getMapPosition().y] = block;
+            }
+        }
+    }
+
+
 
     // TODO: method has a bug, it does not set player exactly at the center.
 

@@ -111,13 +111,12 @@ public class GameLogic implements IGameLogic {
         // Setup Lights
         setupLights();
 
-        mapManger = new MapManger(100, 30);
+        mapManger = new MapManger(300, 100);
         mapManger.generateMap(scene);
 
 
         playerItem = new MainPlayer(mapManger);
         playerItem.setSpeed(0.01f);
-
 
 
         mapManger.putPlayerOnMapCenter(camera, playerItem);
