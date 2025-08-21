@@ -103,8 +103,8 @@ public class GameLogic implements IGameLogic {
 //        scene.setFog(new Fog(true, fogColour, 0.02f));
 
         // Setup  SkyBox
-        float skyBoxScale = 100.0f;
-        SkyBox skyBox = new SkyBox("resources/models/examples/skybox.obj", new Vector4f(0.1f, 0.1f, 1.0f, 1.0f));
+        float skyBoxScale = 500f;
+        SkyBox skyBox = new SkyBox("resources/models/examples/skybox.obj", "resources/textures/skybox.png");
         skyBox.setScale(skyBoxScale);
         scene.setSkyBox(skyBox);
 
