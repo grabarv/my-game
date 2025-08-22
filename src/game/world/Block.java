@@ -15,9 +15,11 @@ public class Block extends GameItem {
     private Vector2i mapPosition;
 
 
-    public Block(Mesh[] mesh, boolean isEulerRotation, float scale, Vector2i posInMap) {
+
+
+    public Block(Mesh[] mesh, boolean isEulerRotation, Vector2i posInMap) {
         super(mesh, isEulerRotation);
-        setScale(scale);
+        setScale(MapManger.blocksScale);
         modelWidth = 2f;
         modelHeight = 2f;
         mapPosition = posInMap;

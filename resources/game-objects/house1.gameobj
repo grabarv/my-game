@@ -1,7 +1,7 @@
 # For description look in gameobj.guide
 m name house1
-m width 10
-m height 10
+m width 20
+m height 20
 m clearArea false
 
 b dirt 0 0

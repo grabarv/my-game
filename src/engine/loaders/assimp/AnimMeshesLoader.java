@@ -241,9 +241,9 @@ public class AnimMeshesLoader extends StaticMeshesLoader {
             }
         }
 
-        Mesh mesh = new Mesh(Utils.listToArray(vertices), Utils.listToArray(textures),
-                Utils.listToArray(normals), Utils.listIntToArray(indices),
-                Utils.listIntToArray(boneIds), Utils.listToArray(weights));
+        Mesh mesh = new Mesh(Utils.listFloatToArray(vertices), Utils.listFloatToArray(textures),
+                Utils.listFloatToArray(normals), Utils.listIntToArray(indices),
+                Utils.listIntToArray(boneIds), Utils.listFloatToArray(weights));
         Material material;
         int materialIdx = aiMesh.mMaterialIndex();
         if (materialIdx >= 0 && materialIdx < materials.size()) {

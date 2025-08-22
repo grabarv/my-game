@@ -13,8 +13,7 @@ import game.MainPlayer;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static engine.loaders.GameObjectLoader.load;
 
@@ -27,30 +26,37 @@ public class MapManger {
     private final Block[][] blocks;
     private final String blockObjPath = "/models/cube.obj";
     private Map<String, Mesh[]> meshMap;
-    private final float blocksScale =  0.03333333f;
+    public static final float blocksScale =  0.03333333f;
     /**
      * The start position is in the left top corner
      */
-    private Vector3f startPos = new Vector3f(-1.0f, 1.0f, worldFirstZIndex - blocksScale);
+    private final Vector3f startPos = new Vector3f(-1.0f, 1.0f, worldFirstZIndex - blocksScale);
 
     private final String[] objects = new String[] {"house1"};
 
 
-    public MapManger(int width, int height) throws Exception {
+    public MapManger(int width, int height) {
         this.width = width;
         this.height = height;
         blocks = new Block[width][height];
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
-                blocks[i][j] = new Block(null, false, blocksScale, new Vector2i(i, j));
-                blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getBlockSize().x *i, startPos.y -  blocks[i][j].getBlockSize().y * j, startPos.z));
+                blocks[i][j] = new Block(null, false, new Vector2i(i, j));
             }
         }
         meshMap = new HashMap<>();
-        Material m = new Material(new Texture("resources/textures/soil.png"));
-        meshMap.put("dirt", new Mesh[]{OBJLoader.loadMesh(blockObjPath, width * height)});
-        for (Mesh mesh : meshMap.get("dirt")) {
-            mesh.setMaterial(m);
+        loadMeshMap();
+    }
+
+    private void loadMeshMap() {
+        try{
+            Material m = new Material(new Texture("resources/textures/soil.png"));
+            meshMap.put("dirt", new Mesh[]{OBJLoader.loadMesh(blockObjPath, width * height)});
+            for (Mesh mesh : meshMap.get("dirt")) {
+                mesh.setMaterial(m);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -78,7 +84,8 @@ public class MapManger {
 
     private void generateObject() {
         for (String object : objects) {
-            Block[] objectBlocks = GameObjectLoader.load(object, meshMap, new Vector2i(0, 0));
+            ArrayList<Block> objectBlocks = GameObjectLoader.load(object,
+                    meshMap, new Vector2i(0, 0));
             for (Block block : objectBlocks) {
                 blocks[block.getMapPosition().x][block.getMapPosition().y] = block;
             }
@@ -101,6 +108,7 @@ public class MapManger {
         for(int i = 0; i < width; i++ ) {
             for (int j = 0; j < height; j++) {
                 if(blocks[i][j] != null && blocks[i][j].getMeshes() != null && !blocks[i][j].getIsInScene()) {
+                    blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getBlockSize().x *i, startPos.y -  blocks[i][j].getBlockSize().y * j, startPos.z));
                     blocks[i][j].setIsInScene(true);
                     scene.setGameItems(new GameItem[] {blocks[i][j]});
                 }

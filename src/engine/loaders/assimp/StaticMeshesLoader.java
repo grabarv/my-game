@@ -131,8 +131,8 @@ public class StaticMeshesLoader {
             }
         }
 
-        Mesh mesh = new Mesh(Utils.listToArray(vertices), Utils.listToArray(textures),
-                Utils.listToArray(normals), Utils.listIntToArray(indices));
+        Mesh mesh = new Mesh(Utils.listFloatToArray(vertices), Utils.listFloatToArray(textures),
+                Utils.listFloatToArray(normals), Utils.listIntToArray(indices));
         Material material;
         int materialIdx = aiMesh.mMaterialIndex();
         if (materialIdx >= 0 && materialIdx < materials.size()) {
