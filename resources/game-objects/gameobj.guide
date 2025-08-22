@@ -7,12 +7,18 @@ The meta information in written in that way:
 m <type> <value>
 For example:
 m name house1
+
+WARNING! between every chunk of data describing one thing must be only ONE space but they must be on the same line,  and
+     chunks of data describing different things must be at different lines.
+
 Below are presented all types of meta information and their expected value:
     name -> string with object name (same as file name without extension)
     width -> int number with width of object in game blocks. Required field.
     height -> int number with height of object in game blocks. Required field.
     clearArea -> true or false. If value is set to true then all blocks that are in area of object but not mentioned in file would be set to null.
         If value is set to false those blocks would be left. Default value is false.
+
+
 
 Then you have to specify blocks, in such way:
 b <mesh type> <x> <y>
@@ -25,8 +31,19 @@ For example:
 b dirt 0 0
 stands for dirt block in top left corner of object
 
-WARNING! between every chunk of data describing one thing must be only ONE space but they must be on the same line,  and
-     chunks of data describing different things must be at different lines.
 
+
+Also you if you want to specify same blocks one after another, you can specify area where to put that blocks.
+Area of blocks is specified in that way:
+ba <mesh type> <x1> <y1> <x2> <y1>
+where:
+    <x1> start x index of area
+    <y1> start y index of area
+    <x2> end x index of area. Must be greater or equal to <x1>
+    <y2> end y index of area. Must be greater or equal to <y1>
+
+For example:
+ba dirt 0 0 2 0
+will create stip of length 3 along x axis made by dirt blocks
     
     

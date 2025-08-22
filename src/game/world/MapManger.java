@@ -30,6 +30,7 @@ public class MapManger {
     public static float worldFirstZIndex = 1.5f;
     private final Block[][] blocks;
     private final String blockObjPath = "/models/cube.obj";
+    private final String tringleObjectPath = "/models/triangle_cylinder.obj";
     private Map<String, Mesh[]> meshMap;
     public static final float blocksScale =  0.03333333f;
     /**
@@ -70,8 +71,12 @@ public class MapManger {
                     String nameWithoutExt = (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
 
                     Material m = new Material(new Texture(dirPath + fileName));
-                    meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, width * height)});
+                    meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, 1000)});
+                    meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 1000)});
                     for (Mesh mesh : meshMap.get(nameWithoutExt)) {
+                        mesh.setMaterial(m);
+                    }
+                    for(Mesh mesh: meshMap.get(nameWithoutExt + "_triangle")) {
                         mesh.setMaterial(m);
                     }
 
@@ -109,7 +114,7 @@ public class MapManger {
     private void generateObject() {
         for (String object : objects) {
             ArrayList<Block> objectBlocks = GameObjectLoader.load(object,
-                    meshMap, new Vector2i(0, 0));
+                    meshMap, new Vector2i(20, 0));
             for (Block block : objectBlocks) {
                 blocks[block.getMapPosition().x][block.getMapPosition().y] = block;
             }

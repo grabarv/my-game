@@ -6,8 +6,6 @@ import game.world.Block;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class GameObjectLoader {
@@ -25,19 +23,13 @@ public class GameObjectLoader {
                 }
                 String[] arguments = line.split(" ");
                 if(arguments[0].equalsIgnoreCase("m")) {
-                    if(arguments.length < 3) {
-                        throw new RuntimeException("Wrong game object structure");
-                    }
+                    checkLength(arguments.length, 3);
                     if(arguments[1].equalsIgnoreCase("width")) {
                         width = Integer.parseInt(arguments[2]);
-                        if(width <= 0) {
-                            throw new RuntimeException("Wrong game object structure");
-                        }
+                        checkLength(width, 1);
                     } else if(arguments[1].equalsIgnoreCase("height")) {
                         height = Integer.parseInt(arguments[2]);
-                        if(height <= 0) {
-                            throw new RuntimeException("Wrong game object structure");
-                        }
+                        checkLength(width, 1);
                     } else if(arguments[1].equalsIgnoreCase("clearArea") && arguments[2].equalsIgnoreCase("true")) {
                         for(int x = 0; x < width; x++) {
                             for(int y = 0; y < height; y++) {
@@ -47,15 +39,28 @@ public class GameObjectLoader {
                         }
                     }
                 } else if(arguments[0].equalsIgnoreCase("b")){
-                    if(arguments.length < 4) {
-                        throw new RuntimeException("Wrong game object structure");
-                    }
+                    checkLength(arguments.length, 4);
                     String type = arguments[1];
                     int x = Integer.parseInt(arguments[2]);
                     int y = Integer.parseInt(arguments[3]);
                     Block block = new Block(meshMap.getOrDefault(type, null), false,
                             new Vector2i(startPos.x + x, startPos.y + y));
                     object.add(block);
+                } else if(arguments[0].equalsIgnoreCase("ba")) {
+                    checkLength(arguments.length, 6);
+                    checkLength(arguments.length, 4);
+                    String type = arguments[1];
+                    int x1 = Integer.parseInt(arguments[2]);
+                    int y1 = Integer.parseInt(arguments[3]);
+                    int x2 = Integer.parseInt(arguments[4]);
+                    int y2 = Integer.parseInt(arguments[5]);
+                    for(int x = x1; x <= x2; x++) {
+                        for(int y = y1; y <= y2; y++) {
+                            Block block = new Block(meshMap.getOrDefault(type, null), false,
+                                    new Vector2i(startPos.x + x, startPos.y + y));
+                            object.add(block);
+                        }
+                    }
                 }
 
             }
@@ -64,4 +69,10 @@ public class GameObjectLoader {
             throw new RuntimeException(e);
         }
     }
+    private static void checkLength(int amount, int min) {
+        if(amount < min) {
+            throw new RuntimeException("Wrong game object structure");
+        }
+    }
 }
+

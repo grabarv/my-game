@@ -1,7 +1,19 @@
 # For description look in gameobj.guide
 m name house1
-m width 20
+m width 40
 m height 20
-m clearArea false
+m clearArea true
 
-b wood_desk 0 0
+# Roof
+ba wood_desk_triangle 3 8 4 8
+ba wood_desk_triangle 4 7 5 7
+
+# Walls
+ba wood_desk 3 9 3 15
+ba wood_desk 26 9 26 15
+
+# Floor
+ba bricks2 3 19 26 20
+b bricks2 2 20
+b bricks2 27 20
+
