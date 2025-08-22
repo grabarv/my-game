@@ -13,7 +13,12 @@ import game.MainPlayer;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static engine.loaders.GameObjectLoader.load;
 
@@ -49,13 +54,32 @@ public class MapManger {
     }
 
     private void loadMeshMap() {
-        try{
-            Material m = new Material(new Texture("resources/textures/soil.png"));
-            meshMap.put("dirt", new Mesh[]{OBJLoader.loadMesh(blockObjPath, width * height)});
-            for (Mesh mesh : meshMap.get("dirt")) {
-                mesh.setMaterial(m);
+            String dirPath = "resources/textures/blocks/";
+            Path dir = Paths.get(dirPath);
+
+
+
+        try {
+            for (Path path : (Iterable<Path>) Files.list(dir).filter(Files::isRegularFile)::iterator) {
+                System.out.println(path.getFileName());
+                try {
+                    String fileName = String.valueOf(path.getFileName());
+                    int dotIndex = fileName.lastIndexOf('.');
+
+                    // Remove extension if present
+                    String nameWithoutExt = (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
+
+                    Material m = new Material(new Texture(dirPath + fileName));
+                    meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, width * height)});
+                    for (Mesh mesh : meshMap.get(nameWithoutExt)) {
+                        mesh.setMaterial(m);
+                    }
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
