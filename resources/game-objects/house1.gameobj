@@ -1,19 +1,30 @@
 # For description look in gameobj.guide
 m name house1
 m width 40
-m height 20
+m height 31
 m clearArea true
 
 # Roof
-ba wood_desk_triangle 3 8 4 8
-ba wood_desk_triangle 4 7 5 7
+b wood_desk_triangle 3 18 180
+b wood_desk_triangle 4 18
+b wood_desk_triangle 4 17 180
+b wood_desk_triangle 5 17
+b wood_desk_triangle 5 16 180
+b wood_desk_triangle 6 16
+b wood_desk_triangle 6 15 180
+b wood_desk_triangle 7 15
+b wood_desk_triangle 7 14 180
+b wood_desk_triangle 8 14
+b wood_desk_triangle 8 13 180
+ba wood_desk 9 13 20 13 90
+ba wood_desk 14 6 25 6 90
 
 # Walls
-ba wood_desk 3 9 3 15
-ba wood_desk 26 9 26 15
+ba wood_desk 3 19 3 25
+ba wood_desk 26 6 26 25
 
 # Floor
-ba bricks2 3 19 26 20
-b bricks2 2 20
-b bricks2 27 20
+ba bricks2 3 29 26 30
+b bricks2 2 30
+b bricks2 27 30
 

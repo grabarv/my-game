@@ -37,13 +37,19 @@ Also you if you want to specify same blocks one after another, you can specify a
 Area of blocks is specified in that way:
 ba <mesh type> <x1> <y1> <x2> <y1>
 where:
-    <x1> start x index of area
-    <y1> start y index of area
-    <x2> end x index of area. Must be greater or equal to <x1>
-    <y2> end y index of area. Must be greater or equal to <y1>
+    <x1> -> start x index of area
+    <y1> -> start y index of area
+    <x2> -> end x index of area. Must be greater or equal to <x1>
+    <y2> -> end y index of area. Must be greater or equal to <y1>
 
 For example:
 ba dirt 0 0 2 0
-will create stip of length 3 along x axis made by dirt blocks
+will create stip of length 3 along x axis made by dirt blocks.
+
+Also you can additionally specify rotation along z axis as last parameter.
+for example:
+b wood_desk_triangle 0 0 180
+Possible values for rotation are: 0, 90, 180, 270.
+You can also add rotation for area description, then rotation will be applied for every block in the area.
     
     

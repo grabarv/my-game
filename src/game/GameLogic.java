@@ -79,6 +79,7 @@ public class GameLogic implements IGameLogic {
         camera.getPosition().z = 4f;
         camera.getRotation().x = 0.0f;
         camera.getRotation().y = 0.0f;
+        camera.getRotation().z = 0f;
 
         scene = new Scene();
 //        angleInc = new Vector2f(0f,0f);
@@ -111,7 +112,7 @@ public class GameLogic implements IGameLogic {
         // Setup Lights
         setupLights();
 
-        mapManger = new MapManger(100, 30);
+        mapManger = new MapManger(1000, 100);
         mapManger.generateMap(scene);
 
 

@@ -95,14 +95,18 @@ public class InstancedMesh extends Mesh {
 
     public void renderListInstanced(List<GameItem> gameItems, boolean billBoard, Transformation transformation, Matrix4f viewMatrix) {
         initRender();
+        MemoryUtil.memFree(this.instanceDataBuffer);
+        instanceDataBuffer = MemoryUtil.memAllocFloat(gameItems.size() * InstancedMesh.INSTANCE_SIZE_FLOATS);
+//        int chunkSize = numInstances;
+//        int length = gameItems.size();
+//        for (int i = 0; i < length; i += chunkSize) {
+//            int end = Math.min(length, i + chunkSize);
+//            List<GameItem> subList = gameItems.subList(i, end);
+//            renderChunkInstanced(subList, billBoard, transformation, viewMatrix);
+//        }
 
-        int chunkSize = numInstances;
-        int length = gameItems.size();
-        for (int i = 0; i < length; i += chunkSize) {
-            int end = Math.min(length, i + chunkSize);
-            List<GameItem> subList = gameItems.subList(i, end);
-            renderChunkInstanced(subList, billBoard, transformation, viewMatrix);
-        }
+            renderChunkInstanced(gameItems, billBoard, transformation, viewMatrix);
+
 
         endRender();
     }

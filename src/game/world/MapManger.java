@@ -7,7 +7,6 @@ import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.GameItem;
 import engine.loaders.GameObjectLoader;
-import engine.loaders.assimp.StaticMeshesLoader;
 import engine.loaders.obj.OBJLoader;
 import game.MainPlayer;
 import org.joml.Vector2i;
@@ -18,25 +17,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
-
-import static engine.loaders.GameObjectLoader.load;
 
 public class MapManger {
 
     private final int width;
     private final int height;
 
-    public static float worldFirstZIndex = 1.5f;
+    public static float worldBlockZIndex = 1.5f;
+    public static float worldWallZIndex = 2.5f;
     private final Block[][] blocks;
+    private final Wall[][] walls;
     private final String blockObjPath = "/models/cube.obj";
+    private final String smallBlockObjPPath = "/models/small_cube.obj";
     private final String tringleObjectPath = "/models/triangle_cylinder.obj";
     private Map<String, Mesh[]> meshMap;
     public static final float blocksScale =  0.03333333f;
+    public static final float wallScale = 0.03333333f;
     /**
      * The start position is in the left top corner
      */
-    private final Vector3f startPos = new Vector3f(-1.0f, 1.0f, worldFirstZIndex - blocksScale);
+    private final Vector3f startPos = new Vector3f(-1.0f, 1.0f, worldBlockZIndex - blocksScale);
 
     private final String[] objects = new String[] {"house1"};
 
@@ -45,16 +45,18 @@ public class MapManger {
         this.width = width;
         this.height = height;
         blocks = new Block[width][height];
+        walls = new Wall[width][height];
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
-                blocks[i][j] = new Block(null, false, new Vector2i(i, j));
+                blocks[i][j] = new Block(null, true, new Vector2i(i, j));
+                walls[i][j] = new Wall(null, true, new Vector2i(i, j));
             }
         }
         meshMap = new HashMap<>();
-        loadMeshMap();
+        loadMeshesToMap();
     }
 
-    private void loadMeshMap() {
+    private void loadMeshesToMap() {
             String dirPath = "resources/textures/blocks/";
             Path dir = Paths.get(dirPath);
 
@@ -62,7 +64,6 @@ public class MapManger {
 
         try {
             for (Path path : (Iterable<Path>) Files.list(dir).filter(Files::isRegularFile)::iterator) {
-                System.out.println(path.getFileName());
                 try {
                     String fileName = String.valueOf(path.getFileName());
                     int dotIndex = fileName.lastIndexOf('.');
@@ -71,8 +72,11 @@ public class MapManger {
                     String nameWithoutExt = (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
 
                     Material m = new Material(new Texture(dirPath + fileName));
-                    meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, 1000)});
-                    meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 1000)});
+
+
+
+                    meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, 100)});
+                    meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 100)});
                     for (Mesh mesh : meshMap.get(nameWithoutExt)) {
                         mesh.setMaterial(m);
                     }
@@ -126,7 +130,7 @@ public class MapManger {
     // TODO: method has a bug, it does not set player exactly at the center.
 
     public void putPlayerOnMapCenter(Camera camera, MainPlayer player) {
-        float xPos = getMapTopLeftCorner().x + width*blocks[0][0].getBlockSize().x/2;
+        float xPos = getMapTopLeftCorner().x; //+ width*blocks[0][0].getSize().x/2;
         float yPos = startPos.y ;
         camera.setPosition(xPos, yPos, camera.getPosition().z);
         player.setPosition(xPos, yPos, player.getPosition().z);
@@ -137,7 +141,7 @@ public class MapManger {
         for(int i = 0; i < width; i++ ) {
             for (int j = 0; j < height; j++) {
                 if(blocks[i][j] != null && blocks[i][j].getMeshes() != null && !blocks[i][j].getIsInScene()) {
-                    blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getBlockSize().x *i, startPos.y -  blocks[i][j].getBlockSize().y * j, startPos.z));
+                    blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getSize().x *i, startPos.y -  blocks[i][j].getSize().y * j, startPos.z));
                     blocks[i][j].setIsInScene(true);
                     scene.setGameItems(new GameItem[] {blocks[i][j]});
                 }
@@ -182,7 +186,7 @@ public class MapManger {
 
 
     public Vector3f getMapTopLeftCorner() {
-        return new Vector3f(getStartPos().x - blocks[0][0].getBlockSize().x/2f, getStartPos().y + blocks[0][0].getBlockSize().y/2f, getStartPos().z);
+        return new Vector3f(getStartPos().x - blocks[0][0].getSize().x/2f, getStartPos().y + blocks[0][0].getSize().y/2f, getStartPos().z);
     }
 
     public boolean checkBlockCoords(int x, int y) {

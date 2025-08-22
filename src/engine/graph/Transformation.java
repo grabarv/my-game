@@ -44,6 +44,7 @@ public class Transformation {
         // First do the rotation so camera rotates over its position
         return matrix.rotationX((float)Math.toRadians(rotation.x))
                      .rotateY((float)Math.toRadians(rotation.y))
+                    .rotateZ((float) Math.toRadians(rotation.z))
                      .translate(-position.x, -position.y, -position.z);
     }
 

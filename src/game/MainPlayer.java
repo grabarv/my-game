@@ -1,7 +1,6 @@
 package game;
 
 import engine.Utils;
-import engine.Window;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
@@ -63,7 +62,7 @@ public class MainPlayer extends GameItem {
         Material material = new Material(texture, 0);
         playerMesh.setMaterial(material);
         setMesh(playerMesh);
-        setPosition(0, 0, MapManger.worldFirstZIndex + 0.01f);
+        setPosition(0, 0, MapManger.worldBlockZIndex + 0.01f);
         setScale(0.1f);
     }
 
@@ -244,8 +243,8 @@ public class MainPlayer extends GameItem {
         Vector2f playerTopLeftCorner = new Vector2f(getPosition().x - modelWidth * getScale()/2, getPosition().y +modelHeight * getScale()/2);
         Vector3f mapTopLeftCorner = map.getMapTopLeftCorner();
         Vector2f posDiff = new Vector2f(playerTopLeftCorner.x - mapTopLeftCorner.x, mapTopLeftCorner.y - playerTopLeftCorner.y);
-        Vector2i playerInBlockMapPos = new Vector2i((int) Math.floor(posDiff.x / map.getBlocks()[0][0].getBlockSize().x),
-                (int) Math.floor(posDiff.y / map.getBlocks()[0][0].getBlockSize().y));
+        Vector2i playerInBlockMapPos = new Vector2i((int) Math.floor(posDiff.x / map.getBlocks()[0][0].getSize().x),
+                (int) Math.floor(posDiff.y / map.getBlocks()[0][0].getSize().y));
         return playerInBlockMapPos;
     }
 
@@ -285,18 +284,18 @@ public class MainPlayer extends GameItem {
         Vector3f playerCornerPos = getCorner(playerCorner);
 
         if(blockCorner.toLowerCase().endsWith("right")) {
-            blockIntersection.x = (blockCornerPos.x - playerCornerPos.x) / block.getBlockSize().x;
+            blockIntersection.x = (blockCornerPos.x - playerCornerPos.x) / block.getSize().x;
         } else {
-            blockIntersection.x = (playerCornerPos.x - blockCornerPos.x) / block.getBlockSize().x;
+            blockIntersection.x = (playerCornerPos.x - blockCornerPos.x) / block.getSize().x;
         }
 
 
         if(blockCorner.toLowerCase().startsWith("down")) {
 
-            blockIntersection.y = (playerCornerPos.y - blockCornerPos.y) / block.getBlockSize().y;
+            blockIntersection.y = (playerCornerPos.y - blockCornerPos.y) / block.getSize().y;
         } else {
 
-            blockIntersection.y = (blockCornerPos.y  - playerCornerPos.y) / block.getBlockSize().y;
+            blockIntersection.y = (blockCornerPos.y  - playerCornerPos.y) / block.getSize().y;
         }
 
         return new Vector2f(blockIntersection.x, blockIntersection.y);
