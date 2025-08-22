@@ -28,7 +28,8 @@ public class MapManger {
     private final Block[][] blocks;
     private final Wall[][] walls;
     private final String blockObjPath = "/models/cube.obj";
-    private final String smallBlockObjPPath = "/models/small_cube.obj";
+    private final String smallBlockObjPath = "/models/small_cube.obj";
+    private final String quadObjPath = "/models/quad.obj";
     private final String tringleObjectPath = "/models/triangle_cylinder.obj";
     private Map<String, Mesh[]> meshMap;
     public static final float blocksScale =  0.03333333f;
@@ -56,8 +57,8 @@ public class MapManger {
         loadMeshesToMap();
     }
 
-    private void loadMeshesToMap() {
-            String dirPath = "resources/textures/blocks/";
+    private void loadMeshesToMap(String dirPath, String type) {
+//            String dirPath = "resources/textures/blocks/";
             Path dir = Paths.get(dirPath);
 
 
@@ -73,10 +74,10 @@ public class MapManger {
 
                     Material m = new Material(new Texture(dirPath + fileName));
 
-
-
                     meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, 100)});
                     meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 100)});
+
+
                     for (Mesh mesh : meshMap.get(nameWithoutExt)) {
                         mesh.setMaterial(m);
                     }
@@ -92,6 +93,8 @@ public class MapManger {
             throw new RuntimeException(e);
         }
     }
+
+
 
     public void generateMap(Scene scene) {
 
