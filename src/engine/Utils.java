@@ -11,10 +11,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import org.joml.Quaternionf;
 import org.lwjgl.BufferUtils;
@@ -40,6 +37,10 @@ public class Utils {
             }
         }
         return list;
+    }
+
+    public static float calculate(String task, Map<String, Float> specialValues) {
+        return 0f;
     }
 
     public static int[] listIntToArray(List<Integer> list) {

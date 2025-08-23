@@ -84,7 +84,7 @@ public class GameLogic implements IGameLogic {
         scene = new Scene();
 //        angleInc = new Vector2f(0f,0f);
 
-    //        Mesh[] terrainMesh = StaticMeshesLoader.load("resources/models/terrain/terrain.obj",
+    //        Mesh[] terrainMesh = StaticMeshesLoader.loadGameObject("resources/models/terrain/terrain.obj",
     // "models/terrain");
     //        GameItem terrain = new GameItem(terrainMesh);
     //        terrain.setScale(100.0f);

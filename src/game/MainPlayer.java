@@ -241,7 +241,7 @@ public class MainPlayer extends GameItem {
 
     private Vector2i getPlayerPosInBlockMap(MapManger map) {
         Vector2f playerTopLeftCorner = new Vector2f(getPosition().x - modelWidth * getScale()/2, getPosition().y +modelHeight * getScale()/2);
-        Vector3f mapTopLeftCorner = map.getMapTopLeftCorner();
+        Vector2f mapTopLeftCorner = map.getMapTopLeftCorner();
         Vector2f posDiff = new Vector2f(playerTopLeftCorner.x - mapTopLeftCorner.x, mapTopLeftCorner.y - playerTopLeftCorner.y);
         Vector2i playerInBlockMapPos = new Vector2i((int) Math.floor(posDiff.x / map.getBlocks()[0][0].getSize().x),
                 (int) Math.floor(posDiff.y / map.getBlocks()[0][0].getSize().y));
@@ -249,7 +249,7 @@ public class MainPlayer extends GameItem {
     }
 
     public void setPlayerInMapTopLeftCorner(MapManger map) {
-        Vector3f mapTopLeftCorner = map.getMapTopLeftCorner();
+        Vector2f mapTopLeftCorner = map.getMapTopLeftCorner();
         setPosition(mapTopLeftCorner.x + modelWidth * getScale()/2, mapTopLeftCorner.y - modelHeight * getScale()/2, getPosition().z);
     }
 

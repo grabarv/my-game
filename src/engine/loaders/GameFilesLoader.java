@@ -2,19 +2,26 @@ package engine.loaders;
 
 import engine.Utils;
 import engine.graph.Mesh;
-import game.world.Block;
-import game.world.GameObject;
-import game.world.Wall;
+import game.records.StructureDescription;
+import game.world.*;
 import org.joml.Vector2i;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
-public class GameObjectLoader {
+public class GameFilesLoader {
 
-    public static GameObject load(String name, Map<String, Mesh[]> meshMap, Vector2i startPos)  {
+    static Map<String, Float> specialValues;
+
+    public static GameObject loadGameObject(String name, Map<String, Mesh[]> meshMap, Map<String, StructureDescription> structureDescriptionMap,  Vector2i startPos)  {
+        specialValues = new HashMap<>();
+        specialValues.put("z_block", MapManger.worldBlockZIndex);
+        specialValues.put("z_wall", MapManger.worldWallZIndex);
+        specialValues.put("block_length", 2f);
+
         try{
             GameObject object = new GameObject();
+            object.setClearArea(false);
             String[] objectFile = Utils.loadResource("/game-objects/" + name + ".gameobj").split("\n");
 
             int width = 0;
@@ -31,20 +38,13 @@ public class GameObjectLoader {
                     } else if(arguments[1].equalsIgnoreCase("width")) {
                         width = Integer.parseInt(arguments[2]);
                         checkLength(width, 1);
-                        object.setWidth(width);
+                        object.getSize().x = width;
                     } else if(arguments[1].equalsIgnoreCase("height")) {
                         height = Integer.parseInt(arguments[2]);
                         checkLength(width, 1);
-                        object.setHeight(height);
+                        object.getSize().y = height;
                     } else if(arguments[1].equalsIgnoreCase("clearArea") && arguments[2].equalsIgnoreCase("true")) {
-                        for(int x = 0; x < width; x++) {
-                            for(int y = 0; y < height; y++) {
-                                Block block = new Block(null, false, new Vector2i(startPos.x + x, startPos.y + y));
-                                object.addBlock(block);
-                                Wall wall = new Wall(null, false, new Vector2i(startPos.x + x, startPos.y + y));
-                                object.addWall(wall);
-                            }
-                        }
+                        object.setClearArea(true);
                     }
                 } else if(arguments[0].equalsIgnoreCase("b")){
                     String type = arguments[1];
@@ -99,15 +99,50 @@ public class GameObjectLoader {
                             }
                         }
                     }
-
+                } else if(arguments[0].equalsIgnoreCase("s") && arguments[1].startsWith("struct_")){
+                    String type = arguments[1];
+                    float zIndex = Utils.calculate(arguments[2], specialValues);
+                    int x = Integer.parseInt(arguments[2]);
+                    int y = Integer.parseInt(arguments[3]);
+                    float rotation = checkRotation(arguments);
+                    StructureDescription structureDescription = structureDescriptionMap.getOrDefault(type, null);
+                    if(structureDescription == null) {
+                        continue;
+                    }
+                    Structure structure = new Structure(meshMap.getOrDefault(type, null), true,
+                            new Vector2i(startPos.x + x, startPos.y + y), structureDescription.size(),zIndex, structureDescription.canMoveThough());
+                    if(rotation != -1) {
+                        wall.getRotation().z = rotation;
+                    }
                 }
-
             }
             return object;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    public static Map<String, StructureDescription> loadStructSize(String path) {
+        Map<String, StructureDescription> result = new HashMap<>();
+
+        try {
+            String[] file = Utils.loadResource(path).split("\n");
+            for (String line: file) {
+                if(line.startsWith("#") || line.isBlank()) {
+                    continue;
+                }
+                String[] arguments = line.split(" ");
+                checkLength(arguments.length, 5);
+                StructureDescription structureDescription = new StructureDescription(new Vector2i(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2])),
+                        arguments[3], Boolean.parseBoolean(arguments[4]));
+                result.put(arguments[0], structureDescription);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
     private static void checkLength(int amount, int min) {
         if(amount < min) {
             throw new RuntimeException("Wrong game object structure");

@@ -30,6 +30,7 @@ public class GameItem {
 
     protected float modelHeight = 1f;
     protected float modelWidth = 1f;
+    protected float modelLength = 1f;
 
     public GameItem(boolean isEulerRotation) {
         this.usingEulerRotation = isEulerRotation;

@@ -3,15 +3,22 @@ package game.world;
 import engine.graph.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
+
+import static game.world.MapManger.worldBlockZIndex;
 
 public class Block extends MapItem {
 
     public Block(Mesh[] mesh, boolean isEulerRotation, Vector2i posInMap) {
-        super(mesh, isEulerRotation);
+        super(mesh, isEulerRotation, posInMap);
         setScale(MapManger.blocksScale);
-        modelWidth = 2f;
-        modelHeight = 2f;
-        mapPosition = posInMap;
+    }
+
+
+    @Override
+    public void setPosition(Vector2f startPos) {
+        setPosition(new Vector3f(startPos.x + getSize().x *mapPosition.x, startPos.y -  getSize().y * mapPosition.y, worldBlockZIndex - getScale()));
+
     }
 
 }

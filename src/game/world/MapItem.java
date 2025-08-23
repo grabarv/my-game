@@ -4,8 +4,11 @@ import engine.graph.Mesh;
 import engine.items.GameItem;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 
-public class MapItem extends GameItem {
+import static game.world.MapManger.blocksScale;
+
+public abstract class MapItem extends GameItem {
 
     protected boolean isInScene = false;
 
@@ -13,6 +16,14 @@ public class MapItem extends GameItem {
 
     public MapItem(Mesh[] meshes, boolean isEulerRotation) {
         super(meshes, isEulerRotation);
+        modelWidth = 2f;
+        modelHeight = 2f;
+        modelLength = 2f;
+    }
+
+    public MapItem(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap) {
+        this(meshes, isEulerRotation);
+        this.mapPosition = positionInMap;
     }
 
     public boolean getIsInScene() {
@@ -22,11 +33,16 @@ public class MapItem extends GameItem {
         this.isInScene = isInScene;
     }
 
-    public Vector2f getSize() {
-        return new Vector2f(modelWidth * getScale(), modelHeight * getScale());
+    public Vector3f getSize() {
+        return new Vector3f(modelWidth * getScale(), modelHeight * getScale(), modelLength * getScale());
     }
 
     public Vector2i getMapPosition() {
         return mapPosition;
+    }
+    public abstract void setPosition(Vector2f startPos);
+
+    protected Vector2f getBlockSize() {
+        return new Vector2f(modelWidth * blocksScale, modelHeight * blocksScale);
     }
 }
