@@ -33,7 +33,7 @@ stands for dirt block in top left corner of object
 
 
 
-Also you if you want to specify same blocks one after another, you can specify area where to put that blocks.
+If you want to specify same blocks one after another, you can specify area where to put that blocks.
 Area of blocks is specified in that way:
 ba <mesh type> <x1> <y1> <x2> <y1>
 where:
@@ -46,11 +46,14 @@ For example:
 ba dirt 0 0 2 0
 will create stip of length 3 along x axis made by dirt blocks.
 
-Also you can additionally specify rotation along z axis as last parameter.
-for example:
+
+You can also optionally specify clockwise z-axis rotation as the last parameter.
+For example:
 b wood_desk_triangle 0 0 180
 Possible values for rotation are: 0, 90, 180, 270.
 You can also add rotation for area description, then rotation will be applied for every block in the area.
-    
+
+
+
 To add wall you just need to properly specify mesh type and if it starts with "wall_" is will be automatically considered as wall.
 Area specification and rotation can be also applied on walls.

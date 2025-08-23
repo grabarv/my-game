@@ -31,7 +31,9 @@ public class MapManger {
     private final String blockObjPath = "/models/cube.obj";
     private final String smallBlockObjPath = "/models/small_cube.obj";
     private final String quadObjPath = "/models/quad.obj";
-    private final String tringleObjectPath = "/models/triangle_cylinder.obj";
+    private final String tringleCylinderObjectPath = "/models/triangle_cylinder.obj";
+    private final String tringleObjectPath = "/models/triangle.obj";
+
     private Map<String, Mesh[]> meshMap;
     public static final float blocksScale =  0.03333333f;
     public static final float wallScale = 0.06333333f;
@@ -78,21 +80,18 @@ public class MapManger {
                     }
                     if(nameWithoutExt.startsWith("wall_")) {
                         meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(quadObjPath, 100)});
-                        for (Mesh mesh : meshMap.get(nameWithoutExt)) {
-                            mesh.setMaterial(m);
-                        }
+                        meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 100)});
                     } else {
                         meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, 100)});
-                        meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 100)});
-                        for (Mesh mesh : meshMap.get(nameWithoutExt)) {
-                            mesh.setMaterial(m);
-                        }
-                        for(Mesh mesh: meshMap.get(nameWithoutExt + "_triangle")) {
-                            mesh.setMaterial(m);
-                        }
+                        meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleCylinderObjectPath, 100)});
                     }
 
-
+                    for (Mesh mesh : meshMap.get(nameWithoutExt)) {
+                        mesh.setMaterial(m);
+                    }
+                    for(Mesh mesh: meshMap.get(nameWithoutExt + "_triangle")) {
+                        mesh.setMaterial(m);
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
