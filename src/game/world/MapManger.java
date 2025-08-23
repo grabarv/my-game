@@ -57,8 +57,8 @@ public class MapManger {
         loadMeshesToMap();
     }
 
-    private void loadMeshesToMap(String dirPath, String type) {
-//            String dirPath = "resources/textures/blocks/";
+    private void loadMeshesToMap() {
+            String dirPath = "resources/textures/blocks/";
             Path dir = Paths.get(dirPath);
 
 

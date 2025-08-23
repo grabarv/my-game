@@ -1,25 +1,22 @@
+
 package engine;
 
 public class GameEngine implements Runnable {
 
-    public static final int TARGET_FPS = 75;
-
+    public static final int TARGET_FPS = 120;
     public static final int TARGET_UPS = 30;
 
     private final Window window;
-
     private final Timer timer;
-
     private final IGameLogic gameLogic;
-
     private final MouseInput mouseInput;
 
-    private double lastFps;
-    
-    private int fps;
-    
     private String windowTitle;
-    
+
+    // Frame/Update counters
+    private int fps, ups;
+    private double fpsTimer;
+
     public GameEngine(String windowTitle, boolean vSync, Window.WindowOptions opts, IGameLogic gameLogic) throws Exception {
         this(windowTitle, 0, 0, vSync, opts, gameLogic);
     }
@@ -49,8 +46,9 @@ public class GameEngine implements Runnable {
         timer.init();
         mouseInput.init(window);
         gameLogic.init(window);
-        lastFps = timer.getTime();
         fps = 0;
+        ups = 0;
+        fpsTimer = timer.getTime();
     }
 
     protected void gameLoop() {
@@ -62,6 +60,7 @@ public class GameEngine implements Runnable {
         while (running && !window.windowShouldClose()) {
             elapsedTime = timer.getElapsedTime();
             accumulator += elapsedTime;
+
             input();
 
             while (accumulator >= interval) {
@@ -71,24 +70,45 @@ public class GameEngine implements Runnable {
 
             render();
 
-            if ( !window.isvSync() ) {
+            if (!window.isvSync()) {
                 sync();
             }
+
+            // Show FPS/UPS once per second
+            printFpsUps();
+        }
+    }
+
+    private void printFpsUps() {
+        double currentTime = timer.getTime();
+        if (currentTime - fpsTimer >= 1.0) {
+            if (window.getWindowOptions().showFps) {
+                window.setWindowTitle(windowTitle + " - " + fps + " FPS / " + ups + " UPS");
+            }
+            fps = 0;
+            ups = 0;
+            fpsTimer = currentTime;
         }
     }
 
     protected void cleanup() {
         gameLogic.cleanup();
     }
-    
+
     private void sync() {
         float loopSlot = 1f / TARGET_FPS;
         double endTime = timer.getLastLoopTime() + loopSlot;
-        while (timer.getTime() < endTime) {
+
+        // Sleep first (coarse-grained)
+        while (timer.getTime() < endTime - 0.002) { // sleep until ~2ms before deadline
             try {
                 Thread.sleep(1);
-            } catch (InterruptedException ie) {
-            }
+            } catch (InterruptedException ignored) {}
+        }
+
+        // Busy wait (fine-grained)
+        while (timer.getTime() < endTime) {
+            Thread.onSpinWait(); // Java 9+, lets CPU spin efficiently
         }
     }
 
@@ -99,17 +119,12 @@ public class GameEngine implements Runnable {
 
     protected void update(float interval) {
         gameLogic.update(interval, mouseInput, window);
+        ups++;
     }
 
     protected void render() {
-        if ( window.getWindowOptions().showFps && timer.getLastLoopTime() - lastFps > 1 ) {
-            lastFps = timer.getLastLoopTime();
-            window.setWindowTitle(windowTitle + " - " + fps + " FPS");
-            fps = 0;
-        }
-        fps++;
         gameLogic.render(window);
         window.update();
+        fps++;
     }
-
 }
