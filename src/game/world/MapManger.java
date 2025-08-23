@@ -9,6 +9,7 @@ import engine.items.GameItem;
 import engine.loaders.GameObjectLoader;
 import engine.loaders.obj.OBJLoader;
 import game.MainPlayer;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
@@ -33,11 +34,10 @@ public class MapManger {
     private final String tringleObjectPath = "/models/triangle_cylinder.obj";
     private Map<String, Mesh[]> meshMap;
     public static final float blocksScale =  0.03333333f;
-    public static final float wallScale = 0.03333333f;
-    /**
-     * The start position is in the left top corner
-     */
-    private final Vector3f startPos = new Vector3f(-1.0f, 1.0f, worldBlockZIndex - blocksScale);
+    public static final float wallScale = 0.06333333f;
+
+  /** The start position is in the left top corner */
+  private final Vector2f startPos = new Vector2f(-1.0f, 1.0f);
 
     private final String[] objects = new String[] {"house1"};
 
@@ -76,16 +76,22 @@ public class MapManger {
                     if(Files.exists(path_normal) && Files.isRegularFile(path_normal)) {
                         m.setNormalMap(new Texture(normalMapPath));
                     }
-                    meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, 100)});
-                    meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 100)});
-
-
-                    for (Mesh mesh : meshMap.get(nameWithoutExt)) {
-                        mesh.setMaterial(m);
+                    if(nameWithoutExt.startsWith("wall_")) {
+                        meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(quadObjPath, 100)});
+                        for (Mesh mesh : meshMap.get(nameWithoutExt)) {
+                            mesh.setMaterial(m);
+                        }
+                    } else {
+                        meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, 100)});
+                        meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 100)});
+                        for (Mesh mesh : meshMap.get(nameWithoutExt)) {
+                            mesh.setMaterial(m);
+                        }
+                        for(Mesh mesh: meshMap.get(nameWithoutExt + "_triangle")) {
+                            mesh.setMaterial(m);
+                        }
                     }
-                    for(Mesh mesh: meshMap.get(nameWithoutExt + "_triangle")) {
-                        mesh.setMaterial(m);
-                    }
+
 
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -99,11 +105,11 @@ public class MapManger {
 
     public void generateMap(Scene scene) {
 
-        addBlocksToMap();
+        generateBaseMap();
 
-        generateObject();
+        generateObjects();
 
-        addNewBlocksToScene(scene);
+        addNewObjectsToScene(scene);
 //        for(int i = (int) Math.floor((double) width /2); i < (int) Math.floor((double) width /2) + 1; i++) {
 //            for(int j = (int) Math.floor((double) height /2); j <  (int) Math.floor((double) height /2) + 1 ; j++){
 //                blocks[i][j].setMeshes(meshMap.get("dirt"));
@@ -111,7 +117,7 @@ public class MapManger {
 //        }
     }
 
-    private void addBlocksToMap() {
+    private void generateBaseMap() {
         for(int i = 0; i < width; i++) {
             for(int j = (int) Math.floor((double) height /2); j <  height ; j++){
                 blocks[i][j].setMeshes(meshMap.get("dirt"));
@@ -119,12 +125,15 @@ public class MapManger {
         }
     }
 
-    private void generateObject() {
+    private void generateObjects() {
         for (String object : objects) {
-            ArrayList<Block> objectBlocks = GameObjectLoader.load(object,
+            GameObject gameObject = GameObjectLoader.load(object,
                     meshMap, new Vector2i(20, 0));
-            for (Block block : objectBlocks) {
+            for (Block block : gameObject.getBlocks()) {
                 blocks[block.getMapPosition().x][block.getMapPosition().y] = block;
+            }
+            for (Wall wall : gameObject.getWalls()) {
+                walls[wall.getMapPosition().x][wall.getMapPosition().y] = wall;
             }
         }
     }
@@ -140,15 +149,21 @@ public class MapManger {
         player.setPosition(xPos, yPos, player.getPosition().z);
     }
 
-    public void addNewBlocksToScene(Scene scene) {
+    public void addNewObjectsToScene(Scene scene) {
 
         for(int i = 0; i < width; i++ ) {
             for (int j = 0; j < height; j++) {
                 if(blocks[i][j] != null && blocks[i][j].getMeshes() != null && !blocks[i][j].getIsInScene()) {
-                    blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getSize().x *i, startPos.y -  blocks[i][j].getSize().y * j, startPos.z));
+                    blocks[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getSize().x *i, startPos.y -  blocks[i][j].getSize().y * j, worldBlockZIndex - blocksScale));
                     blocks[i][j].setIsInScene(true);
                     scene.setGameItems(new GameItem[] {blocks[i][j]});
                 }
+                if(walls[i][j] != null && walls[i][j].getMeshes() != null && !walls[i][j].getIsInScene()) {
+                    walls[i][j].setPosition(new Vector3f(startPos.x + blocks[i][j].getSize().x *i, startPos.y -  blocks[i][j].getSize().y * j, worldBlockZIndex - 2*blocksScale));
+                    walls[i][j].setIsInScene(true);
+                    scene.setGameItems(new GameItem[] {walls[i][j]});
+                }
+
             }
         }
     }
@@ -164,7 +179,7 @@ public class MapManger {
         return blocks;
     }
 
-    public Vector3f getStartPos() {
+    public Vector2f getStartPos() {
         return startPos;
     }
 
@@ -190,7 +205,7 @@ public class MapManger {
 
 
     public Vector3f getMapTopLeftCorner() {
-        return new Vector3f(getStartPos().x - blocks[0][0].getSize().x/2f, getStartPos().y + blocks[0][0].getSize().y/2f, getStartPos().z);
+        return new Vector3f(getStartPos().x - blocks[0][0].getSize().x/2f, getStartPos().y + blocks[0][0].getSize().y/2f, worldBlockZIndex - blocksScale);
     }
 
     public boolean checkBlockCoords(int x, int y) {

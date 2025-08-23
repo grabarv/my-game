@@ -3,6 +3,8 @@ package engine.loaders;
 import engine.Utils;
 import engine.graph.Mesh;
 import game.world.Block;
+import game.world.GameObject;
+import game.world.Wall;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -10,9 +12,9 @@ import java.util.Map;
 
 public class GameObjectLoader {
 
-    public static ArrayList<Block> load(String name, Map<String, Mesh[]> meshMap, Vector2i startPos)  {
+    public static GameObject load(String name, Map<String, Mesh[]> meshMap, Vector2i startPos)  {
         try{
-            ArrayList<Block> object = new ArrayList<>();
+            GameObject object = new GameObject();
             String[] objectFile = Utils.loadResource("/game-objects/" + name + ".gameobj").split("\n");
 
             int width = 0;
@@ -24,17 +26,23 @@ public class GameObjectLoader {
                 String[] arguments = line.split(" ");
                 checkLength(arguments.length, getMinLengthForInputType(arguments[0]));
                 if(arguments[0].equalsIgnoreCase("m")) {
-                    if(arguments[1].equalsIgnoreCase("width")) {
+                    if(arguments[1].equalsIgnoreCase("name")) {
+                        object.setName(arguments[2]);
+                    } else if(arguments[1].equalsIgnoreCase("width")) {
                         width = Integer.parseInt(arguments[2]);
                         checkLength(width, 1);
+                        object.setWidth(width);
                     } else if(arguments[1].equalsIgnoreCase("height")) {
                         height = Integer.parseInt(arguments[2]);
                         checkLength(width, 1);
+                        object.setHeight(height);
                     } else if(arguments[1].equalsIgnoreCase("clearArea") && arguments[2].equalsIgnoreCase("true")) {
                         for(int x = 0; x < width; x++) {
                             for(int y = 0; y < height; y++) {
                                 Block block = new Block(null, false, new Vector2i(startPos.x + x, startPos.y + y));
-                                object.add(block);
+                                object.addBlock(block);
+                                Wall wall = new Wall(null, false, new Vector2i(startPos.x + x, startPos.y + y));
+                                object.addWall(wall);
                             }
                         }
                     }
@@ -42,12 +50,22 @@ public class GameObjectLoader {
                     String type = arguments[1];
                     int x = Integer.parseInt(arguments[2]);
                     int y = Integer.parseInt(arguments[3]);
-                    Block block = new Block(meshMap.getOrDefault(type, null), true,
-                            new Vector2i(startPos.x + x, startPos.y + y));
-                    object.add(block);
                     float rotation = checkRotation(arguments);
-                    if(rotation != -1) {
-                        block.getRotation().z = rotation;
+                    if(type.startsWith("wall_")) {
+                        Wall wall =
+                            new Wall(meshMap.getOrDefault(type, null), true,
+                                    new Vector2i(startPos.x + x, startPos.y + y));
+                        object.addWall(wall);
+                        if(rotation != -1) {
+                            wall.getRotation().z = rotation;
+                        }
+                    } else {
+                        Block block = new Block(meshMap.getOrDefault(type, null), true,
+                                new Vector2i(startPos.x + x, startPos.y + y));
+                        object.addBlock(block);
+                        if(rotation != -1) {
+                            block.getRotation().z = rotation;
+                        }
                     }
                 } else if(arguments[0].equalsIgnoreCase("ba")) {
                     String type = arguments[1];
@@ -55,17 +73,33 @@ public class GameObjectLoader {
                     int y1 = Integer.parseInt(arguments[3]);
                     int x2 = Integer.parseInt(arguments[4]);
                     int y2 = Integer.parseInt(arguments[5]);
-                    for(int x = x1; x <= x2; x++) {
-                        for(int y = y1; y <= y2; y++) {
-                            Block block = new Block(meshMap.getOrDefault(type, null), true,
-                                    new Vector2i(startPos.x + x, startPos.y + y));
-                            float rotation = checkRotation(arguments);
-                            if(rotation != -1) {
-                                block.getRotation().z = rotation;
+                    float rotation = checkRotation(arguments);
+                    if(type.startsWith("wall_")) {
+                        for(int x = x1; x <= x2; x++) {
+                            for(int y = y1; y <= y2; y++) {
+                                Wall wall = new Wall(meshMap.getOrDefault(type, null), true,
+                                        new Vector2i(startPos.x + x, startPos.y + y));
+
+                                if(rotation != -1) {
+                                    wall.getRotation().z = rotation;
+                                }
+                                object.addWall(wall);
                             }
-                            object.add(block);
+                        }
+                    } else {
+                        for(int x = x1; x <= x2; x++) {
+                            for(int y = y1; y <= y2; y++) {
+                                Block block = new Block(meshMap.getOrDefault(type, null), true,
+                                        new Vector2i(startPos.x + x, startPos.y + y));
+
+                                if(rotation != -1) {
+                                    block.getRotation().z = rotation;
+                                }
+                                object.addBlock(block);
+                            }
                         }
                     }
+
                 }
 
             }

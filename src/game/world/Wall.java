@@ -6,7 +6,7 @@ import org.joml.Vector2i;
 public class Wall extends MapItem{
     public Wall(Mesh[] mesh, boolean isEulerRotation, Vector2i posInMap) {
         super(mesh, isEulerRotation);
-        setScale(MapManger.blocksScale);
+        setScale(MapManger.wallScale);
         modelWidth = 2f;
         modelHeight = 2f;
         mapPosition = posInMap;

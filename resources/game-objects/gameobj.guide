@@ -52,4 +52,5 @@ b wood_desk_triangle 0 0 180
 Possible values for rotation are: 0, 90, 180, 270.
 You can also add rotation for area description, then rotation will be applied for every block in the area.
     
-    
+To add wall you just need to properly specify mesh type and if it starts with "wall_" is will be automatically considered as wall.
+Area specification and rotation can be also applied on walls.
