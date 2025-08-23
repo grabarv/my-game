@@ -58,11 +58,9 @@ public class MapManger {
     }
 
     private void loadMeshesToMap() {
-            String dirPath = "resources/textures/blocks/";
-            Path dir = Paths.get(dirPath);
-
-
-
+        String dirPath = "resources/textures/map_objects/";
+        String dirtPathNormals = "resources/textures/normals/";
+        Path dir = Paths.get(dirPath);
         try {
             for (Path path : (Iterable<Path>) Files.list(dir).filter(Files::isRegularFile)::iterator) {
                 try {
@@ -73,7 +71,11 @@ public class MapManger {
                     String nameWithoutExt = (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
 
                     Material m = new Material(new Texture(dirPath + fileName));
-
+                    String normalMapPath = dirtPathNormals + nameWithoutExt + "_normal.png";
+                    Path path_normal = Paths.get(normalMapPath);
+                    if(Files.exists(path_normal) && Files.isRegularFile(path_normal)) {
+                        m.setNormalMap(new Texture(normalMapPath));
+                    }
                     meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(blockObjPath, 100)});
                     meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 100)});
 
@@ -93,7 +95,6 @@ public class MapManger {
             throw new RuntimeException(e);
         }
     }
-
 
 
     public void generateMap(Scene scene) {
