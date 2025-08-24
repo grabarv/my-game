@@ -18,7 +18,7 @@ public class Structure extends MapItem {
 
     public Structure(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow) {
         super(meshes, isEulerRotation, positionInMap);
-        setScale(MapManger.blocksScale);
+        setScale(MapManger.blocksScale * sizeInBlocks.y);
         this.sizeInBlocks = sizeInBlocks;
         this.zIndex = zIndex;
         this.canMoveThrow = canMoveThrow;
@@ -35,7 +35,7 @@ public class Structure extends MapItem {
 
     @Override
     public Vector3f getSize() {
-        return new Vector3f(modelWidth * getScale() * sizeInBlocks.x, modelHeight * getScale() * sizeInBlocks.y, modelHeight * getScale());
+        return new Vector3f(modelWidth * getScale() * sizeInBlocks.x, modelHeight * getScale() * sizeInBlocks.y, modelLength * getScale());
     }
 
 

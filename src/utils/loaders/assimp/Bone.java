@@ -1,4 +1,4 @@
-package engine.loaders.assimp;
+package utils.loaders.assimp;
 
 import org.joml.Matrix4f;
 

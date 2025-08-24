@@ -1,6 +1,6 @@
 package engine.items;
 
-import engine.Utils;
+import utils.Utils;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import engine.graph.Mesh;

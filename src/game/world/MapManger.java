@@ -6,8 +6,8 @@ import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.GameItem;
-import engine.loaders.GameFilesLoader;
-import engine.loaders.obj.OBJLoader;
+import utils.loaders.GameFilesLoader;
+import utils.loaders.obj.OBJLoader;
 import game.MainPlayer;
 import game.records.StructureDescription;
 import org.joml.Vector2f;
@@ -55,7 +55,7 @@ public class MapManger {
     public MapManger(int width, int height) {
         this.width = width;
         this.height = height;
-        structureDescriptionMap = GameFilesLoader.loadStructSize(structureSizeFilePath);
+        structureDescriptionMap = GameFilesLoader.loadStructDescription(structureSizeFilePath);
         blocks = new Block[width][height];
         walls = new Wall[width][height];
         structures = new ArrayList<>();

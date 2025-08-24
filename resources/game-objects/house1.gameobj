@@ -5,21 +5,21 @@ m height 31
 m clearArea true
 
 # Roof
-b wood_desk_triangle 3 18 180
+b wood_desk_triangle 3 18 0,0,180
 b wood_desk_triangle 4 18
-b wood_desk_triangle 4 17 180
+b wood_desk_triangle 4 17 0,0,180
 b wood_desk_triangle 5 17
-b wood_desk_triangle 5 16 180
+b wood_desk_triangle 5 16 0,0,180
 b wood_desk_triangle 6 16
-b wood_desk_triangle 6 15 180
+b wood_desk_triangle 6 15 0,0,180
 b wood_desk_triangle 7 15
-b wood_desk_triangle 7 14 180
+b wood_desk_triangle 7 14 0,0,180
 b wood_desk_triangle 8 14
-b wood_desk_triangle 8 13 180
-ba wood_desk 9 13 20 13 90
-ba wood_desk 14 6 25 6 90
+b wood_desk_triangle 8 13 0,0,180
+ba wood_desk 9 13 20 13 0,0,90
+ba wood_desk 14 6 25 6 0,0,90
 ba wood_desk 14 7 14 9
-b wood_desk_triangle 25 7 90
+b wood_desk_triangle 25 7 0,0,90
 b wood_desk_triangle 15 7
 
 # Walls
@@ -35,15 +35,19 @@ b bricks2 27 30
 ba wall_wood 15 7 25 28
 ba wall_wood 9 14 14 28
 ba wall_wood 4 19 13 28
-b wall_wood_triangle 4 18 180
-b wall_wood_triangle 5 17 180
-b wall_wood_triangle 6 16 180
-b wall_wood_triangle 7 15 180
-b wall_wood_triangle 8 14 180
+b wall_wood_triangle 4 18 0,0,180
+b wall_wood_triangle 5 17 0,0,180
+b wall_wood_triangle 6 16 0,0,180
+b wall_wood_triangle 7 15 0,0,180
+b wall_wood_triangle 8 14 0,0,180
 
 b wall_wood 5 18
-b wall_wood 8 15 8 16
+ba wall_wood 8 15 8 16
 ba wall_wood 7 16 8 16
 ba wall_wood 6 17 8 18
 
+# Doors
+#s struct_door z_block-block_length/2 3 26 0,90,0
+s struct_door z_block-block_length/2 26 26 0,90,0
 
+s struct_door z_block-block_length/2 3 26

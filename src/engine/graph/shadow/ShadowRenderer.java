@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE2;
 import static org.lwjgl.opengl.GL30.*;
 import engine.Scene;
 import engine.SceneLight;
-import engine.Utils;
+import utils.Utils;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.InstancedMesh;

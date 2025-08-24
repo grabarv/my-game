@@ -47,10 +47,11 @@ ba dirt 0 0 2 0
 will create stip of length 3 along x axis made by dirt blocks.
 
 
-You can also optionally specify clockwise z-axis rotation as the last parameter.
+You can also optionally specify rotation along x,y and z axes as the last parameter.
 For example:
-b wood_desk_triangle 0 0 180
+b wood_desk_triangle 0 0 0,0,180
 Possible values for rotation are: 0, 90, 180, 270.
+You cant and any spaces between rotation values and you must specify all of them even if one or two of them are 0;
 You can also add rotation for area description, then rotation will be applied for every block in the area.
 
 
@@ -69,7 +70,7 @@ where:
             "z_block" -> z index of block
             "z_wall" -> z index of wall
             "block_length" -> length of block
-        You can`t add any spaces inside block of operations and don`t use parentheses.
+        You can`t add any spaces inside block of operations but you use parentheses.
     <x> -> start x index of structure
     <y> -> start y index of structure
 

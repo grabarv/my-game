@@ -15,7 +15,7 @@ import engine.items.GameItem;
 import engine.Scene;
 import engine.SceneLight;
 import engine.items.SkyBox;
-import engine.Utils;
+import utils.Utils;
 import engine.Window;
 import engine.graph.anim.AnimGameItem;
 import engine.graph.anim.AnimatedFrame;

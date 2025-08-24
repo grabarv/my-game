@@ -1,4 +1,4 @@
-package engine.loaders.assimp;
+package utils.loaders.assimp;
 
 public class VertexWeight {
 

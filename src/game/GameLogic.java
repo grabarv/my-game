@@ -4,7 +4,6 @@ import engine.graph.*;
 import game.world.MapManger;
 import org.joml.*;
 
-import static engine.Utils.eulerToQuaternion;
 import static org.lwjgl.glfw.GLFW.*;
 import engine.IGameLogic;
 import engine.MouseInput;
@@ -14,15 +13,10 @@ import engine.Window;
 import engine.graph.anim.AnimGameItem;
 import engine.graph.anim.Animation;
 import engine.graph.lights.DirectionalLight;
-import engine.graph.weather.Fog;
 import engine.items.GameItem;
 import engine.items.SkyBox;
-import engine.loaders.assimp.AnimMeshesLoader;
-import engine.loaders.assimp.StaticMeshesLoader;
 
 import java.lang.Math;
-import java.util.List;
-import java.util.Map;
 
 public class GameLogic implements IGameLogic {
 

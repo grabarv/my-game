@@ -1,9 +1,9 @@
-package engine.loaders.obj;
+package utils.loaders.obj;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import engine.Utils;
+import utils.Utils;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import org.joml.Vector2f;

@@ -2,7 +2,7 @@ package engine.items;
 
 import java.util.ArrayList;
 import java.util.List;
-import engine.Utils;
+import utils.Utils;
 import engine.graph.FontTexture;
 import engine.graph.Material;
 import engine.graph.Mesh;

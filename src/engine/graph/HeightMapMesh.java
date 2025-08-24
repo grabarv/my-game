@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector3f;
-import engine.Utils;
+import utils.Utils;
 
 public class HeightMapMesh {
 

@@ -1,4 +1,4 @@
-package engine;
+package utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,10 +37,6 @@ public class Utils {
             }
         }
         return list;
-    }
-
-    public static float calculate(String task, Map<String, Float> specialValues) {
-        return 0f;
     }
 
     public static int[] listIntToArray(List<Integer> list) {

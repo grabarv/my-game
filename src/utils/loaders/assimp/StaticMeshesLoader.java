@@ -1,4 +1,4 @@
-package engine.loaders.assimp;
+package utils.loaders.assimp;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import org.lwjgl.assimp.AIString;
 import org.lwjgl.assimp.AIVector3D;
 import org.lwjgl.assimp.Assimp;
 import static org.lwjgl.assimp.Assimp.*;
-import engine.Utils;
+import utils.Utils;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;

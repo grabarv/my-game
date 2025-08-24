@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.stb.STBImage.*;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.*;
-import engine.Utils;
+import utils.Utils;
 
 public class Texture {
 

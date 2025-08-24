@@ -1,9 +1,9 @@
-package engine.loaders.assimp;
+package utils.loaders.assimp;
 
 import org.joml.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
-import engine.Utils;
+import utils.Utils;
 import engine.graph.*;
 import engine.graph.anim.*;
 

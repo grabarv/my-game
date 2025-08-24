@@ -1,11 +1,11 @@
 package game;
 
-import engine.Utils;
+import utils.Utils;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.GameItem;
-import engine.loaders.assimp.StaticMeshesLoader;
+import utils.loaders.assimp.StaticMeshesLoader;
 import game.world.Block;
 import game.world.MapManger;
 import org.joml.Quaternionf;

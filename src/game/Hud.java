@@ -11,7 +11,7 @@ import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
 import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import engine.Utils;
+import utils.Utils;
 import engine.Window;
 
 public class Hud {

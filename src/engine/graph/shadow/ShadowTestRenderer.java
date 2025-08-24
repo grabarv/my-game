@@ -2,11 +2,11 @@ package engine.graph.shadow;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
-import engine.Utils;
+import utils.Utils;
 import engine.Window;
 import engine.graph.Mesh;
 import engine.graph.ShaderProgram;
-import engine.loaders.assimp.StaticMeshesLoader;
+import utils.loaders.assimp.StaticMeshesLoader;
 
 public class ShadowTestRenderer {
 

@@ -1,11 +1,15 @@
-package engine.loaders;
+package utils.loaders;
 
-import engine.Utils;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import utils.MathEvaluator;
+import utils.Utils;
 import engine.graph.Mesh;
 import game.records.StructureDescription;
 import game.world.*;
 import org.joml.Vector2i;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,15 +21,15 @@ public class GameFilesLoader {
         specialValues = new HashMap<>();
         specialValues.put("z_block", MapManger.worldBlockZIndex);
         specialValues.put("z_wall", MapManger.worldWallZIndex);
-        specialValues.put("block_length", 2f);
+        specialValues.put("block_length", 2f * MapManger.blocksScale);
 
         try{
             GameObject object = new GameObject();
             object.setClearArea(false);
             String[] objectFile = Utils.loadResource("/game-objects/" + name + ".gameobj").split("\n");
 
-            int width = 0;
-            int height = 0;
+            int width;
+            int height;
             for (String line : objectFile) {
                 if(line.startsWith("#") || line.isBlank()) {
                     continue;
@@ -41,7 +45,7 @@ public class GameFilesLoader {
                         object.getSize().x = width;
                     } else if(arguments[1].equalsIgnoreCase("height")) {
                         height = Integer.parseInt(arguments[2]);
-                        checkLength(width, 1);
+                        checkLength(height, 1);
                         object.getSize().y = height;
                     } else if(arguments[1].equalsIgnoreCase("clearArea") && arguments[2].equalsIgnoreCase("true")) {
                         object.setClearArea(true);
@@ -50,22 +54,18 @@ public class GameFilesLoader {
                     String type = arguments[1];
                     int x = Integer.parseInt(arguments[2]);
                     int y = Integer.parseInt(arguments[3]);
-                    float rotation = checkRotation(arguments);
+                    Quaternionf rotation = checkRotation(arguments);
                     if(type.startsWith("wall_")) {
                         Wall wall =
                             new Wall(meshMap.getOrDefault(type, null), true,
                                     new Vector2i(startPos.x + x, startPos.y + y));
                         object.addWall(wall);
-                        if(rotation != -1) {
-                            wall.getRotation().z = rotation;
-                        }
+                        wall.setRotation(rotation);
                     } else {
                         Block block = new Block(meshMap.getOrDefault(type, null), true,
                                 new Vector2i(startPos.x + x, startPos.y + y));
                         object.addBlock(block);
-                        if(rotation != -1) {
-                            block.getRotation().z = rotation;
-                        }
+                        block.setRotation(rotation);
                     }
                 } else if(arguments[0].equalsIgnoreCase("ba")) {
                     String type = arguments[1];
@@ -73,16 +73,14 @@ public class GameFilesLoader {
                     int y1 = Integer.parseInt(arguments[3]);
                     int x2 = Integer.parseInt(arguments[4]);
                     int y2 = Integer.parseInt(arguments[5]);
-                    float rotation = checkRotation(arguments);
+                    Quaternionf rotation = checkRotation(arguments);
                     if(type.startsWith("wall_")) {
                         for(int x = x1; x <= x2; x++) {
                             for(int y = y1; y <= y2; y++) {
                                 Wall wall = new Wall(meshMap.getOrDefault(type, null), true,
                                         new Vector2i(startPos.x + x, startPos.y + y));
 
-                                if(rotation != -1) {
-                                    wall.getRotation().z = rotation;
-                                }
+                                wall.setRotation(rotation);
                                 object.addWall(wall);
                             }
                         }
@@ -92,28 +90,26 @@ public class GameFilesLoader {
                                 Block block = new Block(meshMap.getOrDefault(type, null), true,
                                         new Vector2i(startPos.x + x, startPos.y + y));
 
-                                if(rotation != -1) {
-                                    block.getRotation().z = rotation;
-                                }
+                                block.setRotation(rotation);
                                 object.addBlock(block);
                             }
                         }
                     }
                 } else if(arguments[0].equalsIgnoreCase("s") && arguments[1].startsWith("struct_")){
                     String type = arguments[1];
-                    float zIndex = Utils.calculate(arguments[2], specialValues);
-                    int x = Integer.parseInt(arguments[2]);
-                    int y = Integer.parseInt(arguments[3]);
-                    float rotation = checkRotation(arguments);
-                    StructureDescription structureDescription = structureDescriptionMap.getOrDefault(type, null);
+                    float zIndex = (float) MathEvaluator.eval(arguments[2], specialValues);
+                    int x = Integer.parseInt(arguments[3]);
+                    int y = Integer.parseInt(arguments[4]);
+                    Quaternionf rotation = checkRotation(arguments);
+
+                    StructureDescription structureDescription = structureDescriptionMap.getOrDefault(type.substring(7), null);
                     if(structureDescription == null) {
                         continue;
                     }
                     Structure structure = new Structure(meshMap.getOrDefault(type, null), true,
                             new Vector2i(startPos.x + x, startPos.y + y), structureDescription.size(),zIndex, structureDescription.canMoveThough());
-                    if(rotation != -1) {
-                        wall.getRotation().z = rotation;
-                    }
+                    structure.setRotation(rotation);
+                    object.addStructure(structure);
                 }
             }
             return object;
@@ -122,7 +118,7 @@ public class GameFilesLoader {
         }
     }
 
-    public static Map<String, StructureDescription> loadStructSize(String path) {
+    public static Map<String, StructureDescription> loadStructDescription(String path) {
         Map<String, StructureDescription> result = new HashMap<>();
 
         try {
@@ -154,16 +150,21 @@ public class GameFilesLoader {
      * @param arguments all arguments from one line
      * @return Returns rotation or -1.0f if rotation is not possible for this block
      */
-    private static float checkRotation(String[] arguments) {
+    private static Quaternionf checkRotation(String[] arguments) {
         int minLengthWithoutRotation = getMinLengthForInputType(arguments[0]);
-        if(arguments.length >= minLengthWithoutRotation + 1) {
-            int rotation = Integer.parseInt(arguments[arguments.length-1]);
-            if(rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270) {
-                return (float) rotation;
+        Quaternionf rotation = new Quaternionf(0f, 0f, 0f, 0f);
+            if (arguments.length >= minLengthWithoutRotation + 1) {
+            String[] values = arguments[arguments.length-1].split(",");
+            System.out.println(Arrays.toString(arguments));
+            checkLength(values.length, 3);
+            rotation.x = Float.parseFloat(values[0]);
+            rotation.y = Float.parseFloat(values[1]);
+            rotation.z = Float.parseFloat(values[2]);
+            if(values.length == 4) {
+                rotation.w = Float.parseFloat(values[3]);
             }
         }
-
-        return -1.0f;
+        return rotation;
     }
 
     /**
@@ -179,6 +180,9 @@ public class GameFilesLoader {
         }
         if(type.equalsIgnoreCase("ba")) {
             return 6;
+        }
+        if(type.equalsIgnoreCase("s")) {
+            return 5;
         }
         return -1;
     }

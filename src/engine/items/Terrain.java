@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 import static org.lwjgl.stb.STBImage.*;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import engine.Utils;
+import utils.Utils;
 import engine.graph.HeightMapMesh;
 
 public class Terrain {
