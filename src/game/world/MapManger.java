@@ -142,7 +142,7 @@ public class MapManger {
 
     private void generateObjects() {
         for (String object : objects) {
-            Vector2i startPos = new Vector2i(20, 0);
+            Vector2i startPos = new Vector2i(width/2 - 20, height/2 - 31);
             GameObject gameObject = GameFilesLoader.loadGameObject(object,
                     meshMap, structureDescriptionMap, startPos);
             if(gameObject.isClearArea()) {
@@ -165,8 +165,8 @@ public class MapManger {
     // TODO: method has a bug, it does not set player exactly at the center.
 
     public void putPlayerOnMapCenter(Camera camera, MainPlayer player) {
-        float xPos = getMapTopLeftCorner().x; //+ width*blocks[0][0].getSize().x/2;
-        float yPos = startPos.y ;
+        float xPos = getMapTopLeftCorner().x+ width*blocks[0][0].getSize().x/2;
+        float yPos = getMapTopLeftCorner().y - 20*blocks[0][0].getSize().y/2 ;
         camera.setPosition(xPos, yPos, camera.getPosition().z);
         player.setPosition(xPos, yPos, player.getPosition().z);
     }

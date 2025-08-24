@@ -47,7 +47,37 @@ ba wall_wood 7 16 8 16
 ba wall_wood 6 17 8 18
 
 # Doors
-#s struct_door z_block-block_length/2 3 26 0,90,0
-s struct_door z_block-block_length/2 26 26 0,90,0
+s struct_door z_block-block_length/2 false 14 10 0,90,0
+s struct_door z_block-block_length/2 false 26 26 0,90,0
+s struct_door z_block-block_length/2 true 3 26
 
-s struct_door z_block-block_length/2 3 26
+# Stairs
+b wood_desk_triangle 25 14 0,0,180
+b wood_desk_triangle 25 15
+b wood_desk_triangle 24 15 0,0,180
+b wood_desk_triangle 24 16
+b wood_desk_triangle 23 16 0,0,180
+b wood_desk_triangle 23 17
+b wood_desk_triangle 22 17 0,0,180
+b wood_desk_triangle 22 18
+b wood_desk_triangle 21 18 0,0,180
+b wood_desk_triangle 21 19
+b wood_desk_triangle 20 19 0,0,180
+b wood_desk_triangle 20 20
+b wood_desk_triangle 19 20 0,0,180
+b wood_desk_triangle 19 21
+b wood_desk_triangle 18 21 0,0,180
+b wood_desk_triangle 18 22
+b wood_desk_triangle 17 22 0,0,180
+b wood_desk_triangle 17 23
+b wood_desk_triangle 16 23 0,0,180
+b wood_desk_triangle 16 24
+b wood_desk_triangle 15 24 0,0,180
+b wood_desk_triangle 15 25
+b wood_desk_triangle 14 25 0,0,180
+s wood_desk_triangle z_block-block_length*2/3 true 14 26
+s wood_desk_triangle z_block-block_length*2/3 true 13 26 0,0,180
+s wood_desk_triangle z_block-block_length true 13 27
+s wood_desk_triangle z_block-block_length true 12 27 0,0,180
+s wood_desk_triangle z_block-block_length*5/4 true 12 28
+s wood_desk_triangle z_block-block_length*5/4 true 11 28 0,0,180

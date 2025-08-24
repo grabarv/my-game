@@ -62,6 +62,7 @@ public class GameFilesLoader {
                         object.addWall(wall);
                         wall.setRotation(rotation);
                     } else {
+
                         Block block = new Block(meshMap.getOrDefault(type, null), true,
                                 new Vector2i(startPos.x + x, startPos.y + y));
                         object.addBlock(block);
@@ -95,19 +96,22 @@ public class GameFilesLoader {
                             }
                         }
                     }
-                } else if(arguments[0].equalsIgnoreCase("s") && arguments[1].startsWith("struct_")){
+                } else if(arguments[0].equalsIgnoreCase("s")){
                     String type = arguments[1];
                     float zIndex = (float) MathEvaluator.eval(arguments[2], specialValues);
-                    int x = Integer.parseInt(arguments[3]);
-                    int y = Integer.parseInt(arguments[4]);
+                    boolean canMoveThrow = Boolean.parseBoolean(arguments[3]);
+                    int x = Integer.parseInt(arguments[4]);
+                    int y = Integer.parseInt(arguments[5]);
                     Quaternionf rotation = checkRotation(arguments);
-
+                    Vector2i size;
                     StructureDescription structureDescription = structureDescriptionMap.getOrDefault(type.substring(7), null);
-                    if(structureDescription == null) {
-                        continue;
+                    if(structureDescription != null) {
+                        size = structureDescription.size();
+                    } else {
+                        size = new Vector2i(1,1);
                     }
                     Structure structure = new Structure(meshMap.getOrDefault(type, null), true,
-                            new Vector2i(startPos.x + x, startPos.y + y), structureDescription.size(),zIndex, structureDescription.canMoveThough());
+                            new Vector2i(startPos.x + x, startPos.y + y), size,zIndex, canMoveThrow);
                     structure.setRotation(rotation);
                     object.addStructure(structure);
                 }
@@ -155,7 +159,6 @@ public class GameFilesLoader {
         Quaternionf rotation = new Quaternionf(0f, 0f, 0f, 0f);
             if (arguments.length >= minLengthWithoutRotation + 1) {
             String[] values = arguments[arguments.length-1].split(",");
-            System.out.println(Arrays.toString(arguments));
             checkLength(values.length, 3);
             rotation.x = Float.parseFloat(values[0]);
             rotation.y = Float.parseFloat(values[1]);
@@ -182,7 +185,7 @@ public class GameFilesLoader {
             return 6;
         }
         if(type.equalsIgnoreCase("s")) {
-            return 5;
+            return 6;
         }
         return -1;
     }

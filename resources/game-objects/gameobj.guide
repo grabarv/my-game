@@ -61,9 +61,9 @@ Area specification and rotation can be also applied on walls.
 
 
 To add structures you have to follow this pattern:
-s <mesh type> <z index> <x> <y>
+s <mesh type> <z index> <can move throw> <x> <y>
 where:
-    <mesh type> -> same as above, but must be specified with "struct_" at the beginning.
+    <mesh type> -> just mesh name
     <z index> -> z index of structure positons. Can be specified as absolute value(for example 2.5). Or relative to block/wall z index (and more).
         For z index specification you and use numbers with(or without) decimal part (don`t add "f" to numbers), operators: "+" "-" "*" "/", and
         some special keys which are presented below:
@@ -71,10 +71,12 @@ where:
             "z_wall" -> z index of wall
             "block_length" -> length of block
         You can`t add any spaces inside block of operations but you use parentheses.
+    <can move throw> -> true or false
     <x> -> start x index of structure
     <y> -> start y index of structure
 
 For example:
-s struct_door z_block-block_length/2+0.01 0 0
+s struct_door z_block-block_length/2+0.01 false 0 0
 
 You can`t specify area for structures but you can specify rotation as always.
+Every block or wall can be defined as structure.
