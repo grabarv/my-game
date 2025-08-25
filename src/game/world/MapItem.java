@@ -20,10 +20,21 @@ public abstract class MapItem extends GameItem {
         modelHeight = 2f;
         modelLength = 2f;
     }
+    public MapItem(Mesh[] meshes, boolean isEulerRotation, Vector3f modelSize) {
+        this(meshes, isEulerRotation);
+        modelWidth = modelSize.x;
+        modelHeight = modelSize.y;
+        modelLength = modelSize.z;
+    }
 
     public MapItem(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap) {
         this(meshes, isEulerRotation);
         this.mapPosition = positionInMap;
+    }
+
+    public MapItem(Mesh[] meshes, boolean isEulerRotation, Vector3f modelSize, Vector2i mapPosition) {
+        this(meshes, isEulerRotation, modelSize);
+        this.mapPosition = mapPosition;
     }
 
     public boolean getIsInScene() {

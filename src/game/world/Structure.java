@@ -23,6 +23,12 @@ public class Structure extends MapItem {
         this.zIndex = zIndex;
         this.canMoveThrow = canMoveThrow;
     }
+     public Structure(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow, Vector3f modelSize) {
+        this(meshes, isEulerRotation, positionInMap, sizeInBlocks, zIndex, canMoveThrow);
+        modelWidth = modelSize.x;
+        modelHeight = modelSize.y;
+        modelLength = modelSize.z;
+     }
 
     @Override
     public void setPosition(Vector2f topLeftMapCorner) {

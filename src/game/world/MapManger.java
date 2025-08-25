@@ -6,6 +6,8 @@ import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.GameItem;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import utils.loaders.GameFilesLoader;
 import utils.loaders.obj.OBJLoader;
 import game.MainPlayer;
@@ -133,9 +135,20 @@ public class MapManger {
     }
 
     private void generateBaseMap() {
+        int halfOfHeight = (int) Math.floor((double) height /2);
         for(int i = 0; i < width; i++) {
-            for(int j = (int) Math.floor((double) height /2); j <  height ; j++){
+            for(int j = halfOfHeight; j <  height ; j++){
                 blocks[i][j].setMeshes(meshMap.get("dirt"));
+                if(j == halfOfHeight) {
+                    Structure structure = new Structure(meshMap.get("struct_grass"), true,
+                            new Vector2i(i, j-1),
+                            structureDescriptionMap.get("grass").size(),
+                            worldBlockZIndex + blocksScale,
+                            structureDescriptionMap.get("grass").canMoveThough(), new Vector3f(1f, 1f, 0f));
+//                    structure.setRotation(new Quaternionf(90, 0,0,0));
+                    structures.add(structure);
+
+                }
             }
         }
     }

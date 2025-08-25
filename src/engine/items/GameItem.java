@@ -173,4 +173,9 @@ public class GameItem {
     public float getModelWidth() {
         return modelWidth;
     }
+
+    public float getModelLength() {
+        return modelLength;
+    }
+
 }
