@@ -104,14 +104,17 @@ public class GameFilesLoader {
                     int y = Integer.parseInt(arguments[5]);
                     Quaternionf rotation = checkRotation(arguments);
                     Vector2i size;
+                    Vector3f modelSize;
                     StructureDescription structureDescription = structureDescriptionMap.getOrDefault(type.substring(7), null);
                     if(structureDescription != null) {
                         size = structureDescription.size();
+                        modelSize = structureDescription.modelSize();
                     } else {
                         size = new Vector2i(1,1);
+                        modelSize = new Vector3f(1,1,1);
                     }
                     Structure structure = new Structure(meshMap.getOrDefault(type, null), true,
-                            new Vector2i(startPos.x + x, startPos.y + y), size,zIndex, canMoveThrow);
+                            new Vector2i(startPos.x + x, startPos.y + y), size,zIndex, canMoveThrow, modelSize);
                     structure.setRotation(rotation);
                     object.addStructure(structure);
                 }
@@ -132,9 +135,12 @@ public class GameFilesLoader {
                     continue;
                 }
                 String[] arguments = line.split(" ");
-                checkLength(arguments.length, 5);
+                checkLength(arguments.length, 6);
+                String[] size = arguments[5].split(",");
+                checkLength(size.length, 3);
                 StructureDescription structureDescription = new StructureDescription(new Vector2i(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2])),
-                        arguments[3], Boolean.parseBoolean(arguments[4]));
+                        arguments[3], Boolean.parseBoolean(arguments[4]),
+                        new Vector3f(Float.parseFloat(size[0]), Float.parseFloat(size[1]), Float.parseFloat(size[1])));
                 result.put(arguments[0], structureDescription);
             }
         } catch (Exception e) {

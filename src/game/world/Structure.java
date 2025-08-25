@@ -16,18 +16,24 @@ public class Structure extends MapItem {
 
     private Vector2i sizeInBlocks;
 
-    public Structure(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow) {
-        super(meshes, isEulerRotation, positionInMap);
-        setScale(MapManger.blocksScale * sizeInBlocks.y);
-        this.sizeInBlocks = sizeInBlocks;
-        this.zIndex = zIndex;
-        this.canMoveThrow = canMoveThrow;
-    }
+//    public Structure(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow) {
+//        super(meshes, isEulerRotation, positionInMap);
+//        this.sizeInBlocks = sizeInBlocks;
+//        setScale(MapManger.blocksScale * sizeInBlocks.y);
+//
+//        this.zIndex = zIndex;
+//        this.canMoveThrow = canMoveThrow;
+//    }
      public Structure(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow, Vector3f modelSize) {
-        this(meshes, isEulerRotation, positionInMap, sizeInBlocks, zIndex, canMoveThrow);
-        modelWidth = modelSize.x;
-        modelHeight = modelSize.y;
-        modelLength = modelSize.z;
+         super(meshes, isEulerRotation, positionInMap);
+         this.sizeInBlocks = sizeInBlocks;
+         setScale(MapManger.blocksScale * sizeInBlocks.y * modelHeight);
+
+         this.zIndex = zIndex;
+         this.canMoveThrow = canMoveThrow;
+         modelWidth = modelSize.x;
+         modelHeight = modelSize.y;
+         modelLength = modelSize.z;
      }
 
     @Override

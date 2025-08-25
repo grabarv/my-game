@@ -3,13 +3,13 @@ That file describes size of different structures in game.
 
 All lines that start with # are comments.
 
-One line describes one structures and consists of 5 parts.
+One line describes one structures and consists of 6 parts.
 
 WARNING!! Descriptions of different structures must be at different lines and
     between parts of one structure description must be ONLY ONE space.
 
 The pattern of specification looks in the following way:
-<structure name> <width> <height> <obj file name> <can move through>
+<structure name> <width> <height> <obj file name> <can move through> <modelSize>
 where:
     <structure name> -> is the name of structure. Must be the same as name of texture file which this structure will use but
         without "structure_" on the start and file extension (almost always ".png") at the end.
@@ -17,5 +17,7 @@ where:
     <height> -> height of structure in blocks. Must be greater than 0.
     <obj file name> -> it is file name of obj file for creating mesh for that structure. It mustn`t be full path, only name.
     <can move through> -> true or false
+    <modelSize> -> Vector3f object with size of obj =. must be specified without spaces and "f".
 For example:
-door 1 3 door.obj
+door 1 3 door.obj false 2,2,0
+

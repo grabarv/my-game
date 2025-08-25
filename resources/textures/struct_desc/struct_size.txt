@@ -1,2 +1,2 @@
-door 1 3 door.obj false
-grass 1 1 grass.obj true
+door 1 3 door.obj false 0.66,2,0.1
+grass 1 1 grass.obj true 1,1,0
