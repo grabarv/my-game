@@ -148,4 +148,26 @@ public class Utils {
         return value < threshold;
     }
 
+    /**
+     * Checks if two rectangles in 2D space intersect.
+     *
+     * @param x1 X-coordinate of the first rectangle
+     * @param y1 Y-coordinate of the first rectangle
+     * @param w1 Width of the first rectangle
+     * @param h1 Height of the first rectangle
+     * @param x2 X-coordinate of the second rectangle
+     * @param y2 Y-coordinate of the second rectangle
+     * @param w2 Width of the second rectangle
+     * @param h2 Height of the second rectangle
+     * @return true if rectangles intersect, false otherwise
+     */
+    public static boolean intersects(
+            float x1, float y1, float w1, float h1,
+            float x2, float y2, float w2, float h2) {
+
+        return x1 < x2 + w2 &&   // right side of rect1 > left side of rect2
+                x1 + w1 > x2 &&   // left side of rect1 < right side of rect2
+                y1 < y2 + h2 &&   // bottom of rect1 > top of rect2
+                y1 + h1 > y2;     // top of rect1 < bottom of rect2
+    }
 }

@@ -50,9 +50,6 @@ public class Structure extends MapItem {
 
     @Override
     public void setPosition(Vector2f topLeftMapCorner) {
-         if(name.equals("door")) {
-             System.out.println("");
-         }
         Vector2f structureTopLeftCorner = new Vector2f(topLeftMapCorner.x + mapPosition.x * getBlockSize().x,
                 topLeftMapCorner.y - mapPosition.y * getBlockSize().y);
         setPosition(structureTopLeftCorner.x + sizeInBlocks.x * getBlockSize().x / 2,
@@ -64,5 +61,11 @@ public class Structure extends MapItem {
         return new Vector3f(modelWidth * getScale() * sizeInBlocks.x, modelHeight * getScale() * sizeInBlocks.y, modelLength * getScale());
     }
 
+    public Vector2i getSizeInBlocks() {
+         return sizeInBlocks;
+    }
 
+    public void setSizeInBlocks(Vector2i sizeInBlocks) {
+        this.sizeInBlocks = sizeInBlocks;
+    }
 }

@@ -9,7 +9,6 @@ import game.records.StructureDescription;
 import game.world.*;
 import org.joml.Vector2i;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,7 +102,7 @@ public class GameFilesLoader {
                     int x = Integer.parseInt(arguments[4]);
                     int y = Integer.parseInt(arguments[5]);
                     Quaternionf rotation = checkRotation(arguments);
-                    Vector2i size;
+                    Vector2i sizeInBlocks;
                     Vector3f modelSize;
                     String typeWithoutStruct = type;
                     if(typeWithoutStruct.startsWith("struct_")){
@@ -111,15 +110,15 @@ public class GameFilesLoader {
                     }
                     StructureDescription structureDescription = structureDescriptionMap.getOrDefault(typeWithoutStruct, null);
                     if(structureDescription != null) {
-                        size = structureDescription.size();
+                        sizeInBlocks = structureDescription.size();
                         modelSize = structureDescription.modelSize();
                     } else {
-                        size = new Vector2i(1,1);
-                        modelSize = new Vector3f(1,1,1);
+                        sizeInBlocks = new Vector2i(1,1);
+                        modelSize = new Vector3f(2,2,2);
                     }
                     Structure structure = new Structure(meshMap.getOrDefault(type, null),
                             true, typeWithoutStruct,
-                            new Vector2i(startPos.x + x, startPos.y + y), size,zIndex, canMoveThrow, modelSize);
+                            new Vector2i(startPos.x + x, startPos.y + y), sizeInBlocks,zIndex, canMoveThrow, modelSize);
                     structure.setRotation(rotation);
                     object.addStructure(structure);
                 }

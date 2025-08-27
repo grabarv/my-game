@@ -8,6 +8,7 @@ import engine.graph.Texture;
 import engine.items.GameItem;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import utils.Utils;
 import utils.loaders.GameFilesLoader;
 import utils.loaders.obj.OBJLoader;
 import game.MainPlayer;
@@ -160,7 +161,7 @@ public class MapManger {
 
     private void generateObjects() {
         for (String object : objects) {
-            Vector2i startPos = new Vector2i(0, 0);//new Vector2i(width/2 - 20, height/2 - 30);
+            Vector2i startPos = new Vector2i(width/2 - 20, height/2 - 30);
             GameObject gameObject = GameFilesLoader.loadGameObject(object,
                     meshMap, structureDescriptionMap, startPos);
             if(gameObject.isClearArea()) {
@@ -183,7 +184,7 @@ public class MapManger {
     // TODO: method has a bug, it does not set player exactly at the center.
 
     public void putPlayerOnMapCenter(Camera camera, MainPlayer player) {
-        float xPos = getMapTopLeftCorner().x ;//+ width*blocks[0][0].getSize().x/2;
+        float xPos = getMapTopLeftCorner().x + width*blocks[0][0].getSize().x/2;
         float yPos = getMapTopLeftCorner().y - 20*blocks[0][0].getSize().y/2 ;
         camera.setPosition(xPos, yPos, camera.getPosition().z);
         player.setPosition(xPos, yPos, player.getPosition().z);
@@ -261,7 +262,6 @@ public class MapManger {
         return checkBlockCoords(coords.x, coords.y);
     }
 
-    // TODO: Clear also structures
     private void clearMapArea(Vector2i startOfArea, Vector2i areaSize) {
         for(int x = 0; x < areaSize.x; x++) {
             for(int y = 0; y < areaSize.y; y++) {
@@ -270,6 +270,16 @@ public class MapManger {
                 Wall wall = new Wall(null, false, new Vector2i(startOfArea.x + x, startOfArea.y + y));
                 walls[wall.mapPosition.x][wall.mapPosition.y] = wall;
             }
+        }
+        ArrayList<Structure> structuresToRemove = new ArrayList<>();
+        for (Structure structure : structures) {
+            if(Utils.intersects(structure.mapPosition.x, structure.mapPosition.y, structure.getSizeInBlocks().x, structure.getSizeInBlocks().y,
+                    startOfArea.x, startOfArea.y, areaSize.x, areaSize.y)) {
+                structuresToRemove.add(structure);
+            }
+        }
+        for (Structure removeStructure : structuresToRemove) {
+            structures.remove(removeStructure);
         }
     }
 
