@@ -10,7 +10,7 @@ import static game.world.MapManger.worldBlockZIndex;
 public class Block extends MapItem {
 
     public Block(Mesh[] mesh, boolean isEulerRotation, Vector2i posInMap) {
-        super(mesh, isEulerRotation, posInMap);
+    super(mesh, isEulerRotation, new Vector3f(2f, 2f, 2f), posInMap);
         setScale(MapManger.blocksScale);
     }
 

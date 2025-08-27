@@ -105,7 +105,11 @@ public class GameFilesLoader {
                     Quaternionf rotation = checkRotation(arguments);
                     Vector2i size;
                     Vector3f modelSize;
-                    StructureDescription structureDescription = structureDescriptionMap.getOrDefault(type.substring(7), null);
+                    String typeWithoutStruct = type;
+                    if(typeWithoutStruct.startsWith("struct_")){
+                        typeWithoutStruct = type.substring(7);
+                    }
+                    StructureDescription structureDescription = structureDescriptionMap.getOrDefault(typeWithoutStruct, null);
                     if(structureDescription != null) {
                         size = structureDescription.size();
                         modelSize = structureDescription.modelSize();
@@ -113,7 +117,8 @@ public class GameFilesLoader {
                         size = new Vector2i(1,1);
                         modelSize = new Vector3f(1,1,1);
                     }
-                    Structure structure = new Structure(meshMap.getOrDefault(type, null), true,
+                    Structure structure = new Structure(meshMap.getOrDefault(type, null),
+                            true, typeWithoutStruct,
                             new Vector2i(startPos.x + x, startPos.y + y), size,zIndex, canMoveThrow, modelSize);
                     structure.setRotation(rotation);
                     object.addStructure(structure);

@@ -53,7 +53,4 @@ public abstract class MapItem extends GameItem {
     }
     public abstract void setPosition(Vector2f startPos);
 
-    protected Vector2f getBlockSize() {
-        return new Vector2f(modelWidth * blocksScale, modelHeight * blocksScale);
-    }
 }

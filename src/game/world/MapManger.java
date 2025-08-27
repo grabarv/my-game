@@ -137,17 +137,22 @@ public class MapManger {
     private void generateBaseMap() {
         int halfOfHeight = (int) Math.floor((double) height /2);
         for(int i = 0; i < width; i++) {
-            for(int j = halfOfHeight; j <  height ; j++){
-                blocks[i][j].setMeshes(meshMap.get("dirt"));
-                if(j == halfOfHeight) {
-                    Structure structure = new Structure(meshMap.get("struct_grass"), true,
-                            new Vector2i(i, j-1),
-                            structureDescriptionMap.get("grass").size(),
-                            worldBlockZIndex + blocksScale,
-                            structureDescriptionMap.get("grass").canMoveThough(), structureDescriptionMap.get("grass").modelSize());
-//                    structure.setRotation(new Quaternionf(90, 0,0,0));
-                    structures.add(structure);
+            for(int j = halfOfHeight; j < height ; j++){
 
+                if(j == halfOfHeight) {
+                    if(i % 2 == 0) {
+                        Structure structure = new Structure(meshMap.get("struct_grass"), true, "grass",
+                                new Vector2i(i, j-1),
+                                structureDescriptionMap.get("grass").size(),
+                                worldBlockZIndex,
+                                structureDescriptionMap.get("grass").canMoveThough(), structureDescriptionMap.get("grass").modelSize());
+                        structure.setRotation(new Quaternionf(90, 0,0,0));
+                        structures.add(structure);
+                        blocks[i][j].setMeshes(meshMap.get("dirt"));
+                    }
+
+                } else {
+                    blocks[i][j].setMeshes(meshMap.get("dirt"));
                 }
             }
         }
@@ -155,7 +160,7 @@ public class MapManger {
 
     private void generateObjects() {
         for (String object : objects) {
-            Vector2i startPos = new Vector2i(width/2 - 20, height/2 - 31);
+            Vector2i startPos = new Vector2i(0, 0);//new Vector2i(width/2 - 20, height/2 - 30);
             GameObject gameObject = GameFilesLoader.loadGameObject(object,
                     meshMap, structureDescriptionMap, startPos);
             if(gameObject.isClearArea()) {
@@ -178,14 +183,13 @@ public class MapManger {
     // TODO: method has a bug, it does not set player exactly at the center.
 
     public void putPlayerOnMapCenter(Camera camera, MainPlayer player) {
-        float xPos = getMapTopLeftCorner().x+ width*blocks[0][0].getSize().x/2;
+        float xPos = getMapTopLeftCorner().x ;//+ width*blocks[0][0].getSize().x/2;
         float yPos = getMapTopLeftCorner().y - 20*blocks[0][0].getSize().y/2 ;
         camera.setPosition(xPos, yPos, camera.getPosition().z);
         player.setPosition(xPos, yPos, player.getPosition().z);
     }
 
     public void addNewObjectsToScene(Scene scene) {
-
         for(int i = 0; i < width; i++ ) {
             for (int j = 0; j < height; j++) {
                 if(blocks[i][j] != null && blocks[i][j].getMeshes() != null && !blocks[i][j].getIsInScene()) {
@@ -267,5 +271,9 @@ public class MapManger {
                 walls[wall.mapPosition.x][wall.mapPosition.y] = wall;
             }
         }
+    }
+
+    public static Vector2f getBlockSize() {
+        return new Vector2f(2f * blocksScale, 2f * blocksScale);
     }
 }

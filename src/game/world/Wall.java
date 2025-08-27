@@ -5,8 +5,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import static game.world.MapManger.blocksScale;
-import static game.world.MapManger.worldBlockZIndex;
+import static game.world.MapManger.*;
 
 public class Wall extends MapItem{
     public Wall(Mesh[] mesh, boolean isEulerRotation, Vector2i posInMap) {

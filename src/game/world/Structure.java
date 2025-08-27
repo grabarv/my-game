@@ -5,6 +5,8 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import static game.world.MapManger.getBlockSize;
+
 public class Structure extends MapItem {
 
     private float zIndex;
@@ -16,6 +18,8 @@ public class Structure extends MapItem {
 
     private Vector2i sizeInBlocks;
 
+    private String name;
+
 //    public Structure(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow) {
 //        super(meshes, isEulerRotation, positionInMap);
 //        this.sizeInBlocks = sizeInBlocks;
@@ -24,25 +28,35 @@ public class Structure extends MapItem {
 //        this.zIndex = zIndex;
 //        this.canMoveThrow = canMoveThrow;
 //    }
-     public Structure(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow, Vector3f modelSize) {
+     public Structure(Mesh[] meshes, boolean isEulerRotation,String name,  Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow, Vector3f modelSize) {
          super(meshes, isEulerRotation, positionInMap);
+         this.name = name;
          this.sizeInBlocks = sizeInBlocks;
-         setScale(MapManger.blocksScale * sizeInBlocks.y * modelHeight);
-
          this.zIndex = zIndex;
          this.canMoveThrow = canMoveThrow;
          modelWidth = modelSize.x;
          modelHeight = modelSize.y;
          modelLength = modelSize.z;
+         setScale(getBlockSize().y * sizeInBlocks.y / modelHeight);
      }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public void setPosition(Vector2f topLeftMapCorner) {
+         if(name.equals("door")) {
+             System.out.println("");
+         }
         Vector2f structureTopLeftCorner = new Vector2f(topLeftMapCorner.x + mapPosition.x * getBlockSize().x,
                 topLeftMapCorner.y - mapPosition.y * getBlockSize().y);
-
         setPosition(structureTopLeftCorner.x + sizeInBlocks.x * getBlockSize().x / 2,
-                structureTopLeftCorner.y - sizeInBlocks.y * getBlockSize().y / 2, zIndex);
+                structureTopLeftCorner.y - sizeInBlocks.y * getBlockSize().y /2, zIndex);
     }
 
     @Override
