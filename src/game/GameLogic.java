@@ -50,6 +50,8 @@ public class GameLogic implements IGameLogic {
 
     public static boolean testVar;
 
+    private float angleInc = 0f;
+
 
     public GameLogic() {
         renderer = new Renderer();
@@ -188,6 +190,14 @@ public class GameLogic implements IGameLogic {
             sceneChanged = true;
             testVar = true;
         }
+
+        if (window.isKeyPressed(GLFW_KEY_LEFT)) {
+            angleInc -= 0.05f;
+        } else if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
+            angleInc += 0.05f;
+        } else {
+            angleInc = 0;
+        }
     }
 
     @Override
@@ -220,6 +230,20 @@ public class GameLogic implements IGameLogic {
 //            camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z);
 //
 //        }
+
+        lightAngle += angleInc;
+        if (lightAngle < 0) {
+            lightAngle = 0;
+        } else if (lightAngle > 180) {
+            lightAngle = 180;
+        }
+        float zValue = (float) Math.cos(Math.toRadians(lightAngle));
+        float yValue = (float) Math.sin(Math.toRadians(lightAngle));
+        Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
+        lightDirection.x = 0;
+        lightDirection.y = yValue;
+        lightDirection.z = zValue;
+        lightDirection.normalize();
 
 
 
