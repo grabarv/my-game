@@ -218,7 +218,7 @@ public class GameLogic implements IGameLogic {
 
         cameraInc.set(realMovement, cameraInc.z);
 
-//        animateCameraRotation(0.25f, 2.5f);
+        animateCameraRotation(0.25f, 2.5f);
 
         camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z + cameraInc.z * 0.05f);
 
