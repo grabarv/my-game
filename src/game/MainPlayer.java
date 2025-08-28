@@ -120,6 +120,7 @@ public class MainPlayer extends GameItem {
      */
     public boolean canMove(String direction) {
 
+        return true;
         /* To check can player move in selected direction or not we have to find the nearest possible block positions in selected direction
             and then check if there are blocks.
             Also, we need to consider the fact that if a player is overlying with one of the side blocks and the overlying percent is small,
@@ -127,7 +128,7 @@ public class MainPlayer extends GameItem {
          */
 
         // Input check
-        if(!Utils.isStringInArray(direction.toLowerCase(), new String[] {"up", "down", "left", "right"})) {
+       /* if(!Utils.isStringInArray(direction.toLowerCase(), new String[] {"up", "down", "left", "right"})) {
             return false;
         }
 
@@ -236,7 +237,7 @@ public class MainPlayer extends GameItem {
             return Utils.isValueSmallerThen(intersection.x, intersectionThreshold);
         } else {
             return Utils.isValueSmallerThen(intersection.y, intersectionThreshold);
-        }
+        }*/
     }
 
     private Vector2i getPlayerPosInBlockMap(MapManger map) {

@@ -37,7 +37,7 @@ public class GameLogic implements IGameLogic {
 
 //    private Vector2f angleInc;
 
-    private Vector3f lightAngle;
+    private float lightAngle;
 
     private boolean firstTime;
 
@@ -53,7 +53,7 @@ public class GameLogic implements IGameLogic {
 
     public static boolean testVar;
 
-    private Vector3f angleInc;
+    private float angleInc;
 
 
     public GameLogic() {
@@ -62,9 +62,9 @@ public class GameLogic implements IGameLogic {
         camera = new Camera();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
     //        angleInc = new Vector2f(0f, 0f);
-    angleInc = new Vector3f();
-    lightAngle = new Vector3f(0, 8, 5f);
-        firstTime = true;
+        angleInc = 0;
+        lightAngle = 90;
+    firstTime = true;
 
     }
 
@@ -154,8 +154,8 @@ public class GameLogic implements IGameLogic {
         sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
-        float lightIntensity = 1.0f;
-        Vector3f lightDirection = new Vector3f(lightAngle.x, lightAngle.y, lightAngle.z);
+        float lightIntensity = 5.0f;
+        Vector3f lightDirection = new Vector3f(0, 1, 1);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
         sceneLight.setDirectionalLight(directionalLight);
 
@@ -215,27 +215,13 @@ public class GameLogic implements IGameLogic {
         }
 
         if (window.isKeyPressed(GLFW_KEY_LEFT)) {
-            angleInc.x -= 0.005f;
+            sceneChanged = true;
+            angleInc -= 0.05f;
         } else if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
-            angleInc.x += 0.005f;
+            sceneChanged = true;
+            angleInc += 0.05f;
         } else {
-            angleInc.x = 0;
-        }
-
-        if (window.isKeyPressed(GLFW_KEY_UP)) {
-            angleInc.y += 0.005f;
-        } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
-            angleInc.y -= 0.005f;
-        } else {
-            angleInc.y = 0;
-        }
-
-        if (window.isKeyPressed(GLFW_KEY_O)) {
-            angleInc.z -= 0.005f;
-        } else if (window.isKeyPressed(GLFW_KEY_P)) {
-            angleInc.z += 0.005f;
-        } else {
-            angleInc.z = 0;
+            angleInc = 0;
         }
         //-0.7701382 0.04165437 0.6365155
 
@@ -275,24 +261,21 @@ public class GameLogic implements IGameLogic {
 //
 //        }
 
-        lightAngle.x += angleInc.x;
-        lightAngle.y += angleInc.y;
-        lightAngle.z += angleInc.z;
-
-        /*if (lightAngle < 0) {
+        lightAngle += angleInc;
+        if (lightAngle < 0) {
             lightAngle = 0;
         } else if (lightAngle > 180) {
             lightAngle = 180;
-        }*/
-
-//        float zValue = (float) Math.cos(Math.toRadians(lightAngle));
-//        float yValue = (float) Math.sin(Math.toRadians(lightAngle));
+        }
+        System.out.println(lightAngle);
+        float zValue = (float) Math.cos(Math.toRadians(lightAngle));
+        float yValue = (float) Math.sin(Math.toRadians(lightAngle));
         Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
-        lightDirection.x = lightAngle.x;
-        lightDirection.y = lightAngle.y;
-        lightDirection.z = lightAngle.z;
+        lightDirection.x = 0;
+        lightDirection.y = yValue;
+        lightDirection.z = zValue;
 //        lightDirection.normalize();
-//        System.out.println(lightDirection.x + " " + lightDirection.y + " " + lightDirection.z);
+        System.out.println(lightDirection.x + " " + lightDirection.y + " " + lightDirection.z);
 
         // Update camera position
 //        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
