@@ -150,7 +150,7 @@ public class GameLogic implements IGameLogic {
         scene.setSceneLight(sceneLight);
 
         // Ambient Light
-        sceneLight.setAmbientLight(new Vector3f(0.2f, 0.2f, 0.2f));
+        sceneLight.setAmbientLight(new Vector3f(0.0f, 0.0f, 0.0f));
         sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
@@ -251,8 +251,8 @@ public class GameLogic implements IGameLogic {
             camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
             sceneChanged = true;
         }
-        System.out.println("--------");
-        System.out.println(camera.getPosition().x + " " + camera.getPosition().y + " " + camera.getPosition().z);
+//        System.out.println("--------");
+//        System.out.println(camera.getPosition().x + " " + camera.getPosition().y + " " + camera.getPosition().z);
 
         sceneChanged = true;
 
@@ -292,7 +292,7 @@ public class GameLogic implements IGameLogic {
         lightDirection.y = lightAngle.y;
         lightDirection.z = lightAngle.z;
 //        lightDirection.normalize();
-        System.out.println(lightDirection.x + " " + lightDirection.y + " " + lightDirection.z);
+//        System.out.println(lightDirection.x + " " + lightDirection.y + " " + lightDirection.z);
 
         // Update camera position
 //        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);

@@ -14,7 +14,7 @@ public class Main {
             opts.cullFace = false;
             opts.showFps = true;
             opts.antialiasing = true;
-            opts.frustumCulling = false;
+            opts.frustumCulling = true;
             opts.showTriangles = false;
             GameEngine gameEng = new GameEngine("GAME", vSync, opts, gameLogic);
             gameEng.run();
