@@ -58,6 +58,7 @@ public class Renderer {
         setupSkyBoxShader();
         setupSceneShader();
         setupParticlesShader();
+
     }
 
     public void render(Window window, Camera camera, Scene scene, boolean sceneChanged) {
@@ -83,8 +84,8 @@ public class Renderer {
         renderSkyBox(window, camera, scene);
         renderParticles(window, camera, scene);
 
-        //renderAxes(camera);
-        //renderCrossHair(window);
+//        renderAxes(window, camera);
+//        renderCrossHair(window);
     }
 
     private void setupParticlesShader() throws Exception {

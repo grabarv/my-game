@@ -37,7 +37,7 @@ public class GameLogic implements IGameLogic {
 
 //    private Vector2f angleInc;
 
-    private float lightAngle;
+    private Vector3f lightAngle;
 
     private boolean firstTime;
 
@@ -53,7 +53,7 @@ public class GameLogic implements IGameLogic {
 
     public static boolean testVar;
 
-    private float angleInc = 0f;
+    private Vector3f angleInc;
 
 
     public GameLogic() {
@@ -61,9 +61,9 @@ public class GameLogic implements IGameLogic {
         hud = new Hud();
         camera = new Camera();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
-//        angleInc = new Vector2f(0f, 0f);
-        angleInc = 0;
-        lightAngle = 45;
+    //        angleInc = new Vector2f(0f, 0f);
+    angleInc = new Vector3f();
+    lightAngle = new Vector3f(0, 8, 5f);
         firstTime = true;
 
     }
@@ -100,8 +100,8 @@ public class GameLogic implements IGameLogic {
             scene.setRenderShadows(true);
 
     // Fog
-    Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
-        scene.setFog(new Fog(true, fogColour, 0.02f));
+    Vector3f fogColour = new Vector3f(0.3f, 0.3f, 0.3f);
+//        scene.setFog(new Fog(true, fogColour, 0.2f));
 
         // Setup  SkyBox
         float skyBoxScale = 500f;
@@ -150,26 +150,26 @@ public class GameLogic implements IGameLogic {
         scene.setSceneLight(sceneLight);
 
         // Ambient Light
-        sceneLight.setAmbientLight(new Vector3f(0.8f, 0.8f, 0.8f));
+        sceneLight.setAmbientLight(new Vector3f(0.2f, 0.2f, 0.2f));
         sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
         float lightIntensity = 1.0f;
-        Vector3f lightDirection = new Vector3f(0, 1, 1);
+        Vector3f lightDirection = new Vector3f(lightAngle.x, lightAngle.y, lightAngle.z);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
         sceneLight.setDirectionalLight(directionalLight);
 
 
         // Point Light
-        Vector3f lightPosition = new Vector3f(31.6f, -1.8f, 2);
+        /*Vector3f lightPosition = new Vector3f(31.6f, -1.8f, 2);
         lightIntensity = 1.0f;
         PointLight pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);
         sceneLight.setPointLightList(new PointLight[]{pointLight});
-
+*/
         // Spot Light
-        lightPosition = new Vector3f(31.6f, -1.8f, 2f);
+  /*      lightPosition = new Vector3f(31.6f, -1.8f, 2f);
         pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
         att = new PointLight.Attenuation(0.0f, 0.0f, 0.02f);
         pointLight.setAttenuation(att);
@@ -177,7 +177,7 @@ public class GameLogic implements IGameLogic {
         float cutoff = (float) Math.cos(Math.toRadians(140));
         SpotLight spotLight = new SpotLight(pointLight, coneDir, cutoff);
         sceneLight.setSpotLightList(new SpotLight[]{spotLight, new SpotLight(spotLight)});
-    }
+  */  }
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
@@ -215,12 +215,30 @@ public class GameLogic implements IGameLogic {
         }
 
         if (window.isKeyPressed(GLFW_KEY_LEFT)) {
-            angleInc -= 0.05f;
+            angleInc.x -= 0.005f;
         } else if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
-            angleInc += 0.05f;
+            angleInc.x += 0.005f;
         } else {
-            angleInc = 0;
+            angleInc.x = 0;
         }
+
+        if (window.isKeyPressed(GLFW_KEY_UP)) {
+            angleInc.y += 0.005f;
+        } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
+            angleInc.y -= 0.005f;
+        } else {
+            angleInc.y = 0;
+        }
+
+        if (window.isKeyPressed(GLFW_KEY_O)) {
+            angleInc.z -= 0.005f;
+        } else if (window.isKeyPressed(GLFW_KEY_P)) {
+            angleInc.z += 0.005f;
+        } else {
+            angleInc.z = 0;
+        }
+        //-0.7701382 0.04165437 0.6365155
+
     }
 
     @Override
@@ -233,6 +251,8 @@ public class GameLogic implements IGameLogic {
             camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
             sceneChanged = true;
         }
+        System.out.println("--------");
+        System.out.println(camera.getPosition().x + " " + camera.getPosition().y + " " + camera.getPosition().z);
 
         sceneChanged = true;
 
@@ -255,23 +275,24 @@ public class GameLogic implements IGameLogic {
 //
 //        }
 
-        lightAngle += angleInc;
-        if (lightAngle < 0) {
+        lightAngle.x += angleInc.x;
+        lightAngle.y += angleInc.y;
+        lightAngle.z += angleInc.z;
+
+        /*if (lightAngle < 0) {
             lightAngle = 0;
         } else if (lightAngle > 180) {
             lightAngle = 180;
-        }
-        float zValue = (float) Math.cos(Math.toRadians(lightAngle));
-        float yValue = (float) Math.sin(Math.toRadians(lightAngle));
+        }*/
+
+//        float zValue = (float) Math.cos(Math.toRadians(lightAngle));
+//        float yValue = (float) Math.sin(Math.toRadians(lightAngle));
         Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
-        lightDirection.x = 0;
-        lightDirection.y = yValue;
-        lightDirection.z = zValue;
-        lightDirection.normalize();
-
-        System.out.println(camera.getPosition().x + " " + camera.getPosition().y + " " + camera.getPosition().z);
-
-        //0.0 -1.0 0.0 0.2
+        lightDirection.x = lightAngle.x;
+        lightDirection.y = lightAngle.y;
+        lightDirection.z = lightAngle.z;
+//        lightDirection.normalize();
+        System.out.println(lightDirection.x + " " + lightDirection.y + " " + lightDirection.z);
 
         // Update camera position
 //        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);

@@ -1,6 +1,6 @@
 # For description look in gameobj.guide
 m name house1
-m width 40
+m width 30
 m height 31
 m clearArea true
 
