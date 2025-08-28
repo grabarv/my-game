@@ -70,9 +70,9 @@ public class Renderer {
         }
 
         // Render depth map before view ports has been set up
-//        if (scene.isRenderShadows() && sceneChanged) {
-//            shadowRenderer.render(window, scene, camera, transformation, this);
-//        }
+        if (scene.isRenderShadows() && sceneChanged) {
+            shadowRenderer.render(window, scene, camera, transformation, this);
+        }
 
         glViewport(0, 0, window.getWidth(), window.getHeight());
 

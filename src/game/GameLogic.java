@@ -1,6 +1,9 @@
 package game;
 
 import engine.graph.*;
+import engine.graph.lights.PointLight;
+import engine.graph.lights.SpotLight;
+import engine.graph.weather.Fog;
 import game.world.MapManger;
 import org.joml.*;
 
@@ -59,7 +62,8 @@ public class GameLogic implements IGameLogic {
         camera = new Camera();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
 //        angleInc = new Vector2f(0f, 0f);
-        lightAngle = 90;
+        angleInc = 0;
+        lightAngle = 45;
         firstTime = true;
 
     }
@@ -93,11 +97,11 @@ public class GameLogic implements IGameLogic {
     //        scene.setGameItems(new GameItem[]{animItem, terrain});
 
     // Shadows
-    //        scene.setRenderShadows(true);
+            scene.setRenderShadows(true);
 
     // Fog
     Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
-//        scene.setFog(new Fog(true, fogColour, 0.02f));
+        scene.setFog(new Fog(true, fogColour, 0.02f));
 
         // Setup  SkyBox
         float skyBoxScale = 500f;
@@ -146,7 +150,7 @@ public class GameLogic implements IGameLogic {
         scene.setSceneLight(sceneLight);
 
         // Ambient Light
-        sceneLight.setAmbientLight(new Vector3f(1f, 1f, 1f));
+        sceneLight.setAmbientLight(new Vector3f(0.8f, 0.8f, 0.8f));
         sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
@@ -154,6 +158,25 @@ public class GameLogic implements IGameLogic {
         Vector3f lightDirection = new Vector3f(0, 1, 1);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
         sceneLight.setDirectionalLight(directionalLight);
+
+
+        // Point Light
+        Vector3f lightPosition = new Vector3f(31.6f, -1.8f, 2);
+        lightIntensity = 1.0f;
+        PointLight pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
+        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+        pointLight.setAttenuation(att);
+        sceneLight.setPointLightList(new PointLight[]{pointLight});
+
+        // Spot Light
+        lightPosition = new Vector3f(31.6f, -1.8f, 2f);
+        pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
+        att = new PointLight.Attenuation(0.0f, 0.0f, 0.02f);
+        pointLight.setAttenuation(att);
+        Vector3f coneDir = new Vector3f(0, 0, -1);
+        float cutoff = (float) Math.cos(Math.toRadians(140));
+        SpotLight spotLight = new SpotLight(pointLight, coneDir, cutoff);
+        sceneLight.setSpotLightList(new SpotLight[]{spotLight, new SpotLight(spotLight)});
     }
 
     @Override
@@ -203,6 +226,7 @@ public class GameLogic implements IGameLogic {
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
 
+        // For debugging
         if (mouseInput.isRightButtonPressed()) {
             // Update camera based on mouse
             Vector2f rotVec = mouseInput.getDisplVec();
@@ -218,7 +242,7 @@ public class GameLogic implements IGameLogic {
 
         cameraInc.set(realMovement, cameraInc.z);
 
-        animateCameraRotation(0.25f, 2.5f);
+//        animateCameraRotation(0.25f, 2.5f);
 
         camera.setPosition(playerItem.getPosition().x, playerItem.getPosition().y, camera.getPosition().z + cameraInc.z * 0.05f);
 
@@ -245,27 +269,12 @@ public class GameLogic implements IGameLogic {
         lightDirection.z = zValue;
         lightDirection.normalize();
 
-
+        System.out.println(camera.getPosition().x + " " + camera.getPosition().y + " " + camera.getPosition().z);
 
         //0.0 -1.0 0.0 0.2
 
         // Update camera position
 //        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
-        /*
-        lightAngle += angleInc;
-        if (lightAngle < 0) {
-            lightAngle = 0;
-        } else if (lightAngle > 180) {
-            lightAngle = 180;
-        }
-        float zValue = (float) Math.cos(Math.toRadians(lightAngle));
-        float yValue = (float) Math.sin(Math.toRadians(lightAngle));
-        Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
-        lightDirection.x = 0;
-        lightDirection.y = yValue;
-        lightDirection.z = zValue;
-        lightDirection.normalize();
-*/
         camera.updateViewMatrix();
 
     }
