@@ -154,8 +154,8 @@ public class GameLogic implements IGameLogic {
         sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
-        float lightIntensity = 5.0f;
-        Vector3f lightDirection = new Vector3f(0, 1, 1);
+        float lightIntensity = 1.0f;
+        Vector3f lightDirection = new Vector3f(-100f, 100f, 1.5f);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
         sceneLight.setDirectionalLight(directionalLight);
 
@@ -268,12 +268,11 @@ public class GameLogic implements IGameLogic {
             lightAngle = 180;
         }
         System.out.println(lightAngle);
-        float zValue = (float) Math.cos(Math.toRadians(lightAngle));
+        float xValue = (float) Math.cos(Math.toRadians(lightAngle));
         float yValue = (float) Math.sin(Math.toRadians(lightAngle));
         Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
-        lightDirection.x = 0;
-        lightDirection.y = yValue;
-        lightDirection.z = zValue;
+//        lightDirection.x = xValue;
+//        lightDirection.y = yValue;
 //        lightDirection.normalize();
         System.out.println(lightDirection.x + " " + lightDirection.y + " " + lightDirection.z);
 
