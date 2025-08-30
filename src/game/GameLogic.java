@@ -1,22 +1,15 @@
 package game;
 
 import engine.graph.*;
-import game.world.MapManger;
 import org.joml.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 import engine.IGameLogic;
 import engine.MouseInput;
 import engine.Scene;
-import engine.SceneLight;
 import engine.Window;
 import engine.graph.anim.AnimGameItem;
 import engine.graph.anim.Animation;
-import engine.graph.lights.DirectionalLight;
-import engine.items.GameItem;
-import engine.items.SkyBox;
-
-import java.lang.Math;
 
 public class GameLogic implements IGameLogic {
 
@@ -69,7 +62,7 @@ public class GameLogic implements IGameLogic {
 
         scene = new Scene();
         gameLoader = new GameManager(scene, camera);
-        gameLoader.init();
+        gameLoader.load();
 //        angleInc = new Vector2f(0f,0f);
 
     //        Mesh[] terrainMesh = StaticMeshesLoader.loadGameObject("resources/models/terrain/terrain.obj",

@@ -10,8 +10,8 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import utils.Utils;
 import utils.loaders.GameFilesLoader;
+import utils.loaders.assimp.StaticMeshesLoader;
 import utils.loaders.obj.OBJLoader;
-import game.MainPlayer;
 import game.records.StructureDescription;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -358,4 +358,6 @@ public class MapManger {
     public static Vector2f getBlockSize() {
         return new Vector2f(2f * blocksScale, 2f * blocksScale);
     }
+
+
 }

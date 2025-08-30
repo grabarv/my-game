@@ -5,6 +5,7 @@ import engine.Scene;
 import engine.graph.Camera;
 import engine.items.GameItem;
 import engine.items.SkyBox;
+import game.world.MainPlayer;
 import game.world.MapManger;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -17,12 +18,13 @@ public class GameManager {
     LightController lightController;
     MapManger mapManger;
     MainPlayer player;
+
     public GameManager(Scene scene, Camera camera) {
         this.camera = camera;
         this.scene = scene;
         lightController = new LightController(scene);
     }
-    public void init() throws Exception {
+    public void load() throws Exception {
         camera.getPosition().x = 0f;
         camera.getPosition().y = 0f;
         camera.getPosition().z = 4f;
