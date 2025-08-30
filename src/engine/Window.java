@@ -252,6 +252,8 @@ public class Window {
 
         public boolean antialiasing;
 
-        public boolean frustumCulling;        
+        public boolean frustumCulling;
+
+        public boolean loadStarterUI;
     }
 }

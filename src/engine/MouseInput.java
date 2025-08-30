@@ -18,6 +18,8 @@ public class MouseInput {
 
     private boolean rightButtonPressed = false;
 
+    public static final float MOUSE_SENSITIVITY = 0.2f;
+
     public MouseInput() {
         previousPos = new Vector2d(-1, -1);
         currentPos = new Vector2d(0, 0);

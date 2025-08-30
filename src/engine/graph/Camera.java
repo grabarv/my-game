@@ -67,4 +67,26 @@ public class Camera {
         rotation.y += offsetY;
         rotation.z += offsetZ;
     }
+
+    public void animateCameraRotation(Vector3f cameraInc, float stepChange, float maxValue) {
+        float xRotation = getRotation().x;
+        float yRotation = getRotation().y;
+        if (cameraInc.x == 0) {
+            yRotation -= Math.signum(yRotation) * stepChange;
+        } else {
+            yRotation += cameraInc.x * stepChange;
+            if(Math.abs(yRotation) > maxValue) {
+                yRotation = Math.signum(yRotation) * maxValue;
+            }
+        }
+        if(cameraInc.y == 0) {
+            xRotation -= Math.signum(xRotation) * stepChange;
+        } else {
+            xRotation -= cameraInc.y * stepChange;
+            if(Math.abs(xRotation) > maxValue) {
+                xRotation = Math.signum(xRotation) * maxValue;
+            }
+        }
+        setRotation(xRotation, yRotation, getRotation().z);
+    }
 }
