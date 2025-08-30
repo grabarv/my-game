@@ -18,13 +18,16 @@ public class GameManager {
     LightController lightController;
     MapManger mapManger;
     MainPlayer player;
+    boolean isLoaded;
 
     public GameManager(Scene scene, Camera camera) {
         this.camera = camera;
         this.scene = scene;
         lightController = new LightController(scene);
+        isLoaded = false;
     }
     public void load() throws Exception {
+        isLoaded = true;
         camera.getPosition().x = 0f;
         camera.getPosition().y = 0f;
         camera.getPosition().z = 4f;
@@ -61,6 +64,9 @@ public class GameManager {
     }
 
     public void updateGameState(Vector3f cameraInc, float angleInc, MouseInput mouseInput) {
+        if(!isLoaded) {
+            throw new RuntimeException("Game is`nt loaded.");
+        }
         if (mouseInput.isRightButtonPressed()) {
             // Update camera based on mouse
             Vector2f rotVec = mouseInput.getDisplVec();

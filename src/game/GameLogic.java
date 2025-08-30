@@ -42,6 +42,7 @@ public class GameLogic implements IGameLogic {
 
     private boolean gameLoaded = false;
     private GameManager gameLoader;
+    private UI ui;
 
 
     public GameLogic() {
@@ -61,8 +62,14 @@ public class GameLogic implements IGameLogic {
         renderer.init(window);
 
         scene = new Scene();
+
+        ui = new UI();
+
         gameLoader = new GameManager(scene, camera);
-        gameLoader.load();
+
+        // gameLoader.load();
+
+
 //        angleInc = new Vector2f(0f,0f);
 
     //        Mesh[] terrainMesh = StaticMeshesLoader.loadGameObject("resources/models/terrain/terrain.obj",
@@ -146,7 +153,7 @@ public class GameLogic implements IGameLogic {
 
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
-        gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
+//        gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
         camera.updateViewMatrix();
 
     }
@@ -165,7 +172,6 @@ public class GameLogic implements IGameLogic {
     @Override
     public void cleanup() {
         renderer.cleanup();
-
         scene.cleanup();
     }
 
