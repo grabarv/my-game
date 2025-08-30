@@ -12,11 +12,33 @@ import org.joml.Vector2i;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class for loading game object definitions and structure descriptions
+ * from external resource files. Provides parsing of custom `.gameobj` files
+ * into {@link GameObject}, and reading structure metadata into
+ * {@link StructureDescription}.
+ */
 public class GameFilesLoader {
 
+    /** Special values (constants) used in parsing and evaluation of expressions. */
     static Map<String, Float> specialValues;
 
-    public static GameObject loadGameObject(String name, Map<String, Mesh[]> meshMap, Map<String, StructureDescription> structureDescriptionMap,  Vector2i startPos)  {
+    /**
+     * Loads a game object from a {@code .gameobj} file, parses its blocks, walls,
+     * and structures, and instantiates the corresponding game entities.
+     *
+     * @param name name of the game object (file name without extension, loaded from {@code /game-objects/})
+     * @param meshMap cache of meshes for object instancing
+     * @param structureDescriptionMap metadata describing available structures
+     * @param startPos top-left position in the map grid where the object is placed
+     * @return fully constructed {@link GameObject} instance
+     *
+     * @throws RuntimeException if file parsing fails or arguments are invalid
+     */
+    public static GameObject loadGameObject(String name,
+                                            Map<String, Mesh[]> meshMap,
+                                            Map<String, StructureDescription> structureDescriptionMap,
+                                            Vector2i startPos)  {
         specialValues = new HashMap<>();
         specialValues.put("z_block", MapManger.worldBlockZIndex);
         specialValues.put("z_wall", MapManger.worldWallZIndex);
@@ -35,6 +57,8 @@ public class GameFilesLoader {
                 }
                 String[] arguments = line.split(" ");
                 checkLength(arguments.length, getMinLengthForInputType(arguments[0]));
+
+                // Metadata block
                 if(arguments[0].equalsIgnoreCase("m")) {
                     if(arguments[1].equalsIgnoreCase("name")) {
                         object.setName(arguments[2]);
@@ -49,37 +73,39 @@ public class GameFilesLoader {
                     } else if(arguments[1].equalsIgnoreCase("clearArea") && arguments[2].equalsIgnoreCase("true")) {
                         object.setClearArea(true);
                     }
-                } else if(arguments[0].equalsIgnoreCase("b")){
+                }
+                // Single block or wall
+                else if(arguments[0].equalsIgnoreCase("b")){
                     String type = arguments[1];
                     int x = Integer.parseInt(arguments[2]);
                     int y = Integer.parseInt(arguments[3]);
                     Quaternionf rotation = checkRotation(arguments);
                     if(type.startsWith("wall_")) {
-                        Wall wall =
-                            new Wall(meshMap.getOrDefault(type, null), true,
-                                    new Vector2i(startPos.x + x, startPos.y + y));
+                        Wall wall = new Wall(meshMap.getOrDefault(type, null), true,
+                                new Vector2i(startPos.x + x, startPos.y + y));
                         object.addWall(wall);
                         wall.setRotation(rotation);
                     } else {
-
                         Block block = new Block(meshMap.getOrDefault(type, null), true,
                                 new Vector2i(startPos.x + x, startPos.y + y));
                         object.addBlock(block);
                         block.setRotation(rotation);
                     }
-                } else if(arguments[0].equalsIgnoreCase("ba")) {
+                }
+                // Block/wall area (multiple placed in grid)
+                else if(arguments[0].equalsIgnoreCase("ba")) {
                     String type = arguments[1];
                     int x1 = Integer.parseInt(arguments[2]);
                     int y1 = Integer.parseInt(arguments[3]);
                     int x2 = Integer.parseInt(arguments[4]);
                     int y2 = Integer.parseInt(arguments[5]);
                     Quaternionf rotation = checkRotation(arguments);
+
                     if(type.startsWith("wall_")) {
                         for(int x = x1; x <= x2; x++) {
                             for(int y = y1; y <= y2; y++) {
                                 Wall wall = new Wall(meshMap.getOrDefault(type, null), true,
                                         new Vector2i(startPos.x + x, startPos.y + y));
-
                                 wall.setRotation(rotation);
                                 object.addWall(wall);
                             }
@@ -89,19 +115,21 @@ public class GameFilesLoader {
                             for(int y = y1; y <= y2; y++) {
                                 Block block = new Block(meshMap.getOrDefault(type, null), true,
                                         new Vector2i(startPos.x + x, startPos.y + y));
-
                                 block.setRotation(rotation);
                                 object.addBlock(block);
                             }
                         }
                     }
-                } else if(arguments[0].equalsIgnoreCase("s")){
+                }
+                // Structure placement
+                else if(arguments[0].equalsIgnoreCase("s")){
                     String type = arguments[1];
                     float zIndex = (float) MathEvaluator.eval(arguments[2], specialValues);
                     boolean canMoveThrow = Boolean.parseBoolean(arguments[3]);
                     int x = Integer.parseInt(arguments[4]);
                     int y = Integer.parseInt(arguments[5]);
                     Quaternionf rotation = checkRotation(arguments);
+
                     Vector2i sizeInBlocks;
                     Vector3f modelSize;
                     String typeWithoutStruct = type;
@@ -118,7 +146,8 @@ public class GameFilesLoader {
                     }
                     Structure structure = new Structure(meshMap.getOrDefault(type, null),
                             true, typeWithoutStruct,
-                            new Vector2i(startPos.x + x, startPos.y + y), sizeInBlocks,zIndex, canMoveThrow, modelSize);
+                            new Vector2i(startPos.x + x, startPos.y + y),
+                            sizeInBlocks, zIndex, canMoveThrow, modelSize);
                     structure.setRotation(rotation);
                     object.addStructure(structure);
                 }
@@ -129,6 +158,13 @@ public class GameFilesLoader {
         }
     }
 
+    /**
+     * Loads structure descriptions (size, model path, etc.) from a given text file.
+     * Each line in the file defines a structure with metadata.
+     *
+     * @param path resource path to the description file
+     * @return map of structure names to {@link StructureDescription}
+     */
     public static Map<String, StructureDescription> loadStructDescription(String path) {
         Map<String, StructureDescription> result = new HashMap<>();
 
@@ -142,9 +178,13 @@ public class GameFilesLoader {
                 checkLength(arguments.length, 6);
                 String[] size = arguments[5].split(",");
                 checkLength(size.length, 3);
-                StructureDescription structureDescription = new StructureDescription(new Vector2i(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2])),
-                        arguments[3], Boolean.parseBoolean(arguments[4]),
-                        new Vector3f(Float.parseFloat(size[0]), Float.parseFloat(size[1]), Float.parseFloat(size[1])));
+
+                StructureDescription structureDescription = new StructureDescription(
+                        new Vector2i(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2])),
+                        arguments[3],
+                        Boolean.parseBoolean(arguments[4]),
+                        new Vector3f(Float.parseFloat(size[0]), Float.parseFloat(size[1]), Float.parseFloat(size[1]))
+                );
                 result.put(arguments[0], structureDescription);
             }
         } catch (Exception e) {
@@ -153,6 +193,13 @@ public class GameFilesLoader {
         return result;
     }
 
+    /**
+     * Ensures that argument count meets the minimum expected length.
+     *
+     * @param amount actual number of arguments
+     * @param min    minimum required number
+     * @throws RuntimeException if too few arguments
+     */
     private static void checkLength(int amount, int min) {
         if(amount < min) {
             throw new RuntimeException("Wrong game object structure");
@@ -160,14 +207,17 @@ public class GameFilesLoader {
     }
 
     /**
+     * Parses and constructs a {@link Quaternionf} rotation from the arguments array,
+     * if provided at the end of the line. Rotation values are expected as
+     * comma-separated floats (x,y,z[,w]).
      *
      * @param arguments all arguments from one line
-     * @return Returns rotation or -1.0f if rotation is not possible for this block
+     * @return rotation quaternion (default 0,0,0,0 if none provided)
      */
     private static Quaternionf checkRotation(String[] arguments) {
         int minLengthWithoutRotation = getMinLengthForInputType(arguments[0]);
         Quaternionf rotation = new Quaternionf(0f, 0f, 0f, 0f);
-            if (arguments.length >= minLengthWithoutRotation + 1) {
+        if (arguments.length >= minLengthWithoutRotation + 1) {
             String[] values = arguments[arguments.length-1].split(",");
             checkLength(values.length, 3);
             rotation.x = Float.parseFloat(values[0]);
@@ -181,8 +231,10 @@ public class GameFilesLoader {
     }
 
     /**
-     * Returns -1 if wrong type specified
+     * Gets the minimum required argument length for a given line type.
      *
+     * @param type the line type (e.g. "m", "b", "ba", "s")
+     * @return minimum length, or -1 if type is invalid
      */
     private static int getMinLengthForInputType(String type) {
         if(type.equalsIgnoreCase("m")) {
@@ -201,4 +253,3 @@ public class GameFilesLoader {
     }
 
 }
-

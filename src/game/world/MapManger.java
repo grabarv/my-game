@@ -22,23 +22,44 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * Manages the game map, including blocks, walls, and structures.
+ * Handles generation, placement, and rendering of map elements
+ * into the game {@link Scene}.
+ */
 public class MapManger {
 
+    /** Map width in blocks. */
     private final int width;
+
+    /** Map height in blocks. */
     private final int height;
 
-    public static final float blocksScale =  0.03333333f;
+    /** Scale factor for block models. */
+    public static final float blocksScale = 0.03333333f;
+
+    /** Scale factor for wall models. */
     public static final float wallScale = 0.06666666f;
 
+    /** Z-index (height offset) for blocks in world space. */
     public static float worldBlockZIndex = 1.5f;
+
+    /** Z-index (height offset) for walls in world space. */
     public static float worldWallZIndex = worldBlockZIndex - 2 * blocksScale;
 
+    /** 2D array of map blocks. */
     private final Block[][] blocks;
+
+    /** 2D array of map walls. */
     private final Wall[][] walls;
+
+    /** List of placed structures on the map. */
     private final ArrayList<Structure> structures;
 
+    /** Descriptions of available structures (loaded from file). */
     private final Map<String, StructureDescription> structureDescriptionMap;
 
+    // File paths to models and metadata
     private final String blockObjPath = "/models/cube.obj";
     private final String smallBlockObjPath = "/models/small_cube.obj";
     private final String quadObjPath = "/models/quad.obj";
@@ -46,15 +67,22 @@ public class MapManger {
     private final String tringleObjectPath = "/models/triangle.obj";
     private final String structureSizeFilePath = "/textures/struct_desc/struct_size.txt";
     private final String pathToModels = "/models/";
+
+    /** Cached meshes for quick object instancing. */
     private Map<String, Mesh[]> meshMap;
 
+    /** Start position of the map (top-left corner in world coordinates). */
+    private final Vector2f startPos = new Vector2f(-1.0f, 1.0f);
 
-  /** The start position is in the left top corner */
-  private final Vector2f startPos = new Vector2f(-1.0f, 1.0f);
-
+    /** Objects to generate on the map (by name). */
     private final String[] objects = new String[] {"house1"};
 
-
+    /**
+     * Creates a new {@code MapManger} with given dimensions.
+     *
+     * @param width  number of blocks in map width
+     * @param height number of blocks in map height
+     */
     public MapManger(int width, int height) {
         this.width = width;
         this.height = height;
@@ -72,6 +100,10 @@ public class MapManger {
         loadMeshesToMap();
     }
 
+    /**
+     * Loads meshes for all available block, wall, and structure textures.
+     * Uses the OBJLoader and assigns materials (including normal maps if available).
+     */
     private void loadMeshesToMap() {
         String dirPath = "resources/textures/map_objects/";
         String dirtPathNormals = "resources/textures/normals/";
@@ -91,6 +123,7 @@ public class MapManger {
                     if(Files.exists(path_normal) && Files.isRegularFile(path_normal)) {
                         m.setNormalMap(new Texture(normalMapPath));
                     }
+
                     if(nameWithoutExt.startsWith("wall_")) {
                         meshMap.put(nameWithoutExt, new Mesh[] {OBJLoader.loadMesh(quadObjPath, 100)});
                         meshMap.put(nameWithoutExt + "_triangle", new Mesh[] {OBJLoader.loadMesh(tringleObjectPath, 100)});
@@ -120,21 +153,21 @@ public class MapManger {
         }
     }
 
-
+    /**
+     * Generates the map: base blocks and pre-defined objects,
+     * then adds them to the scene.
+     *
+     * @param scene game scene to populate with map items
+     */
     public void generateMap(Scene scene) {
-
         generateBaseMap();
-
         generateObjects();
-
         addNewObjectsToScene(scene);
-//        for(int i = (int) Math.floor((double) width /2); i < (int) Math.floor((double) width /2) + 1; i++) {
-//            for(int j = (int) Math.floor((double) height /2); j <  (int) Math.floor((double) height /2) + 1 ; j++){
-//                blocks[i][j].setMeshes(meshMap.get("dirt"));
-//            }
-//        }
     }
 
+    /**
+     * Generates the base layer of the map (e.g. grass/dirt blocks).
+     */
     private void generateBaseMap() {
         int halfOfHeight = (int) Math.floor((double) height /2);
         for(int i = 0; i < width; i++) {
@@ -159,6 +192,9 @@ public class MapManger {
         }
     }
 
+    /**
+     * Generates additional objects (houses, etc.) from predefined names.
+     */
     private void generateObjects() {
         for (String object : objects) {
             Vector2i startPos = new Vector2i(width/2 - 20, height/2 - 30);
@@ -179,10 +215,13 @@ public class MapManger {
         }
     }
 
-
-
-    // TODO: method has a bug, it does not set player exactly at the center.
-
+    /**
+     * Places the player at the approximate center of the map.
+     * (Note: positioning is not perfectly centered, see TODO in code).
+     *
+     * @param camera game camera to update position
+     * @param player main player to place
+     */
     public void putPlayerOnMapCenter(Camera camera, MainPlayer player) {
         float xPos = getMapTopLeftCorner().x + width*blocks[0][0].getSize().x/2;
         float yPos = getMapTopLeftCorner().y - 20*blocks[0][0].getSize().y/2 ;
@@ -190,6 +229,11 @@ public class MapManger {
         player.setPosition(xPos, yPos, player.getPosition().z);
     }
 
+    /**
+     * Adds all generated blocks, walls, and structures into the scene.
+     *
+     * @param scene game scene
+     */
     public void addNewObjectsToScene(Scene scene) {
         for(int i = 0; i < width; i++ ) {
             for (int j = 0; j < height; j++) {
@@ -214,54 +258,79 @@ public class MapManger {
         }
     }
 
+    /** @return map width in blocks */
     public int getWidth() {
         return width;
     }
 
+    /** @return map height in blocks */
     public int getHeight() {
         return height;
     }
+
+    /** @return 2D block array of the map */
     public Block[][] getBlocks() {
         return blocks;
     }
 
+    /** @return starting position (top-left corner) of the map */
     public Vector2f getStartPos() {
         return startPos;
     }
 
+    /** @return block scale factor */
     public float getBlocksScale() {
         return blocksScale;
     }
 
-
-
     /**
+     * Checks if a block exists at given map coordinates.
      *
-     * @param x width index in map array
-     * @param y height index in map array
-     * @return true if there is a block or false if the value in that place in array is null. If specified indexes are negative or bigger then array size then returns false
+     * @param x width index
+     * @param y height index
+     * @return true if block exists and has meshes, false otherwise
      */
     public boolean isThereABlock(int x, int y) {
         if(!checkBlockCoords(x,y)) {
             return false;
         }
-//        System.out.println(x +" " + y);
         return blocks[x][y] != null && blocks[x][y].getMeshes() != null;
     }
 
-
+    /**
+     * @return world position of top-left map corner
+     */
     public Vector2f getMapTopLeftCorner() {
         return new Vector2f(getStartPos().x - blocks[0][0].getSize().x/2f, getStartPos().y + blocks[0][0].getSize().y/2f);
     }
 
+    /**
+     * Checks if given block coordinates are inside the map bounds.
+     *
+     * @param x block x index
+     * @param y block y index
+     * @return true if coordinates are valid, false otherwise
+     */
     public boolean checkBlockCoords(int x, int y) {
         return  !(x < 0 || y < 0 || x >= getWidth() || y >= getHeight());
     }
 
+    /**
+     * Checks if given vector coordinates are inside the map bounds.
+     *
+     * @param coords vector of (x,y) block indices
+     * @return true if inside, false otherwise
+     */
     public boolean checkBlockCoords(Vector2i coords) {
         return checkBlockCoords(coords.x, coords.y);
     }
 
+    /**
+     * Clears an area of the map by removing blocks, walls, and structures.
+     *
+     * @param startOfArea top-left corner of area
+     * @param areaSize    size of area in blocks
+     */
     private void clearMapArea(Vector2i startOfArea, Vector2i areaSize) {
         for(int x = 0; x < areaSize.x; x++) {
             for(int y = 0; y < areaSize.y; y++) {
@@ -283,6 +352,9 @@ public class MapManger {
         }
     }
 
+    /**
+     * @return size of one block in world units (x,y)
+     */
     public static Vector2f getBlockSize() {
         return new Vector2f(2f * blocksScale, 2f * blocksScale);
     }

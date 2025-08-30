@@ -150,7 +150,7 @@ public class GameLogic implements IGameLogic {
         scene.setSceneLight(sceneLight);
 
         // Ambient Light
-        sceneLight.setAmbientLight(new Vector3f(0.0f, 0.0f, 0.0f));
+        sceneLight.setAmbientLight(new Vector3f(1.0f, 1.0f, 1.0f));
         sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
