@@ -42,7 +42,7 @@ public class GameLogic implements IGameLogic {
 
     private boolean gameLoaded = false;
     private GameManager gameLoader;
-    private UI ui;
+
 
 
     public GameLogic() {
@@ -62,8 +62,6 @@ public class GameLogic implements IGameLogic {
         renderer.init(window);
 
         scene = new Scene();
-
-        ui = new UI();
 
         gameLoader = new GameManager(scene, camera);
 
@@ -165,7 +163,7 @@ public class GameLogic implements IGameLogic {
             firstTime = false;
         }
         renderer.render(window, camera, scene, sceneChanged);
-        hud.render(window);
+        hud.renderStartWindow(window);
 
     }
 

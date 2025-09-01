@@ -154,7 +154,7 @@ public class MapManger {
     }
 
     /**
-     * Generates the map: base blocks and pre-defined objects,
+     * Generates the map: base blocks and pre-defined obj`ects,
      * then adds them to the scene.
      *
      * @param scene game scene to populate with map items

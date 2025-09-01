@@ -9,6 +9,8 @@ import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import org.lwjgl.nanovg.NVGColor;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
+
+import org.lwjgl.nanovg.NVGPaint;
 import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import utils.Utils;
@@ -32,6 +34,10 @@ public class Hud {
 
     private int counter;
 
+    int image;
+
+    NVGPaint imgPaint;
+
     public void init(Window window) throws Exception {
         this.vg = window.getOptions().antialiasing ? nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES) : nvgCreate(NVG_STENCIL_STROKES);
         if (this.vg == NULL) {
@@ -48,11 +54,30 @@ public class Hud {
         posx = MemoryUtil.memAllocDouble(1);
         posy = MemoryUtil.memAllocDouble(1);
 
+        image = nvgCreateImage(vg, "resources/textures/map_objects/struct_grass.png", NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
+        if (image == 0) {
+            throw new Exception("Could not load image.");
+        }
+
+        imgPaint = NVGPaint.calloc();
+
         counter = 0;
     }
 
-    public void render(Window window) {
+    private void startRender(Window window) {
         nvgBeginFrame(vg, window.getWidth(), window.getHeight(), 1);
+    }
+
+    private void endRender(Window window) {
+        nvgEndFrame(vg);
+
+        // Restore state
+        window.restoreState();
+    }
+
+
+    public void render(Window window) {
+        startRender(window);
 
         // Upper ribbon
         nvgBeginPath(vg);
@@ -99,11 +124,56 @@ public class Hud {
         nvgFillColor(vg, rgba(0xe6, 0xea, 0xed, 255, colour));
         nvgText(vg, window.getWidth() - 150, window.getHeight() - 95, dateFormat.format(new Date()));
 
+        endRender(window);
+    }
 
-        nvgEndFrame(vg);
+    public void renderStartWindow(Window window) {
 
-        // Restore state
-        window.restoreState();
+        float width;
+        float height;
+        float x;
+        float y;
+
+        x = 0;
+        y = 0;
+        width = 1024;
+        height = 1024;
+
+        startRender(window);
+
+
+        nvgBeginPath(vg);
+        nvgRect(vg, 0,0, window.getWidth(), window.getHeight());
+        // Create the pattern (sx, sy = size of the image region to draw)
+        nvgImagePattern(vg, x, y, width, height, 0.0f, image, 1.0f, imgPaint);
+
+        // Apply it as fill
+        nvgFillPaint(vg, imgPaint);
+//        nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 200, colour));
+        nvgFill(vg);
+
+        x = window.getWidth() / 2f - window.getWidth() / 8f - 100;
+        y = window.getHeight() / 2f - window.getHeight() / 16f;
+        width = window.getWidth() / 8f;
+        height = window.getHeight() / 8f;
+
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, x, y, width, height, 30);
+        nvgFillColor(vg, rgba(0xff, 0xff, 0x00, 500, colour));
+        nvgFill(vg);
+
+        x = window.getWidth() / 2f + 100;
+        y = window.getHeight() / 2f - window.getHeight() / 16f;
+        width = window.getWidth() / 8f;
+        height = window.getHeight() / 8f;
+
+
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, x, y, width, height, 30);
+        nvgFillColor(vg, rgba(0xff, 0xff, 0x00, 500, colour));
+        nvgFill(vg);
+
+        endRender(window);
     }
 
     public void incCounter() {
@@ -123,6 +193,7 @@ public class Hud {
     }
 
     public void cleanup() {
+        imgPaint.free();
         nvgDelete(vg);
         if (posx != null) {
             MemoryUtil.memFree(posx);
