@@ -15,7 +15,6 @@ import utils.loaders.obj.OBJLoader;
 import game.records.StructureDescription;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -1,9 +1,7 @@
 package utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -17,6 +15,8 @@ import org.joml.Quaternionf;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 
+import javax.imageio.ImageIO;
+
 public class Utils {
 
     public static String loadResource(String fileName) throws Exception {
@@ -26,6 +26,25 @@ public class Utils {
             result = scanner.useDelimiter("\\A").next();
         }
         return result;
+    }
+
+    public static int[] getImageSize(String imagePath) {
+        try {
+            File file = new File(imagePath);
+            BufferedImage image = ImageIO.read(file);
+
+            if (image != null) {
+                int width = image.getWidth();
+                int height = image.getHeight();
+                return new int[]{width, height};
+            } else {
+                System.err.println("Could not read image: " + imagePath);
+                return null;
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading image: " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<String> readAllLines(String fileName) throws Exception {

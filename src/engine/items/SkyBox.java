@@ -8,10 +8,20 @@ import utils.loaders.assimp.StaticMeshesLoader;
 
 public class SkyBox extends GameItem {
 
-    public SkyBox(String objModel, String textureFile) throws Exception {
+    public SkyBox(String objModel, String textureFile) {
         super(false);
-        Mesh skyBoxMesh = StaticMeshesLoader.load(objModel, "")[0];
-        Texture skyBoxtexture = new Texture(textureFile);
+        Mesh skyBoxMesh = null;
+        try {
+            skyBoxMesh = StaticMeshesLoader.load(objModel, "")[0];
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Texture skyBoxtexture = null;
+        try {
+            skyBoxtexture = new Texture(textureFile);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         skyBoxMesh.setMaterial(new Material(skyBoxtexture, 0.0f));
         setMesh(skyBoxMesh);
         setPosition(0, 0, 0f);

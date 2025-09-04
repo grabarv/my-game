@@ -26,7 +26,7 @@ public class GameManager {
         lightController = new LightController(scene);
         isLoaded = false;
     }
-    public void load() throws Exception {
+    public void loadNewGame() {
         isLoaded = true;
         camera.getPosition().x = 0f;
         camera.getPosition().y = 0f;
@@ -62,6 +62,10 @@ public class GameManager {
 
         scene.setGameItems(new GameItem[] { player});
     }
+    public void loadSavedGame() {
+
+    }
+
 
     public void updateGameState(Vector3f cameraInc, float angleInc, MouseInput mouseInput) {
         if(!isLoaded) {

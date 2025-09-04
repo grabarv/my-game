@@ -50,15 +50,25 @@ public class MainPlayer extends GameItem {
     private final MapManger map;
 
 
-    public MainPlayer(MapManger map) throws Exception {
+    public MainPlayer(MapManger map) {
         super(false);
         this.map = map;
         modelHeight = 2f;
         modelWidth = 1.33332f;
         final String modelPath = "resources/models/main_player.obj";
-        Mesh playerMesh = StaticMeshesLoader.load(modelPath, "", 0)[0];
+        Mesh playerMesh = null;
+        try {
+            playerMesh = StaticMeshesLoader.load(modelPath, "", 0)[0];
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         final String texturePath = "resources/textures/player.png";
-        Texture texture = new Texture(texturePath);
+        Texture texture = null;
+        try {
+            texture = new Texture(texturePath);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         Material material = new Material(texture, 0);
         playerMesh.setMaterial(material);
         setMesh(playerMesh);

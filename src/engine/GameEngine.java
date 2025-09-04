@@ -63,7 +63,7 @@ public class GameEngine implements Runnable {
             input();
 
             while (accumulator >= interval) {
-                update(interval);
+                running = update(interval);
                 accumulator -= interval;
             }
 
@@ -116,13 +116,14 @@ public class GameEngine implements Runnable {
         gameLogic.input(window, mouseInput);
     }
 
-    protected void update(float interval) {
-        gameLogic.update(interval, mouseInput, window);
+    protected boolean update(float interval) {
         ups++;
+        return gameLogic.update(interval, mouseInput, window);
+
     }
 
     protected void render() {
-        gameLogic.render(window);
+        gameLogic.render(window, mouseInput);
         window.update();
         fps++;
     }

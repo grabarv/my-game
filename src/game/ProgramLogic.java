@@ -11,7 +11,7 @@ import engine.Window;
 import engine.graph.anim.AnimGameItem;
 import engine.graph.anim.Animation;
 
-public class GameLogic implements IGameLogic {
+public class ProgramLogic implements IGameLogic {
 
     private final Vector3f cameraInc;
 
@@ -45,7 +45,7 @@ public class GameLogic implements IGameLogic {
 
 
 
-    public GameLogic() {
+    public ProgramLogic() {
         renderer = new Renderer();
         hud = new Hud();
         camera = new Camera();
@@ -58,7 +58,7 @@ public class GameLogic implements IGameLogic {
 
     @Override
     public void init(Window window) throws Exception {
-        hud.init(window);
+        hud.init(window, new String[]{"resources/textures/map_objects/struct_grass.png", "", "", "", "", "","","", "", ""});
         renderer.init(window);
 
         scene = new Scene();
@@ -150,20 +150,45 @@ public class GameLogic implements IGameLogic {
     }
 
     @Override
-    public void update(float interval, MouseInput mouseInput, Window window) {
-//        gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
-        camera.updateViewMatrix();
+    public boolean update(float interval, MouseInput mouseInput, Window window) {
+        if(hud.getHudResult().startGame) {
+            gameLoader.loadNewGame();
+            hud.getHudResult().startGame = false;
+            gameLoaded = true;
+            sceneChanged = true;
+        } else if(hud.getHudResult().loadGame) {
+            gameLoader.loadSavedGame();
+            hud.getHudResult().loadGame = false;
+            gameLoaded = true;
+            sceneChanged = true;
+        } else if (hud.getHudResult().exitGame) {
+            return false;
+        }
 
+        if(gameLoaded) {
+            if (sceneChanged) {
+                gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
+            }
+//        gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
+            camera.updateViewMatrix();
+        }
+
+
+        return true;
     }
 
     @Override
-    public void render(Window window) {
+    public void render(Window window, MouseInput mouseInput) {
         if (firstTime) {
             sceneChanged = true;
             firstTime = false;
         }
         renderer.render(window, camera, scene, sceneChanged);
-        hud.renderStartWindow(window);
+        if(!gameLoaded) {
+            hud.renderStartWindow(window, mouseInput);
+        } else {
+            hud.renderPlayerInventory(window, new String[]{"struct_grass", "", "", "", "", "","","", "", ""}); // Example items
+        }
 
     }
 
