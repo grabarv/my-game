@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,13 +37,15 @@ public class Hud {
     private DoubleBuffer posy;
 
 
-    int backgroundImage;
-
     Map<String, Image> imageMap;
 
     NVGPaint imgPaint;
 
      private HUDResults hudResult;
+
+    private boolean canCloseSettingsInGame = false;
+
+    private boolean canOpenSettingsInGame = false;
 
 
 
@@ -65,100 +66,209 @@ public class Hud {
         posx = MemoryUtil.memAllocDouble(1);
         posy = MemoryUtil.memAllocDouble(1);
 
-        backgroundImage = nvgCreateImage(vg, "resources/textures/map_objects/struct_grass.png", NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
+        imageMap = new HashMap<>();
+
+        int backgroundImage = nvgCreateImage(vg, "resources/textures/map_objects/struct_grass.png", NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
         if (backgroundImage == 0) {
             throw new Exception("Could not load image.");
         }
+        imageMap.put("background", new Image(Utils.getImageSize("resources/textures/map_objects/struct_grass.png"), backgroundImage));
 
-        imageMap = new HashMap<>();
+        int settingsImage = nvgCreateImage(vg, "resources/textures/settings.png", NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
+        if (settingsImage == 0) {
+            throw new Exception("Could not load image.");
+        }
+        imageMap.put("settings", new Image(Utils.getImageSize("resources/textures/settings.png"), settingsImage));
 
         for(String item : items) {
             if(item == null || item.isEmpty()) {
                 continue;
             }
-            int imageId = nvgCreateImage(vg, item, NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
-            if (imageId == 0) {
-                throw new Exception("Could not load image: " + item);
-            }
-
-            Image image = new Image(Utils.getImageSize(item), imageId);
-            if(image.sizeInPixels == null) {
-                throw new Exception("Could not get image size.");
-            }
-            imageMap.put(item.substring(item.lastIndexOf('/') + 1, item.lastIndexOf('.')), image);
-
+            addImageToMap(item);
         }
 
         imgPaint = NVGPaint.calloc();
+    }
 
+    private void addImageToMap(String item) throws Exception {
+        int imageId = nvgCreateImage(vg, item, NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
+        if (imageId == 0) {
+            throw new Exception("Could not load image: " + item);
+        }
 
-
+        Image image = new Image(Utils.getImageSize(item), imageId);
+        if(image.sizeInPixels == null) {
+            throw new Exception("Could not get image size.");
+        }
+        imageMap.put(item.substring(item.lastIndexOf('/') + 1, item.lastIndexOf('.')), image);
 
     }
 
-    private void startRender(Window window) {
+
+    public void startRender(Window window) {
         nvgBeginFrame(vg, window.getWidth(), window.getHeight(), 1);
+
+        glfwGetCursorPos(window.getWindowHandle(), posx, posy);
     }
 
-    private void endRender(Window window) {
+    public void endRender(Window window) {
         nvgEndFrame(vg);
 
         // Restore state
         window.restoreState();
     }
 
-
-    public void render(Window window) {
-        startRender(window);
-
-        // Upper ribbon
+    public void renderHeath(Window window, int health, int maxHealth) {
+        float x, y, width, height;
+        x = 0;
+        y = window.getHeight() - 50;
+        width = window.getWidth() / 5f;
+        height = 40;
         nvgBeginPath(vg);
-        nvgRect(vg, 0, window.getHeight() - 100, window.getWidth(), 50);
-        nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 200, colour));
+        nvgRoundedRect(vg, x, y, width, height, 5);
+        NVGColor color = NVGColor.create();
+
+        nvgFillColor(vg, rgba(128, 128, 128, 150, color));
         nvgFill(vg);
 
-        // Lower ribbon
+        nvgStrokeColor(vg, rgba(0, 0, 0, 256, color));
+        nvgStrokeWidth(vg, 2.0f);
+        nvgStroke(vg);
+
+        float healthWidth = (health / (float) maxHealth) * (width - 4);
         nvgBeginPath(vg);
-        nvgRect(vg, 0, window.getHeight() - 50, window.getWidth(), 10);
-        nvgFillColor(vg, rgba(0xc1, 0xe3, 0xf9, 200, colour));
+        nvgRoundedRect(vg, x + 2, y + 2, healthWidth, height - 4, 5);
+        nvgFillColor(vg, rgba(255, 0, 0, 200, color));
         nvgFill(vg);
 
-        glfwGetCursorPos(window.getWindowHandle(), posx, posy);
-        int xcenter = 50;
-        int ycenter = window.getHeight() - 75;
-        int radius = 20;
-        int x = (int) posx.get(0);
-        int y = (int) posy.get(0);
-        boolean hover = Math.pow(x - xcenter, 2) + Math.pow(y - ycenter, 2) < Math.pow(radius, 2);
-
-        // Circle
-        nvgBeginPath(vg);
-        nvgCircle(vg, xcenter, ycenter, radius);
-        nvgFillColor(vg, rgba(0xc1, 0xe3, 0xf9, 200, colour));
-        nvgFill(vg);
-
-        // Clicks Text
-        nvgFontSize(vg, 25.0f);
+        nvgFontSize(vg, 24.0f);
         nvgFontFace(vg, FONT_NAME);
-        nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
-        if (hover) {
-            nvgFillColor(vg, rgba(0x00, 0x00, 0x00, 255, colour));
-        } else {
-            nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 255, colour));
+        nvgTextAlign(vg, NVG_ALIGN_MIDDLE | NVG_ALIGN_CENTER);
+        nvgFillColor(vg, rgba(255, 255, 255, 255, color));
+        String healthText = "Health: " + health + " / " + maxHealth;
+        nvgText(vg, x + width / 2, y + height / 2, healthText);
 
-        }
-//        nvgText(vg, 50, window.getHeight() - 87, String.format("%02d", counter));
 
-        // Render hour text
-        nvgFontSize(vg, 40.0f);
+    }
+    public void renderStamina(Window window, int stamina, int maxStamina) {
+        float x, y, width, height;
+        x = 0;
+        y = window.getHeight() - 50 - 60;
+        width = window.getWidth() / 5f;
+        height = 40;
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, x, y, width, height, 5);
+        NVGColor color = NVGColor.create();
+
+        nvgFillColor(vg, rgba(128, 128, 128, 150, color));
+        nvgFill(vg);
+
+        nvgStrokeColor(vg, rgba(0, 0, 0, 256, color));
+        nvgStrokeWidth(vg, 2.0f);
+        nvgStroke(vg);
+
+        float staminaWidth = (stamina / (float) maxStamina) * (width - 4);
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, x + 2, y + 2, staminaWidth, height - 4, 5);
+        nvgFillColor(vg, rgba(0, 0, 156, 200, color));
+        nvgFill(vg);
+
+        nvgFontSize(vg, 24.0f);
         nvgFontFace(vg, FONT_NAME);
-        nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgFillColor(vg, rgba(0xe6, 0xea, 0xed, 255, colour));
-        nvgText(vg, window.getWidth() - 150, window.getHeight() - 95, dateFormat.format(new Date()));
-
-        endRender(window);
+        nvgTextAlign(vg, NVG_ALIGN_MIDDLE | NVG_ALIGN_CENTER);
+        nvgFillColor(vg, rgba(255, 255, 255, 255, color));
+        String healthText = "Stamina: " + stamina + " / " + maxStamina;
+        nvgText(vg, x + width / 2, y + height / 2, healthText);
     }
 
+    public void renderSettingsButton(Window window, MouseInput mouseInput) throws Exception {
+        float width;
+        float height;
+        float x;
+        float y;
+
+        width = 80;
+        height = 80;
+        x = window.getWidth() - 90;
+        y = window.getHeight() - 90;
+
+        Image image = imageMap.get("settings");
+        if(image == null) {
+            throw new Exception("Image not found in map: " + "settings");
+        }
+
+        // Draw transparent rectangle with only border
+/*        nvgBeginPath(vg);
+        nvgRect(vg, x, y, width, height);
+        nvgStrokeColor(vg, rgba(0x20, 0x20, 0x20, 200, NVGColor.create()));
+        nvgStrokeWidth(vg, 4.0f);
+        nvgStroke(vg);*/
+
+        // Draw the settings image centered and scaled to fit inside the button
+
+        boolean hover = isHoveringButton(x, y, width, height);
+        if(!mouseInput.isLeftButtonPressed()) {
+            canOpenSettingsInGame = true;
+        }
+        if(canOpenSettingsInGame && hover && mouseInput.isLeftButtonPressed()) {
+            hudResult.openSettingsInGame = true;
+            canCloseSettingsInGame = false;
+        }
+        float paddingFactor = hover ? 0.05f : 0.1f;
+        float padding = width * paddingFactor;
+        float imgW = width - 2 * padding;
+        float imgH = height - 2 * padding;
+        float imgX = x + padding;
+        float imgY = y + padding;
+        nvgBeginPath(vg);
+        nvgRect(vg, imgX, imgY, imgW, imgH);
+        nvgImagePattern(vg, imgX, imgY, imgW, imgH, 0.0f, image.textureId, 1.0f, imgPaint);
+        nvgFillPaint(vg, imgPaint);
+        nvgFill(vg);
+
+    }
+
+    public void renderSettingsMenu(Window window, MouseInput mouseInput) {
+        float width;
+        float height;
+        float x;
+        float y;
+
+        width = window.getWidth() / 3f;
+        height = window.getHeight() / 2f;
+        x = window.getWidth() / 2f - width / 2f;
+        y = window.getHeight() / 2f - height / 2f;
+
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, x, y, width, height, 10);
+        nvgFillColor(vg, rgba(0x20, 0x20, 0x20, 200, NVGColor.create()));
+        nvgFill(vg);
+
+        nvgStrokeColor(vg, rgba(0x50, 0x50, 0x50, 255, NVGColor.create()));
+        nvgStrokeWidth(vg, 4.0f);
+        nvgStroke(vg);
+
+        nvgFontSize(vg, 30.0f);
+        nvgFontFace(vg, FONT_NAME);
+        nvgTextAlign(vg, NVG_ALIGN_MIDDLE | NVG_ALIGN_CENTER);
+        nvgFillColor(vg, rgba(0xe6, 0xea, 0xed, 255, NVGColor.create()));
+        nvgText(vg, x + width / 2f, y + 40, "Settings Menu");
+        if(!mouseInput.isLeftButtonPressed()) {
+            canCloseSettingsInGame = true;
+        }
+        if(canCloseSettingsInGame && !isHoveringButton(x, y, width, height) && mouseInput.isLeftButtonPressed()) {
+            hudResult.openSettingsInGame = false;
+            canOpenSettingsInGame = false;
+        }
+
+    }
+
+    /**
+     * Renders the player's inventory as a horizontal grid at the bottom center of the screen.
+     * Each cell displays an item icon and its quantity.
+     * @param window the application window
+     * @param inventoryItems array of item texture paths in the inventory (max 10 items)
+     */
     public void renderPlayerInventory(Window window, String[] inventoryItems) {
         float width;
         float height;
@@ -171,8 +281,6 @@ public class Hud {
         height = window.getHeight();
 
         if(inventoryItems != null && inventoryItems.length == 10) {
-
-            startRender(window);
 
             int cellSize = 64;
             int padding = 10;
@@ -195,12 +303,22 @@ public class Hud {
 
                 x += cellSize + padding;
             }
-            endRender(window);
         }
 
 
     }
 
+    /**
+     * Renders a single inventory cell with an item icon and quantity.
+     * @param x the x position of the cell
+     * @param y the y position of the cell
+     * @param width the width of the cell
+     * @param height the height of the cell
+     * @param item the item texture path to display
+     * @param quantity the quantity of the item
+     * @param backgroundColor the background color of the cell
+     * @throws Exception if image loading fails
+     */
     private void renderInventoryCell(float x, float y, int width, int height, String item, int quantity, NVGColor backgroundColor) throws Exception {
         nvgBeginPath(vg);
         nvgRoundedRect(vg, x, y, width, height, 10);
@@ -217,9 +335,15 @@ public class Hud {
             throw new Exception("Image not found in map: " + item);
         }
 
+        // Draw the item image centered and scaled to fit inside the cell with padding
+        float padding = width * 0.15f; // 15% padding
+        float imgW = width - 2 * padding;
+        float imgH = height - 2 * padding;
+        float imgX = x + padding;
+        float imgY = y + padding;
         nvgBeginPath(vg);
-        nvgRect(vg, x + 0.1f * width,y + 0.1f * height, 0.8f * width, 0.8f * height);
-        nvgImagePattern(vg, x, y, image.sizeInPixels[0], image.sizeInPixels[1], 0.0f, image.textureId, 1.0f, imgPaint);
+        nvgRect(vg, imgX, imgY, imgW, imgH);
+        nvgImagePattern(vg, imgX, imgY, imgW, imgH, 0.0f, image.textureId, 1.0f, imgPaint);
         nvgFillPaint(vg, imgPaint);
         nvgFill(vg);
 
@@ -243,19 +367,10 @@ public class Hud {
         float x;
         float y;
 
-        x = 0;
-        y = 0;
-        width = 1024;
-        height = 1024;
-
-        startRender(window);
-
-        glfwGetCursorPos(window.getWindowHandle(), posx, posy);
-
         nvgBeginPath(vg);
         // Background image
         nvgRect(vg, 0,0, window.getWidth(), window.getHeight());
-        nvgImagePattern(vg, x, y, width, height, 0.0f, backgroundImage, 1.0f, imgPaint);
+        nvgImagePattern(vg, 0, 0, imageMap.get("background").sizeInPixels[0], imageMap.get("background").sizeInPixels[1], 0.0f, imageMap.get("background").textureId, 1.0f, imgPaint);
         nvgFillPaint(vg, imgPaint);
         nvgFill(vg);
 
@@ -313,7 +428,6 @@ public class Hud {
         nvgFillColor(vg, rgba(0xff, 0xff, 0x00, 500, rectColour));
         nvgFill(vg);*/
 
-        endRender(window);
     }
 
     /**
@@ -346,12 +460,30 @@ public class Hud {
         nvgText(vg, x + width/2f, y + height / 2f, text);
 
     }
+    /**
+     * Checks if the mouse is hovering over a button.
+     * @param x position x of button
+     * @param y position y of button
+     * @param width width of button
+     * @param height height of button
+     * @return true if hovering, false otherwise
+     */
 
     public boolean isHoveringButton(float x, float y, float width, float height) {
         return (posx != null && posy != null) &&
                 (posx.get(0) > x && posx.get(0) < x + width && posy.get(0) > y && posy.get(0) < y + height);
     }
 
+
+    /**
+     * Converts RGBA values to NVGColor.
+     * @param r red value (0-255)
+     * @param g green value (0-255)
+     * @param b blue value (0-255)
+     * @param a alpha value (0-255)
+     * @param colour NVGColor object to store the result
+     * @return the NVGColor object with the specified RGBA values
+     */
 
     private NVGColor rgba(int r, int g, int b, int a, NVGColor colour) {
         colour.r(r / 255.0f);
@@ -361,6 +493,8 @@ public class Hud {
 
         return colour;
     }
+
+
 
     public void cleanup() {
         imgPaint.free();
@@ -377,11 +511,13 @@ public class Hud {
         public boolean loadGame;
         public boolean openSettings;
         public boolean exitGame;
+        public boolean openSettingsInGame;
         public HUDResults() {
             startGame = false;
             loadGame = false;
             openSettings = false;
             exitGame = false;
+            openSettingsInGame = false;
         }
     }
 
@@ -399,4 +535,3 @@ public class Hud {
     }
 
 }
-

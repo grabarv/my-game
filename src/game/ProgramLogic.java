@@ -184,11 +184,26 @@ public class ProgramLogic implements IGameLogic {
             firstTime = false;
         }
         renderer.render(window, camera, scene, sceneChanged);
+        hud.startRender(window);
         if(!gameLoaded) {
             hud.renderStartWindow(window, mouseInput);
         } else {
-            hud.renderPlayerInventory(window, new String[]{"struct_grass", "", "", "", "", "","","", "", ""}); // Example items
+            hud.renderPlayerInventory(window, new String[]{"struct_grass", "", "", "", "", "","","", "", ""});
+            hud.renderHeath(window, 50, 100);
+            hud.renderStamina(window, 50, 200);
+
+            if(hud.getHudResult().openSettingsInGame) {
+                hud.renderSettingsMenu(window, mouseInput);
+            } else  {
+                try {
+                    hud.renderSettingsButton(window, mouseInput);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
+
+        hud.endRender(window);
 
     }
 
