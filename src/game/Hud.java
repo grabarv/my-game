@@ -26,16 +26,11 @@ public class Hud {
 
     private long vg;
 
-    private NVGColor colour;
-
     private ByteBuffer fontBuffer;
-
-    private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     private DoubleBuffer posx;
 
     private DoubleBuffer posy;
-
 
     Map<String, Image> imageMap;
 
@@ -48,6 +43,12 @@ public class Hud {
     private boolean canOpenSettingsInGame = false;
 
 
+    /**
+     * Initializes the HUD with fonts and images.
+     * @param window the application window
+     * @param items array of image file paths to load
+     * @throws Exception if initialization fails
+     */
 
     public void init(Window window, String[] items) throws Exception {
         hudResult = new HUDResults();
@@ -61,7 +62,7 @@ public class Hud {
         if (font == -1) {
             throw new Exception("Could not add font");
         }
-        colour = NVGColor.create();
+
 
         posx = MemoryUtil.memAllocDouble(1);
         posy = MemoryUtil.memAllocDouble(1);
@@ -90,6 +91,12 @@ public class Hud {
         imgPaint = NVGPaint.calloc();
     }
 
+    /**
+     * Adds an image to the image map for later use in rendering.
+     * @param item the file path of the image to load
+     * @throws Exception if image loading fails
+     */
+
     private void addImageToMap(String item) throws Exception {
         int imageId = nvgCreateImage(vg, item, NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
         if (imageId == 0) {
@@ -104,6 +111,10 @@ public class Hud {
 
     }
 
+    /**
+     * Starts the rendering process and prepares the window state.
+     * @param window the application window
+     */
 
     public void startRender(Window window) {
         nvgBeginFrame(vg, window.getWidth(), window.getHeight(), 1);
@@ -111,12 +122,23 @@ public class Hud {
         glfwGetCursorPos(window.getWindowHandle(), posx, posy);
     }
 
+    /**
+     * Ends the rendering process and restores the window state.
+     * @param window the application window
+     */
+
     public void endRender(Window window) {
         nvgEndFrame(vg);
 
         // Restore state
         window.restoreState();
     }
+    /**
+     * Renders the health bar at the bottom left corner of the screen.
+     * @param window the application window
+     * @param health current health value
+     * @param maxHealth maximum health value
+     */
 
     public void renderHeath(Window window, int health, int maxHealth) {
         float x, y, width, height;
@@ -147,9 +169,15 @@ public class Hud {
         nvgFillColor(vg, rgba(255, 255, 255, 255, color));
         String healthText = "Health: " + health + " / " + maxHealth;
         nvgText(vg, x + width / 2, y + height / 2, healthText);
-
-
     }
+
+    /**
+     * Renders the stamina bar at the bottom left corner of the screen.
+     * @param window the application window
+     * @param stamina current stamina value
+     * @param maxStamina maximum stamina value
+     */
+
     public void renderStamina(Window window, int stamina, int maxStamina) {
         float x, y, width, height;
         x = 0;
@@ -180,6 +208,14 @@ public class Hud {
         String healthText = "Stamina: " + stamina + " / " + maxStamina;
         nvgText(vg, x + width / 2, y + height / 2, healthText);
     }
+
+    /**
+     * Renders a settings button at the bottom right corner of the screen.
+     * When clicked, it sets a flag to open the settings menu.
+     * @param window the application window
+     * @param mouseInput the mouse input handler
+     * @throws Exception if image loading fails
+     */
 
     public void renderSettingsButton(Window window, MouseInput mouseInput) throws Exception {
         float width;
@@ -228,6 +264,13 @@ public class Hud {
 
     }
 
+    /**
+     * Renders the settings menu as a centered rectangle with a title.
+     * The menu can be closed by clicking outside of it.
+     * @param window the application window
+     * @param mouseInput the mouse input handler
+     */
+
     public void renderSettingsMenu(Window window, MouseInput mouseInput) {
         float width;
         float height;
@@ -260,7 +303,6 @@ public class Hud {
             hudResult.openSettingsInGame = false;
             canOpenSettingsInGame = false;
         }
-
     }
 
     /**
