@@ -178,7 +178,9 @@ public class MapManger {
                                 new Vector2i(i, j-1),
                                 structureDescriptionMap.get("grass").size(),
                                 worldBlockZIndex,
-                                structureDescriptionMap.get("grass").canMoveThough(), structureDescriptionMap.get("grass").modelSize());
+                                structureDescriptionMap.get("grass").canMoveThough(),
+                                structureDescriptionMap.get("grass").canStandOn(),
+                                structureDescriptionMap.get("grass").modelSize());
                         structure.setRotation(new Quaternionf(90, 0,0,0));
                         structures.add(structure);
                         blocks[i][j].setMeshes(meshMap.get("dirt"));

@@ -24,15 +24,16 @@ public class MainPlayer extends GameItem {
     static final int widthInBlocks = 2;
 
     private float speed = 0f;
+
     /**
-     * Player has 2 modes:
-     * <ul>
-     *     <li>flying - where gravity doesn't work and player can fly</li>
-     *     <li>walking - where gravity works and player can only jump instead of flying</li>
-     * </ul>
-     * Set this variable to false if you want to switch to flying mode.
-     */
-    private boolean isInWalkingMode = false;
+    * Player has 3 modes:
+    * <ul>
+    *     <li>walking - where gravity works and player can only jump instead of flying</li>
+    *     <li>flying - where gravity doesn't work and player can fly</li>
+    *     <li>spirit mode - same as flying but player can move throw blocks</li>
+    * </ul>
+    */
+    private MoveMode moveMode = MoveMode.FLYING;
 
     private boolean isJumping = false;
 
@@ -74,20 +75,30 @@ public class MainPlayer extends GameItem {
         setMesh(playerMesh);
         setPosition(0, 0, worldBlockZIndex + 0.01f);
         setScale(0.1f);
+        setRotation(new Quaternionf(0.0f, 0f, 0f, 0f));
     }
 
     public Vector2f move(Vector2f movement) {
 
         // rotating player depending on his direction
         if(movement.x == -1) {
-            Quaternionf q = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
-            setRotation(q);
+            getRotation().y = 0.0f;
 
         } else if(movement.x == 1) {
-            Quaternionf q = new Quaternionf(0.0f, 1.0f, 0.0f, 0.00f);
-            setRotation(q);
+            getRotation().y = 1.0f;
         }
-        if(isInWalkingMode) {
+        if(moveMode == MoveMode.SPIRIT) {
+            setPosition(getPosition().x + movement.x* speed, getPosition().y + movement.y*speed, getPosition().z );
+            return movement;
+        } else if(moveMode == MoveMode.FLYING) {
+            Vector2f positionNow = new Vector2f(getPosition().x, getPosition().y);
+            Vector2f nextPosition = new Vector2f(getPosition().x + movement.x* speed, getPosition().y + movement.y*speed);
+            Vector2f realPosition = changePositionToPossible(positionNow, nextPosition);
+
+            setPosition(realPosition.x, realPosition.y, getPosition().z );
+            return movement;
+        }
+        if(moveMode == MoveMode.WALKING) {
 
             if(movement.y != 1 && !isJumping && !canMove("down")) {
                 isReadyForJump = true;
@@ -118,6 +129,10 @@ public class MainPlayer extends GameItem {
         }
         // Returns the real movement that the player made. Would be the same with the method input in flying mode
         return movement;
+    }
+
+    private Vector2f changePositionToPossible(Vector2f positionNow, Vector2f nextPosition) {
+        return nextPosition;
     }
 
 
@@ -335,19 +350,21 @@ public class MainPlayer extends GameItem {
         return speed;
     }
 
-    /**
-     *
-     * @return if return false it means that player is in flying mode
-     */
-    public boolean isInWalkingMode() {
-        return isInWalkingMode;
-    }
-    public void setToWalkingMode() {
-        isInWalkingMode = true;
+    public void setMoveMode(MoveMode moveMode) {
+        this.moveMode = moveMode;
+        if(moveMode == MoveMode.WALKING) {
+            isJumping = false;
+            isReadyForJump = false;
+        }
     }
 
-    public void setToFlyingMode() {
-        isInWalkingMode = false;
+    public MoveMode getMoveMode() {
+        return moveMode;
     }
 
+    public enum MoveMode {
+        WALKING,
+        FLYING,
+        SPIRIT
+    }
 }

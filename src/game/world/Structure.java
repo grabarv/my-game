@@ -16,6 +16,12 @@ public class Structure extends MapItem {
      */
     private boolean canMoveThrow;
 
+    /**
+     * Can player or any other character stand on it
+     * Must be true if canMoveThrow = false
+     */
+    private boolean canStandOn;
+
     private Vector2i sizeInBlocks;
 
     private String name;
@@ -28,12 +34,13 @@ public class Structure extends MapItem {
 //        this.zIndex = zIndex;
 //        this.canMoveThrow = canMoveThrow;
 //    }
-     public Structure(Mesh[] meshes, boolean isEulerRotation,String name,  Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow, Vector3f modelSize) {
+     public Structure(Mesh[] meshes, boolean isEulerRotation,String name,  Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow,boolean canStandOn, Vector3f modelSize) {
          super(meshes, isEulerRotation, positionInMap);
          this.name = name;
          this.sizeInBlocks = sizeInBlocks;
          this.zIndex = zIndex;
          this.canMoveThrow = canMoveThrow;
+         this.canStandOn = canStandOn;
          modelWidth = modelSize.x;
          modelHeight = modelSize.y;
          modelLength = modelSize.z;

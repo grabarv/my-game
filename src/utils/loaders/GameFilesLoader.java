@@ -132,6 +132,7 @@ public class GameFilesLoader {
 
                     Vector2i sizeInBlocks;
                     Vector3f modelSize;
+                    boolean canStandOn;
                     String typeWithoutStruct = type;
                     if(typeWithoutStruct.startsWith("struct_")){
                         typeWithoutStruct = type.substring(7);
@@ -140,14 +141,16 @@ public class GameFilesLoader {
                     if(structureDescription != null) {
                         sizeInBlocks = structureDescription.size();
                         modelSize = structureDescription.modelSize();
+                        canStandOn = structureDescription.canStandOn();
                     } else {
                         sizeInBlocks = new Vector2i(1,1);
                         modelSize = new Vector3f(2,2,2);
+                        canStandOn = true;
                     }
                     Structure structure = new Structure(meshMap.getOrDefault(type, null),
                             true, typeWithoutStruct,
                             new Vector2i(startPos.x + x, startPos.y + y),
-                            sizeInBlocks, zIndex, canMoveThrow, modelSize);
+                            sizeInBlocks, zIndex, canMoveThrow, canStandOn, modelSize);
                     structure.setRotation(rotation);
                     object.addStructure(structure);
                 }
@@ -175,14 +178,18 @@ public class GameFilesLoader {
                     continue;
                 }
                 String[] arguments = line.split(" ");
-                checkLength(arguments.length, 6);
-                String[] size = arguments[5].split(",");
+                checkLength(arguments.length, 7);
+                String[] size = arguments[6].split(",");
                 checkLength(size.length, 3);
+
+                if(arguments[4].equals("false") && arguments[5].equals("false")) {
+                    throw new RuntimeException("Structure cannot be both not move-through and not stand-on");
+                }
 
                 StructureDescription structureDescription = new StructureDescription(
                         new Vector2i(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2])),
                         arguments[3],
-                        Boolean.parseBoolean(arguments[4]),
+                        Boolean.parseBoolean(arguments[4]), Boolean.parseBoolean(arguments[5]),
                         new Vector3f(Float.parseFloat(size[0]), Float.parseFloat(size[1]), Float.parseFloat(size[1]))
                 );
                 result.put(arguments[0], structureDescription);
