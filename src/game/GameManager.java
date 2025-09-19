@@ -6,7 +6,7 @@ import engine.graph.Camera;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.world.MainPlayer;
-import game.world.MapManger;
+import game.world.map.MapManger;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 

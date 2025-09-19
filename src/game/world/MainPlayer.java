@@ -4,6 +4,10 @@ import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.GameItem;
+import game.world.map.Block;
+import game.world.map.MapItemType;
+import game.world.map.MapManger;
+import game.world.map.Structure;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -11,7 +15,7 @@ import org.joml.Vector3f;
 import utils.Utils;
 import utils.loaders.assimp.StaticMeshesLoader;
 
-import static game.world.MapManger.worldBlockZIndex;
+import static game.world.map.MapManger.worldBlockZIndex;
 
 /**
  * Main player of the game
@@ -132,6 +136,8 @@ public class MainPlayer extends GameItem {
     }
 
     private Vector2f changePositionToPossible(Vector2f positionNow, Vector2f nextPosition) {
+        Vector2f direction = new Vector2f(nextPosition.x - positionNow.x, nextPosition.y - positionNow.y);
+
         return nextPosition;
     }
 
@@ -277,6 +283,34 @@ public class MainPlayer extends GameItem {
     public void setPlayerInMapTopLeftCorner(MapManger map) {
         Vector2f mapTopLeftCorner = map.getMapTopLeftCorner();
         setPosition(mapTopLeftCorner.x + modelWidth * getScale()/2, mapTopLeftCorner.y - modelHeight * getScale()/2, getPosition().z);
+    }
+
+    public boolean isPlayerPositionPossible(MapManger map, Vector2f nextPosition) {
+        Vector2i playerPosInBlockMap = getPlayerPosInBlockMap(map);
+        // Checking blocks presence in the center of the player
+        for(int i = 0; i <= widthInBlocks; i++) {
+            for(int j = 0; j <= heightInBlocks; j++) {
+                Block block = map.getBlocks()[playerPosInBlockMap.x + i][playerPosInBlockMap.y + j];
+                if(block == null || !block.getIsInScene()) {
+                    continue;
+                }
+                if(block.getType() == MapItemType.QUAD) {
+                    if(Utils.intersects(getPosition().x, getPosition().y, modelWidth * getScale(), modelHeight * getScale(),
+                            block.getPosition().x - map.getBlocks()[0][0].getSize().x /2,
+                            block.getPosition().y + map.getBlocks()[0][0].getSize().y /2,
+                            block.getSize().x, block.getSize().y)) {
+                        return false;
+                    }
+                }
+
+            }
+        }
+
+        for(Structure structure : map.getStructures()) {
+            Vector2i structurePosInBlockMap = structure.getMapPosition();
+            Vector2i structureSizeInBlocks = structure.getSizeInBlocks();
+        }
+        return false;
     }
 
 

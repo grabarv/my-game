@@ -1,11 +1,11 @@
-package game.world;
+package game.world.map;
 
 import engine.graph.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import static game.world.MapManger.getBlockSize;
+import static game.world.map.MapManger.getBlockSize;
 
 public class Structure extends MapItem {
 

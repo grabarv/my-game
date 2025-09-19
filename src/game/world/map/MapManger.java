@@ -1,4 +1,4 @@
-package game.world;
+package game.world.map;
 
 import engine.Scene;
 import engine.graph.Camera;
@@ -6,11 +6,11 @@ import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.GameItem;
+import game.world.GameObject;
+import game.world.MainPlayer;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import utils.Utils;
 import utils.loaders.GameFilesLoader;
-import utils.loaders.assimp.StaticMeshesLoader;
 import utils.loaders.obj.OBJLoader;
 import game.records.StructureDescription;
 import org.joml.Vector2f;
@@ -91,7 +91,7 @@ public class MapManger {
         structures = new ArrayList<>();
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
-                blocks[i][j] = new Block(null, true, new Vector2i(i, j));
+                blocks[i][j] = new Block(null, true, new Vector2i(i, j), null);
                 walls[i][j] = new Wall(null, true, new Vector2i(i, j));
             }
         }
@@ -292,7 +292,7 @@ public class MapManger {
      * @return true if block exists and has meshes, false otherwise
      */
     public boolean isThereABlock(int x, int y) {
-        if(!checkBlockCoords(x,y)) {
+        if(!checkCoords(x,y)) {
             return false;
         }
         return blocks[x][y] != null && blocks[x][y].getMeshes() != null;
@@ -312,7 +312,7 @@ public class MapManger {
      * @param y block y index
      * @return true if coordinates are valid, false otherwise
      */
-    public boolean checkBlockCoords(int x, int y) {
+    public boolean checkCoords(int x, int y) {
         return  !(x < 0 || y < 0 || x >= getWidth() || y >= getHeight());
     }
 
@@ -322,8 +322,8 @@ public class MapManger {
      * @param coords vector of (x,y) block indices
      * @return true if inside, false otherwise
      */
-    public boolean checkBlockCoords(Vector2i coords) {
-        return checkBlockCoords(coords.x, coords.y);
+    public boolean checkCoords(Vector2i coords) {
+        return checkCoords(coords.x, coords.y);
     }
 
     /**
@@ -335,7 +335,7 @@ public class MapManger {
     private void clearMapArea(Vector2i startOfArea, Vector2i areaSize) {
         for(int x = 0; x < areaSize.x; x++) {
             for(int y = 0; y < areaSize.y; y++) {
-                Block block = new Block(null, false, new Vector2i(startOfArea.x + x, startOfArea.y + y));
+                Block block = new Block(null, false, new Vector2i(startOfArea.x + x, startOfArea.y + y), null);
                 blocks[block.mapPosition.x][block.mapPosition.y] = block;
                 Wall wall = new Wall(null, false, new Vector2i(startOfArea.x + x, startOfArea.y + y));
                 walls[wall.mapPosition.x][wall.mapPosition.y] = wall;
@@ -360,5 +360,8 @@ public class MapManger {
         return new Vector2f(2f * blocksScale, 2f * blocksScale);
     }
 
+    public ArrayList<Structure> getStructures() {
+        return structures;
+    }
 
 }

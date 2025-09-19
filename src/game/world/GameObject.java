@@ -1,5 +1,8 @@
 package game.world;
 
+import game.world.map.Block;
+import game.world.map.Structure;
+import game.world.map.Wall;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;

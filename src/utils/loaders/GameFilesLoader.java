@@ -1,5 +1,6 @@
 package utils.loaders;
 
+import game.world.map.*;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import utils.MathEvaluator;
@@ -86,8 +87,12 @@ public class GameFilesLoader {
                         object.addWall(wall);
                         wall.setRotation(rotation);
                     } else {
+                        MapItemType mapItemType = MapItemType.QUAD;
+                        if(type.startsWith("triangle_")){
+                            mapItemType = MapItemType.TRIANGLE;
+                        }
                         Block block = new Block(meshMap.getOrDefault(type, null), true,
-                                new Vector2i(startPos.x + x, startPos.y + y));
+                                new Vector2i(startPos.x + x, startPos.y + y), mapItemType);
                         object.addBlock(block);
                         block.setRotation(rotation);
                     }
@@ -113,8 +118,12 @@ public class GameFilesLoader {
                     } else {
                         for(int x = x1; x <= x2; x++) {
                             for(int y = y1; y <= y2; y++) {
+                                MapItemType mapItemType = MapItemType.QUAD;
+                                if(type.startsWith("triangle_")){
+                                    mapItemType = MapItemType.TRIANGLE;
+                                }
                                 Block block = new Block(meshMap.getOrDefault(type, null), true,
-                                        new Vector2i(startPos.x + x, startPos.y + y));
+                                        new Vector2i(startPos.x + x, startPos.y + y), mapItemType);
                                 block.setRotation(rotation);
                                 object.addBlock(block);
                             }
