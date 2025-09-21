@@ -5,7 +5,7 @@ import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.GameItem;
 import game.world.map.Block;
-import game.world.map.MapItemType;
+import game.world.map.ShapeType;
 import game.world.map.MapManger;
 import game.world.map.Structure;
 import org.joml.Quaternionf;
@@ -294,7 +294,7 @@ public class MainPlayer extends GameItem {
                 if(block == null || !block.getIsInScene()) {
                     continue;
                 }
-                if(block.getType() == MapItemType.QUAD) {
+                if(block.getShapeType() == ShapeType.RECTANGLE) {
                     if(Utils.intersects(getPosition().x, getPosition().y, modelWidth * getScale(), modelHeight * getScale(),
                             block.getPosition().x - map.getBlocks()[0][0].getSize().x /2,
                             block.getPosition().y + map.getBlocks()[0][0].getSize().y /2,

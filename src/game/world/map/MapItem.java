@@ -12,6 +12,7 @@ public abstract class MapItem extends GameItem {
 
     protected Vector2i mapPosition;
 
+
     public MapItem(Mesh[] meshes, boolean isEulerRotation) {
         super(meshes, isEulerRotation);
         modelWidth = 2f;
@@ -50,5 +51,6 @@ public abstract class MapItem extends GameItem {
         return mapPosition;
     }
     public abstract void setPosition(Vector2f startPos);
+
 
 }

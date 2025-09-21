@@ -5,9 +5,11 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+
 import static game.world.map.MapManger.getBlockSize;
 
-public class Structure extends MapItem {
+public class Structure extends MapItem implements HasShape {
 
     private float zIndex;
 
@@ -25,6 +27,11 @@ public class Structure extends MapItem {
     private Vector2i sizeInBlocks;
 
     private String name;
+
+
+    private ShapeType type;
+
+    private ArrayList<Vector2f> shapeVertices;
 
 //    public Structure(Mesh[] meshes, boolean isEulerRotation, Vector2i positionInMap, Vector2i sizeInBlocks, float zIndex, boolean canMoveThrow) {
 //        super(meshes, isEulerRotation, positionInMap);
@@ -74,5 +81,30 @@ public class Structure extends MapItem {
 
     public void setSizeInBlocks(Vector2i sizeInBlocks) {
         this.sizeInBlocks = sizeInBlocks;
+    }
+
+    @Override
+    public void setShapeVertices(ArrayList<Vector2f> shapeVertices) {
+        this.shapeVertices = shapeVertices;
+    }
+
+    @Override
+    public ArrayList<Vector2f> getShapeVertices() {
+        return shapeVertices;
+    }
+
+    @Override
+    public void setShapeVertex(Vector2f shapeVertex) {
+        this.shapeVertices.add(shapeVertex);
+    }
+
+    @Override
+    public void setShapeType(ShapeType type) {
+        this.type = type;
+    }
+
+    @Override
+    public ShapeType getShapeType() {
+        return type;
     }
 }

@@ -87,9 +87,9 @@ public class GameFilesLoader {
                         object.addWall(wall);
                         wall.setRotation(rotation);
                     } else {
-                        MapItemType mapItemType = MapItemType.QUAD;
+                        ShapeType mapItemType = ShapeType.RECTANGLE;
                         if(type.startsWith("triangle_")){
-                            mapItemType = MapItemType.TRIANGLE;
+                            mapItemType = ShapeType.TRIANGLE;
                         }
                         Block block = new Block(meshMap.getOrDefault(type, null), true,
                                 new Vector2i(startPos.x + x, startPos.y + y), mapItemType);
@@ -118,9 +118,9 @@ public class GameFilesLoader {
                     } else {
                         for(int x = x1; x <= x2; x++) {
                             for(int y = y1; y <= y2; y++) {
-                                MapItemType mapItemType = MapItemType.QUAD;
+                                ShapeType mapItemType = ShapeType.RECTANGLE;
                                 if(type.startsWith("triangle_")){
-                                    mapItemType = MapItemType.TRIANGLE;
+                                    mapItemType = ShapeType.TRIANGLE;
                                 }
                                 Block block = new Block(meshMap.getOrDefault(type, null), true,
                                         new Vector2i(startPos.x + x, startPos.y + y), mapItemType);
