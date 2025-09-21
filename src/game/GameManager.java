@@ -82,7 +82,17 @@ public class GameManager {
 
         checkCameraInc(cameraInc);
 
-        Vector2f realMovement = player.move(new Vector2f(cameraInc.x, cameraInc.y));
+        Vector2f realMovement = new Vector2f(0,0);
+
+        float movementLength = 0f;
+
+        while (movementLength < player.getSpeed()) {
+            realMovement = player.move(new Vector2f(cameraInc.x, cameraInc.y));
+            if(!realMovement.equals(new Vector2f(cameraInc.x, cameraInc.y))) {
+                break;
+            }
+            movementLength += MainPlayer.movementStep;
+        }
 
         cameraInc.set(realMovement, cameraInc.z);
 

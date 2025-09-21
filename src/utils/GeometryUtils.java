@@ -1,6 +1,13 @@
 package utils;
 
+import game.world.map.Orientation;
+import org.joml.Vector2f;
+
+import java.util.ArrayList;
+import java.util.Vector;
+
 public class GeometryUtils {
+
 
     // --------------------
     // Data Classes
@@ -18,6 +25,13 @@ public class GeometryUtils {
             this.xMax = Math.max(xMin, xMax);
             this.yMax = Math.max(yMin, yMax);
         }
+
+        public Rectangle(Vector2f centerPosition, Vector2f size) {
+            this.xMin = centerPosition.x - size.x / 2;
+            this.yMin = centerPosition.y - size.y / 2;
+            this.xMax = centerPosition.x + size.x / 2;
+            this.yMax = centerPosition.y + size.y / 2;
+        }
         public boolean contains(Point p) {
             return p.x >= xMin && p.x <= xMax && p.y >= yMin && p.y <= yMax;
         }
@@ -34,6 +48,13 @@ public class GeometryUtils {
     public static class Triangle {
         public Point a, b, c;
         public Triangle(Point a, Point b, Point c) { this.a = a; this.b = b; this.c = c; }
+
+        public Triangle(Vector2f a, Vector2f b, Vector2f c) {
+            this.a = new Point(a.x, a.y);
+            this.b = new Point(b.x, b.y);
+            this.c = new Point(c.x, c.y);
+        }
+
         public Point[] getVertices() { return new Point[]{a, b, c}; }
     }
 
@@ -95,5 +116,41 @@ public class GeometryUtils {
         if (val > 0) return 1;
         if (val < 0) return -1;
         return 0;
+    }
+
+    public static ArrayList<Vector2f> createRectangleVertices(Vector2f topLeft, Vector2f size) {
+        ArrayList<Vector2f> vertices = new ArrayList<>();
+        vertices.add(new Vector2f(topLeft.x, topLeft.y)); // Top-left
+        vertices.add(new Vector2f(topLeft.x + size.x, topLeft.y)); // Top-right
+        vertices.add(new Vector2f(topLeft.x + size.x, topLeft.y - size.y)); // Bottom-right
+        vertices.add(new Vector2f(topLeft.x, topLeft.y - size.y)); // Bottom-left
+        return vertices;
+    }
+
+    public static ArrayList<Vector2f> createTriangleVertices(Vector2f centralPosition, Vector2f size, Orientation orientation) {
+        ArrayList<Vector2f> vertices = new ArrayList<>();
+        switch (orientation) {
+            case TOP_LEFT -> {
+                vertices.add(new Vector2f(centralPosition.x - size.x / 2, centralPosition.y + size.y / 2)); // Top-left
+                vertices.add(new Vector2f(centralPosition.x - size.x / 2, centralPosition.y - size.y / 2)); // Bottom-left
+                vertices.add(new Vector2f(centralPosition.x + size.x / 2, centralPosition.y + size.y / 2)); // Tp-right
+            }
+            case TOP_RIGHT -> {
+                vertices.add(new Vector2f(centralPosition.x + size.x / 2, centralPosition.y + size.y / 2)); // Top-right
+                vertices.add(new Vector2f(centralPosition.x - size.x / 2, centralPosition.y + size.y / 2)); // Top-left
+                vertices.add(new Vector2f(centralPosition.x + size.x / 2, centralPosition.y - size.y / 2)); // Bottom-right
+            }
+            case BOTTOM_RIGHT -> {
+                vertices.add(new Vector2f(centralPosition.x + size.x / 2, centralPosition.y - size.y / 2)); // Bottom-right
+                vertices.add(new Vector2f(centralPosition.x + size.x / 2, centralPosition.y + size.y / 2)); // Top-right
+                vertices.add(new Vector2f(centralPosition.x - size.x / 2, centralPosition.y - size.y / 2)); // Bottom-left
+            }
+            case BOTTOM_LEFT -> {
+                vertices.add(new Vector2f(centralPosition.x - size.x / 2, centralPosition.y - size.y / 2)); // Bottom-left
+                vertices.add(new Vector2f(centralPosition.x + size.x / 2, centralPosition.y - size.y / 2)); // Bottom-right
+                vertices.add(new Vector2f(centralPosition.x - size.x / 2, centralPosition.y + size.y / 2)); // Top-left
+            }
+        }
+        return vertices;
     }
 }

@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
+import static game.world.map.MapManger.blocksScale;
 import static game.world.map.MapManger.worldBlockZIndex;
 
 public class Block extends MapItem implements HasShape {
@@ -15,9 +16,11 @@ public class Block extends MapItem implements HasShape {
 
     private ArrayList<Vector2f> shapeVertices;
 
+    public static final Vector3f BLOCK_MODEL_SIZE = new Vector3f(2f, 2f, 2f);
+
     public Block(Mesh[] mesh, boolean isEulerRotation, Vector2i posInMap, ShapeType mapItemType) {
-    super(mesh, isEulerRotation, new Vector3f(2f, 2f, 2f), posInMap);
-        setScale(MapManger.blocksScale);
+    super(mesh, isEulerRotation, BLOCK_MODEL_SIZE, posInMap);
+        setScale(blocksScale);
         this.type = mapItemType;
     }
 
@@ -57,5 +60,12 @@ public class Block extends MapItem implements HasShape {
     @Override
     public ShapeType getShapeType() {
         return type;
+    }
+
+    /**
+     * @return size of one block in world units (x,y)
+     */
+    public static Vector2f get2DSize() {
+        return new Vector2f(BLOCK_MODEL_SIZE.x * blocksScale, BLOCK_MODEL_SIZE.y * blocksScale);
     }
 }

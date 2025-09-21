@@ -271,7 +271,7 @@ void main()
     if ( outSelected > 0 ) {
         fragColor = vec4(fragColor.x, fragColor.y, 1, 1);
     }
-    if(fragColor.a < 0.1) {
-        discard;
-    }
+//    if(fragColor.a < 0.1) {
+//        discard;
+//    }
 }

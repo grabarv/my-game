@@ -64,10 +64,11 @@ public class GameEngine implements Runnable {
 
             while (accumulator >= interval) {
                 running = update(interval);
+                render();
                 accumulator -= interval;
             }
 
-            render();
+
 
             if (!window.isvSync()) {
                 sync();

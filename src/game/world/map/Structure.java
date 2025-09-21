@@ -7,8 +7,6 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
-import static game.world.map.MapManger.getBlockSize;
-
 public class Structure extends MapItem implements HasShape {
 
     private float zIndex;
@@ -51,7 +49,7 @@ public class Structure extends MapItem implements HasShape {
          modelWidth = modelSize.x;
          modelHeight = modelSize.y;
          modelLength = modelSize.z;
-         setScale(getBlockSize().y * sizeInBlocks.y / modelHeight);
+         setScale(Block.get2DSize().y * sizeInBlocks.y / modelHeight);
      }
 
     public String getName() {
@@ -64,10 +62,10 @@ public class Structure extends MapItem implements HasShape {
 
     @Override
     public void setPosition(Vector2f topLeftMapCorner) {
-        Vector2f structureTopLeftCorner = new Vector2f(topLeftMapCorner.x + mapPosition.x * getBlockSize().x,
-                topLeftMapCorner.y - mapPosition.y * getBlockSize().y);
-        setPosition(structureTopLeftCorner.x + sizeInBlocks.x * getBlockSize().x / 2,
-                structureTopLeftCorner.y - sizeInBlocks.y * getBlockSize().y /2, zIndex);
+        Vector2f structureTopLeftCorner = new Vector2f(topLeftMapCorner.x + mapPosition.x * Block.get2DSize().x,
+                topLeftMapCorner.y - mapPosition.y * Block.get2DSize().y);
+        setPosition(structureTopLeftCorner.x + sizeInBlocks.x * Block.get2DSize().y / 2,
+                structureTopLeftCorner.y - sizeInBlocks.y * Block.get2DSize().y /2, zIndex);
     }
 
     @Override
@@ -106,5 +104,13 @@ public class Structure extends MapItem implements HasShape {
     @Override
     public ShapeType getShapeType() {
         return type;
+    }
+
+    public Vector2f get2DSize() {
+        return new Vector2f(getSize().x, getSize().y);
+    }
+
+    public boolean canMoveThrow() {
+        return canMoveThrow;
     }
 }

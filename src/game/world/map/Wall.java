@@ -15,7 +15,7 @@ public class Wall extends MapItem {
 
     @Override
     public void setPosition(Vector2f startPos) {
-        setPosition(new Vector3f(startPos.x + getBlockSize().x * mapPosition.x, startPos.y -  getBlockSize().y * mapPosition.y, worldBlockZIndex - 2 * blocksScale));
+        setPosition(new Vector3f(startPos.x + Block.get2DSize().x * mapPosition.x, startPos.y -  Block.get2DSize().y * mapPosition.y, worldBlockZIndex - 2 * blocksScale));
 
     }
 

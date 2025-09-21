@@ -2,7 +2,9 @@ package utils.loaders;
 
 import game.world.map.*;
 import org.joml.Quaternionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import utils.GeometryUtils;
 import utils.MathEvaluator;
 import utils.Utils;
 import engine.graph.Mesh;
@@ -10,6 +12,7 @@ import game.records.StructureDescription;
 import game.world.*;
 import org.joml.Vector2i;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +45,7 @@ public class GameFilesLoader {
                                             Vector2i startPos)  {
         specialValues = new HashMap<>();
         specialValues.put("z_block", MapManger.worldBlockZIndex);
-        specialValues.put("z_wall", MapManger.worldWallZIndex);
+        specialValues.put("z2_wall", MapManger.worldWallZIndex);
         specialValues.put("block_length", 2f * MapManger.blocksScale);
 
         try{
@@ -80,19 +83,19 @@ public class GameFilesLoader {
                     String type = arguments[1];
                     int x = Integer.parseInt(arguments[2]);
                     int y = Integer.parseInt(arguments[3]);
-                    Quaternionf rotation = checkRotation(arguments);
+                    Quaternionf rotation = getRotation(arguments);
                     if(type.startsWith("wall_")) {
                         Wall wall = new Wall(meshMap.getOrDefault(type, null), true,
                                 new Vector2i(startPos.x + x, startPos.y + y));
                         object.addWall(wall);
                         wall.setRotation(rotation);
                     } else {
-                        ShapeType mapItemType = ShapeType.RECTANGLE;
-                        if(type.startsWith("triangle_")){
-                            mapItemType = ShapeType.TRIANGLE;
-                        }
                         Block block = new Block(meshMap.getOrDefault(type, null), true,
-                                new Vector2i(startPos.x + x, startPos.y + y), mapItemType);
+                                new Vector2i(startPos.x + x, startPos.y + y), null);
+
+                        setShapeType(block, type);
+                        block.setShapeVertices(getRightBlockVertices(block, type, rotation));
+
                         object.addBlock(block);
                         block.setRotation(rotation);
                     }
@@ -104,7 +107,7 @@ public class GameFilesLoader {
                     int y1 = Integer.parseInt(arguments[3]);
                     int x2 = Integer.parseInt(arguments[4]);
                     int y2 = Integer.parseInt(arguments[5]);
-                    Quaternionf rotation = checkRotation(arguments);
+                    Quaternionf rotation = getRotation(arguments);
 
                     if(type.startsWith("wall_")) {
                         for(int x = x1; x <= x2; x++) {
@@ -124,6 +127,10 @@ public class GameFilesLoader {
                                 }
                                 Block block = new Block(meshMap.getOrDefault(type, null), true,
                                         new Vector2i(startPos.x + x, startPos.y + y), mapItemType);
+
+                                setShapeType(block, type);
+                                block.setShapeVertices(getRightBlockVertices(block, type, rotation));
+
                                 block.setRotation(rotation);
                                 object.addBlock(block);
                             }
@@ -137,7 +144,7 @@ public class GameFilesLoader {
                     boolean canMoveThrow = Boolean.parseBoolean(arguments[3]);
                     int x = Integer.parseInt(arguments[4]);
                     int y = Integer.parseInt(arguments[5]);
-                    Quaternionf rotation = checkRotation(arguments);
+                    Quaternionf rotation = getRotation(arguments);
 
                     Vector2i sizeInBlocks;
                     Vector3f modelSize;
@@ -160,6 +167,10 @@ public class GameFilesLoader {
                             true, typeWithoutStruct,
                             new Vector2i(startPos.x + x, startPos.y + y),
                             sizeInBlocks, zIndex, canMoveThrow, canStandOn, modelSize);
+
+                    setShapeType(structure, type);
+                    structure.setShapeVertices(GeometryUtils.createRectangleVertices(structure.getTopLeftCorner2DPosition(), structure.get2DSize()));
+
                     structure.setRotation(rotation);
                     object.addStructure(structure);
                 }
@@ -230,7 +241,7 @@ public class GameFilesLoader {
      * @param arguments all arguments from one line
      * @return rotation quaternion (default 0,0,0,0 if none provided)
      */
-    private static Quaternionf checkRotation(String[] arguments) {
+    private static Quaternionf getRotation(String[] arguments) {
         int minLengthWithoutRotation = getMinLengthForInputType(arguments[0]);
         Quaternionf rotation = new Quaternionf(0f, 0f, 0f, 0f);
         if (arguments.length >= minLengthWithoutRotation + 1) {
@@ -266,6 +277,30 @@ public class GameFilesLoader {
             return 6;
         }
         return -1;
+    }
+
+    private static void setShapeType(HasShape item, String type) {
+        if(type.startsWith("triangle_")){
+            item.setShapeType(ShapeType.TRIANGLE);
+        } else {
+            item.setShapeType(ShapeType.RECTANGLE);
+        }
+    }
+
+    private static ArrayList<Vector2f> getRightBlockVertices(MapItem item, String type, Quaternionf rotation) {
+        ArrayList<Vector2f> shapeVertices = new ArrayList<>();
+
+        if(type.startsWith("triangle_")){
+            switch ((int) rotation.z) {
+                case 0 -> shapeVertices = GeometryUtils.createTriangleVertices(item.get2DPosition(), Block.get2DSize(), Orientation.BOTTOM_LEFT);
+                case 90 -> shapeVertices = GeometryUtils.createTriangleVertices(item.get2DPosition(), Block.get2DSize(), Orientation.TOP_LEFT);
+                case 180 -> shapeVertices = GeometryUtils.createTriangleVertices(item.get2DPosition(), Block.get2DSize(), Orientation.TOP_RIGHT);
+                case 270 -> shapeVertices = GeometryUtils.createTriangleVertices(item.get2DPosition(), Block.get2DSize(), Orientation.BOTTOM_RIGHT);
+            }
+        } else {
+            shapeVertices = GeometryUtils.createRectangleVertices(item.getTopLeftCorner2DPosition(), Block.get2DSize());
+        }
+        return shapeVertices;
     }
 
 }

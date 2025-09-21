@@ -1,6 +1,8 @@
 package game;
 
 import engine.graph.*;
+import game.world.MainPlayer;
+import game.world.map.MapItem;
 import org.joml.*;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -134,6 +136,7 @@ public class ProgramLogic implements IGameLogic {
         if (window.isKeyPressed(GLFW_KEY_SPACE)) {
             sceneChanged = true;
             testVar = true;
+            MainPlayer.DEBUG_MODE = true;
         }
 
         if (window.isKeyPressed(GLFW_KEY_LEFT)) {

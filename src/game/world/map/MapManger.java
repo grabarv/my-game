@@ -9,6 +9,7 @@ import engine.items.GameItem;
 import game.world.GameObject;
 import game.world.MainPlayer;
 import org.joml.Quaternionf;
+import utils.GeometryUtils;
 import utils.Utils;
 import utils.loaders.GameFilesLoader;
 import utils.loaders.obj.OBJLoader;
@@ -153,7 +154,7 @@ public class MapManger {
     }
 
     /**
-     * Generates the map: base blocks and pre-defined obj`ects,
+     * Generates the map: base blocks and pre-defined objects,
      * then adds them to the scene.
      *
      * @param scene game scene to populate with map items
@@ -184,10 +185,16 @@ public class MapManger {
                         structure.setRotation(new Quaternionf(90, 0,0,0));
                         structures.add(structure);
                         blocks[i][j].setMeshes(meshMap.get("dirt"));
+                        blocks[i][j].setShapeType(ShapeType.RECTANGLE);
+                        blocks[i][j].setShapeVertices(GeometryUtils.createRectangleVertices(
+                               blocks[i][j].getTopLeftCorner2DPosition(), blocks[i][j].get2DSize()));
                     }
 
                 } else {
                     blocks[i][j].setMeshes(meshMap.get("dirt"));
+                    blocks[i][j].setShapeType(ShapeType.RECTANGLE);
+                    blocks[i][j].setShapeVertices(GeometryUtils.createRectangleVertices(
+                            blocks[i][j].getTopLeftCorner2DPosition(), blocks[i][j].get2DSize()));
                 }
             }
         }
@@ -351,13 +358,6 @@ public class MapManger {
         for (Structure removeStructure : structuresToRemove) {
             structures.remove(removeStructure);
         }
-    }
-
-    /**
-     * @return size of one block in world units (x,y)
-     */
-    public static Vector2f getBlockSize() {
-        return new Vector2f(2f * blocksScale, 2f * blocksScale);
     }
 
     public ArrayList<Structure> getStructures() {

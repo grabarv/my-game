@@ -12,6 +12,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import utils.GeometryUtils;
 import utils.Utils;
 import utils.loaders.assimp.StaticMeshesLoader;
 
@@ -22,12 +23,14 @@ import static game.world.map.MapManger.worldBlockZIndex;
  */
 public class MainPlayer extends GameItem {
 
-
+    public static final float movementStep = 0.001f;
     static final int heightInBlocks = 3;
 
     static final int widthInBlocks = 2;
 
     private float speed = 0f;
+
+    public static boolean DEBUG_MODE = false;
 
     /**
     * Player has 3 modes:
@@ -58,8 +61,8 @@ public class MainPlayer extends GameItem {
     public MainPlayer(MapManger map) {
         super(false);
         this.map = map;
-        modelHeight = 2f;
-        modelWidth = 1.33332f;
+        modelHeight = 2.0000f;
+        modelWidth = 1.333333f;
         final String modelPath = "resources/models/main_player.obj";
         Mesh playerMesh = null;
         try {
@@ -92,14 +95,29 @@ public class MainPlayer extends GameItem {
             getRotation().y = 1.0f;
         }
         if(moveMode == MoveMode.SPIRIT) {
-            setPosition(getPosition().x + movement.x* speed, getPosition().y + movement.y*speed, getPosition().z );
+            setPosition(getPosition().x + movement.x* movementStep, getPosition().y + movement.y*movementStep, getPosition().z );
             return movement;
         } else if(moveMode == MoveMode.FLYING) {
-            Vector2f positionNow = new Vector2f(getPosition().x, getPosition().y);
-            Vector2f nextPosition = new Vector2f(getPosition().x + movement.x* speed, getPosition().y + movement.y*speed);
-            Vector2f realPosition = changePositionToPossible(positionNow, nextPosition);
 
-            setPosition(realPosition.x, realPosition.y, getPosition().z );
+            System.out.println(getPosition().x + ", " + getPosition().y);
+            Vector2f nextXPosition = new Vector2f(getPosition().x + movement.x* movementStep, getPosition().y) ;
+            Vector2f nextYPosition = new Vector2f(getPosition().x, getPosition().y + movement.y*movementStep) ;
+            System.out.println(isPlayerPositionPossible(map, new Vector2f(getPosition().x, getPosition().y)) );
+            if(!isPlayerPositionPossible(map, nextYPosition)) {
+                System.out.println("Player pos in block map: " + getPlayerPosInBlockMap(map).x + ", " + getPlayerPosInBlockMap(map).y);
+            }
+            if(movement.x != 0 && isPlayerPositionPossible(map, nextXPosition)) {
+
+                getPosition().x = nextXPosition.x;
+            } else  {
+                movement.x = 0f;
+            }
+            if(movement.y != 0 && isPlayerPositionPossible(map, nextYPosition)) {
+
+                getPosition().y = nextYPosition.y;
+            } else  {
+                movement.y = 0f;
+            }
             return movement;
         }
         if(moveMode == MoveMode.WALKING) {
@@ -126,19 +144,13 @@ public class MainPlayer extends GameItem {
                 isJumping = false;
                 isReadyForJump = false;
             }
-            setPosition(getPosition().x + movement.x* speed, getPosition().y + movement.y*jumpSpeed, getPosition().z );
+            setPosition(getPosition().x + movement.x* movementStep, getPosition().y + movement.y*jumpSpeed, getPosition().z );
 
         } else {
-            setPosition(getPosition().x + movement.x* speed, getPosition().y + movement.y*speed, getPosition().z );
+            setPosition(getPosition().x + movement.x* movementStep, getPosition().y + movement.y*movementStep, getPosition().z );
         }
         // Returns the real movement that the player made. Would be the same with the method input in flying mode
         return movement;
-    }
-
-    private Vector2f changePositionToPossible(Vector2f positionNow, Vector2f nextPosition) {
-        Vector2f direction = new Vector2f(nextPosition.x - positionNow.x, nextPosition.y - positionNow.y);
-
-        return nextPosition;
     }
 
 
@@ -295,22 +307,40 @@ public class MainPlayer extends GameItem {
                     continue;
                 }
                 if(block.getShapeType() == ShapeType.RECTANGLE) {
-                    if(Utils.intersects(getPosition().x, getPosition().y, modelWidth * getScale(), modelHeight * getScale(),
-                            block.getPosition().x - map.getBlocks()[0][0].getSize().x /2,
-                            block.getPosition().y + map.getBlocks()[0][0].getSize().y /2,
-                            block.getSize().x, block.getSize().y)) {
+                    if(GeometryUtils.intersects(new GeometryUtils.Rectangle(block.get2DPosition(), Block.get2DSize()),
+                            new GeometryUtils.Rectangle(nextPosition, getPlayerSize()))) {
+                        return false;
+                    }
+                } else if(block.getShapeType() == ShapeType.TRIANGLE) {
+                    if(GeometryUtils.intersects(new GeometryUtils.Triangle(block.getShapeVertices().get(0), block.getShapeVertices().get(1), block.getShapeVertices().get(2)),
+                            new GeometryUtils.Rectangle(nextPosition, getPlayerSize()))) {
                         return false;
                     }
                 }
-
             }
         }
 
         for(Structure structure : map.getStructures()) {
             Vector2i structurePosInBlockMap = structure.getMapPosition();
             Vector2i structureSizeInBlocks = structure.getSizeInBlocks();
+            if(!structure.getIsInScene() || structure.canMoveThrow()) {
+                continue;
+            }
+            if(structure.getShapeType() == ShapeType.RECTANGLE) {
+                if(GeometryUtils.intersects(new GeometryUtils.Rectangle(new Vector2f(structure.getPosition().x - structure.getSize().x/2,
+                                structure.getPosition().y + structure.getSize().y/2),
+                        new Vector2f(structureSizeInBlocks.x * Block.get2DSize().x, structureSizeInBlocks.y * Block.get2DSize().y)),
+                        new GeometryUtils.Rectangle(nextPosition, getPlayerSize()))) {
+                    return false;
+                }
+            } else if(structure.getShapeType() == ShapeType.TRIANGLE) {
+                if(GeometryUtils.intersects(new GeometryUtils.Triangle(structure.getShapeVertices().get(0), structure.getShapeVertices().get(1), structure.getShapeVertices().get(2)),
+                        new GeometryUtils.Rectangle(nextPosition, getPlayerSize()))) {
+                    return false;
+                }
+            }
         }
-        return false;
+        return true;
     }
 
 
