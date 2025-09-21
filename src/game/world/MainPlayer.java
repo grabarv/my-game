@@ -98,12 +98,10 @@ public class MainPlayer extends GameItem {
             setPosition(getPosition().x + movement.x* movementStep, getPosition().y + movement.y*movementStep, getPosition().z );
             return movement;
         } else if(moveMode == MoveMode.FLYING) {
-
-            System.out.println(getPosition().x + ", " + getPosition().y);
             Vector2f nextXPosition = new Vector2f(getPosition().x + movement.x* movementStep, getPosition().y) ;
             Vector2f nextYPosition = new Vector2f(getPosition().x, getPosition().y + movement.y*movementStep) ;
-            System.out.println(isPlayerPositionPossible(map, new Vector2f(getPosition().x, getPosition().y)) );
-            if(!isPlayerPositionPossible(map, nextYPosition)) {
+            if(isPlayerPositionPossible(map, new Vector2f(getPosition().x, getPosition().y)) && (!isPlayerPositionPossible(map, nextXPosition)
+                    || !isPlayerPositionPossible(map, nextYPosition))) {
                 System.out.println("Player pos in block map: " + getPlayerPosInBlockMap(map).x + ", " + getPlayerPosInBlockMap(map).y);
             }
             if(movement.x != 0 && isPlayerPositionPossible(map, nextXPosition)) {
