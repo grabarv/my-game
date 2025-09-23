@@ -6,6 +6,7 @@ import engine.graph.Camera;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.world.MainPlayer;
+import game.world.map.Block;
 import game.world.map.MapManger;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -126,6 +127,21 @@ public class GameManager {
 
         // Update camera position
 //        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+
+        System.out.println("--------------");
+        System.out.println("Camera pos: " + camera.getPosition().x + " " + camera.getPosition().y);
+        System.out.println("Player pos: " + player.getPosition().x + " " + player.getPosition().y);
+        boolean first = false;
+        for(Block[] blocks : mapManger.getBlocks() ) {
+            for(Block b : blocks) {
+                if(b != null && b.getIsInScene()) {
+                    first = true;
+                    System.out.println("Block pos: " + b.getPosition().x + " " + b.getPosition().y);
+                }
+                if(first) break;
+            }
+            if(first) break;
+        }
     }
 
     private void checkCameraInc(Vector3f cameraInc) {

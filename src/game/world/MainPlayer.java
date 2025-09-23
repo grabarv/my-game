@@ -23,7 +23,7 @@ import static game.world.map.MapManger.worldBlockZIndex;
  */
 public class MainPlayer extends GameItem {
 
-    public static final float movementStep = 0.001f;
+    public static final float movementStep = 0.1f; //0.001f;
     static final int heightInBlocks = 3;
 
     static final int widthInBlocks = 2;
@@ -100,6 +100,10 @@ public class MainPlayer extends GameItem {
         } else if(moveMode == MoveMode.FLYING) {
             Vector2f nextXPosition = new Vector2f(getPosition().x + movement.x* movementStep, getPosition().y) ;
             Vector2f nextYPosition = new Vector2f(getPosition().x, getPosition().y + movement.y*movementStep) ;
+            if(DEBUG_MODE && movement.x != 0) {
+                System.out.println("Next X pos: " + nextXPosition.x + ", " + nextXPosition.y);
+                System.out.println("Next Y pos: " + nextYPosition.x + ", " + nextYPosition.y);
+            }
             if(isPlayerPositionPossible(map, new Vector2f(getPosition().x, getPosition().y)) && (!isPlayerPositionPossible(map, nextXPosition)
                     || !isPlayerPositionPossible(map, nextYPosition))) {
                 System.out.println("Player pos in block map: " + getPlayerPosInBlockMap(map).x + ", " + getPlayerPosInBlockMap(map).y);
@@ -298,11 +302,16 @@ public class MainPlayer extends GameItem {
     public boolean isPlayerPositionPossible(MapManger map, Vector2f nextPosition) {
         Vector2i playerPosInBlockMap = getPlayerPosInBlockMap(map);
         // Checking blocks presence in the center of the player
+        boolean first = true;
         for(int i = 0; i <= widthInBlocks; i++) {
             for(int j = 0; j <= heightInBlocks; j++) {
                 Block block = map.getBlocks()[playerPosInBlockMap.x + i][playerPosInBlockMap.y + j];
                 if(block == null || !block.getIsInScene()) {
                     continue;
+                }
+                if(first) {
+                    first = false;
+                    System.out.println("Block: " + block.getPosition().x + ", " + block.getPosition().y);
                 }
                 if(block.getShapeType() == ShapeType.RECTANGLE) {
                     if(GeometryUtils.intersects(new GeometryUtils.Rectangle(block.get2DPosition(), Block.get2DSize()),
