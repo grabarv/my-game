@@ -169,10 +169,10 @@ public class ProgramLogic implements IGameLogic {
         }
 
         if(gameLoaded) {
-//            if (sceneChanged) {
-//                gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
-//            }
-        gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
+            if (sceneChanged) {
+                gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
+            }
+//        gameLoader.updateGameState(cameraInc, angleInc, mouseInput);
 
             camera.updateViewMatrix();
         }

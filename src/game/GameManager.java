@@ -89,10 +89,10 @@ public class GameManager {
 
         while (movementLength < player.getSpeed()) {
             realMovement = player.move(new Vector2f(cameraInc.x, cameraInc.y));
-            if(!realMovement.equals(new Vector2f(cameraInc.x, cameraInc.y))) {
+            if(realMovement.x == 0 && realMovement.y == 0) {
                 break;
             }
-            movementLength += MainPlayer.movementStep;
+            movementLength += MainPlayer.MOVEMENT_STEP;
         }
 
         cameraInc.set(realMovement, cameraInc.z);
@@ -128,20 +128,21 @@ public class GameManager {
         // Update camera position
 //        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
 
-        System.out.println("--------------");
-        System.out.println("Camera pos: " + camera.getPosition().x + " " + camera.getPosition().y);
-        System.out.println("Player pos: " + player.getPosition().x + " " + player.getPosition().y);
-        boolean first = false;
-        for(Block[] blocks : mapManger.getBlocks() ) {
-            for(Block b : blocks) {
-                if(b != null && b.getIsInScene()) {
-                    first = true;
-                    System.out.println("Block pos: " + b.getPosition().x + " " + b.getPosition().y);
-                }
-                if(first) break;
-            }
-            if(first) break;
-        }
+//        System.out.println("--------------");
+//        System.out.println("Camera pos: " + camera.getPosition().x + " " + camera.getPosition().y);
+//        System.out.println("Player pos: " + player.getPosition().x + " " + player.getPosition().y);
+//        boolean first = false;
+//        for(Block[] blocks : mapManger.getBlocks() ) {
+//            for(Block b : blocks) {
+//                if(b != null && b.getIsInScene()) {
+//                    first = true;
+//                    System.out.println("Block pos: " + b.getPosition().x + " " + b.getPosition().y);
+//                }
+//                if(first) break;
+//            }
+//            if(first) break;
+//        }
+//        mapManger.getBlocks()[494][26].setScale(mapManger.getBlocks()[494][26].getScale()/2f);
     }
 
     private void checkCameraInc(Vector3f cameraInc) {
