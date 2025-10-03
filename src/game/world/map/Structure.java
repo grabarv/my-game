@@ -61,9 +61,9 @@ public class Structure extends MapItem implements HasShape {
     }
 
     @Override
-    public void setPosition(Vector2f topLeftMapCorner) {
-        Vector2f structureTopLeftCorner = new Vector2f(topLeftMapCorner.x + mapPosition.x * Block.get2DSize().x,
-                topLeftMapCorner.y - mapPosition.y * Block.get2DSize().y);
+    public void setPosition() {
+        Vector2f structureTopLeftCorner = new Vector2f(MapManager.getMapTopLeftCorner().x + mapPosition.x * Block.get2DSize().x,
+                MapManager.getMapTopLeftCorner().y - mapPosition.y * Block.get2DSize().y);
         setPosition(structureTopLeftCorner.x + sizeInBlocks.x * Block.get2DSize().y / 2,
                 structureTopLeftCorner.y - sizeInBlocks.y * Block.get2DSize().y /2, zIndex);
     }

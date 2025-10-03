@@ -27,7 +27,7 @@ import java.util.*;
  * Handles generation, placement, and rendering of map elements
  * into the game {@link Scene}.
  */
-public class MapManger {
+public class MapManager {
 
     /** Map width in blocks. */
     private final int width;
@@ -72,7 +72,7 @@ public class MapManger {
     private Map<String, Mesh[]> meshMap;
 
     /** Start position of the map (top-left corner in world coordinates). */
-    private final Vector2f startPos = new Vector2f(-1.0f, 1.0f);
+    public static final Vector2f startPos = new Vector2f(-1.0f, 1.0f);
 
     /** Objects to generate on the map (by name). */
     private final String[] objects = new String[] {"house1"};
@@ -83,7 +83,7 @@ public class MapManger {
      * @param width  number of blocks in map width
      * @param height number of blocks in map height
      */
-    public MapManger(int width, int height) {
+    public MapManager(int width, int height) {
         this.width = width;
         this.height = height;
         structureDescriptionMap = GameFilesLoader.loadStructDescription(structureSizeFilePath);
@@ -246,12 +246,12 @@ public class MapManger {
         for(int i = 0; i < width; i++ ) {
             for (int j = 0; j < height; j++) {
                 if(blocks[i][j] != null && blocks[i][j].getMeshes() != null && !blocks[i][j].getIsInScene()) {
-                    blocks[i][j].setPosition(startPos);
+                    blocks[i][j].setPosition();
                     blocks[i][j].setIsInScene(true);
                     scene.setGameItems(new GameItem[] {blocks[i][j]});
                 }
                 if(walls[i][j] != null && walls[i][j].getMeshes() != null && !walls[i][j].getIsInScene()) {
-                    walls[i][j].setPosition(startPos);
+                    walls[i][j].setPosition();
                     walls[i][j].setIsInScene(true);
                     scene.setGameItems(new GameItem[] {walls[i][j]});
                 }
@@ -259,7 +259,7 @@ public class MapManger {
         }
         for (Structure structure : structures) {
             if(!structure.isInScene) {
-                structure.setPosition(getMapTopLeftCorner());
+                structure.setPosition();
                 structure.setIsInScene(true);
                 scene.setGameItems(new GameItem[] {structure});
             }
@@ -308,8 +308,8 @@ public class MapManger {
     /**
      * @return world position of top-left map corner
      */
-    public Vector2f getMapTopLeftCorner() {
-        return new Vector2f(getStartPos().x - blocks[0][0].getSize().x/2f, getStartPos().y + blocks[0][0].getSize().y/2f);
+    public static Vector2f getMapTopLeftCorner() {
+        return new Vector2f(startPos.x - Block.get2DSize().x/2f, startPos.y + Block.get2DSize().y/2f);
     }
 
     /**

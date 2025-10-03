@@ -50,7 +50,7 @@ public abstract class MapItem extends GameItem {
     public Vector2i getMapPosition() {
         return mapPosition;
     }
-    public abstract void setPosition(Vector2f startPos);
+    public abstract void setPosition();
 
     public Vector2f getTopLeftCorner2DPosition() {
         return new Vector2f(getPosition().x - getSize().x / 2, getPosition().y + getSize().y / 2);

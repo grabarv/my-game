@@ -6,8 +6,7 @@ import engine.graph.Camera;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.world.MainPlayer;
-import game.world.map.Block;
-import game.world.map.MapManger;
+import game.world.map.MapManager;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -17,7 +16,7 @@ public class GameManager {
     Scene scene;
     Camera camera;
     LightController lightController;
-    MapManger mapManger;
+    MapManager mapManger;
     MainPlayer player;
     boolean isLoaded;
 
@@ -51,7 +50,7 @@ public class GameManager {
         // Setup Lights
         lightController.setupLights();
 
-        mapManger = new MapManger(1000, 100);
+        mapManger = new MapManager(1000, 100);
         mapManger.generateMap(scene);
 
 

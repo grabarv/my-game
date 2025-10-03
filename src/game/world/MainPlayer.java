@@ -6,7 +6,7 @@ import engine.graph.Texture;
 import engine.items.GameItem;
 import game.world.map.Block;
 import game.world.map.ShapeType;
-import game.world.map.MapManger;
+import game.world.map.MapManager;
 import game.world.map.Structure;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
@@ -16,7 +16,7 @@ import utils.GeometryUtils;
 import utils.Utils;
 import utils.loaders.assimp.StaticMeshesLoader;
 
-import static game.world.map.MapManger.worldBlockZIndex;
+import static game.world.map.MapManager.worldBlockZIndex;
 
 /**
  * Main player of the game
@@ -55,10 +55,10 @@ public class MainPlayer extends GameItem {
 
     private float jumpSpeed;
 
-    private final MapManger map;
+    private final MapManager map;
 
 
-    public MainPlayer(MapManger map) {
+    public MainPlayer(MapManager map) {
         super(false);
         this.map = map;
         modelHeight = 2.0000f;
@@ -106,7 +106,7 @@ public class MainPlayer extends GameItem {
             }
             if(isPlayerPositionPossible(map, new Vector2f(getPosition().x, getPosition().y)) && (!isPlayerPositionPossible(map, nextXPosition)
                     || !isPlayerPositionPossible(map, nextYPosition))) {
-                System.out.println("Player pos in block map: " + getPlayerPosInBlockMap(map).x + ", " + getPlayerPosInBlockMap(map).y);
+//                System.out.println("Player pos in block map: " + getPlayerPosInBlockMap(map).x + ", " + getPlayerPosInBlockMap(map).y);
             }
             if(movement.x != 0 && isPlayerPositionPossible(map, nextXPosition)) {
 
@@ -285,21 +285,29 @@ public class MainPlayer extends GameItem {
             }*/
     }
 
-    private Vector2i getPlayerPosInBlockMap(MapManger map) {
-        Vector2f playerTopLeftCorner = new Vector2f(getPosition().x - modelWidth * getScale()/2, getPosition().y +modelHeight * getScale()/2);
+    private Vector2i getPlayerPosInBlockMap(MapManager map) {
+        Vector2f playerTopLeftCorner = getPlayerTopLeftCorner();
         Vector2f mapTopLeftCorner = map.getMapTopLeftCorner();
         Vector2f posDiff = new Vector2f(playerTopLeftCorner.x - mapTopLeftCorner.x, mapTopLeftCorner.y - playerTopLeftCorner.y);
         Vector2i playerInBlockMapPos = new Vector2i((int) Math.floor(posDiff.x / map.getBlocks()[0][0].getSize().x),
                 (int) Math.floor(posDiff.y / map.getBlocks()[0][0].getSize().y));
         return playerInBlockMapPos;
     }
+    private Vector2f getPlayerTopLeftCorner() {
+        return new Vector2f(getPosition().x - modelWidth * getScale() /2f, getPosition().y + modelHeight * getScale() /2f);
+    }
+    /**
+     * Sets player position to the top-left corner of the map.
+     * <p>Note: Player position is set in a way that his top-left corner coincides with the map top-left corner.</p>
+     * @param map MapManger object representing the map
+     */
 
-    public void setPlayerInMapTopLeftCorner(MapManger map) {
+    public void setPlayerInMapTopLeftCorner(MapManager map) {
         Vector2f mapTopLeftCorner = map.getMapTopLeftCorner();
         setPosition(mapTopLeftCorner.x + modelWidth * getScale()/2, mapTopLeftCorner.y - modelHeight * getScale()/2, getPosition().z);
     }
 
-    public boolean isPlayerPositionPossible(MapManger map, Vector2f nextPosition) {
+    public boolean isPlayerPositionPossible(MapManager map, Vector2f nextPosition) {
         Vector2i playerPosInBlockMap = getPlayerPosInBlockMap(map);
         // Checking blocks presence in the center of the player
         for(int i = -1; i <= widthInBlocks + 1; i++) {
@@ -314,6 +322,9 @@ public class MainPlayer extends GameItem {
                         return false;
                     }
                 } else if(block.getShapeType() == ShapeType.TRIANGLE) {
+                    if(DEBUG_MODE ) {
+                        System.out.println("");
+                    }
                     if(GeometryUtils.intersects(new GeometryUtils.Triangle(block.getShapeVertices().get(0), block.getShapeVertices().get(1), block.getShapeVertices().get(2)),
                             new GeometryUtils.Rectangle(nextPosition, getPlayerSize()))) {
                         return false;
@@ -329,8 +340,8 @@ public class MainPlayer extends GameItem {
                 continue;
             }
             if(structure.getShapeType() == ShapeType.RECTANGLE) {
-                if(GeometryUtils.intersects(new GeometryUtils.Rectangle(new Vector2f(structure.getPosition().x - structure.getSize().x/2,
-                                structure.getPosition().y + structure.getSize().y/2),
+                if(GeometryUtils.intersects(new GeometryUtils.Rectangle(new Vector2f(structure.getPosition().x /*- structure.getSize().x/2*/,
+                                structure.getPosition().y /*+ structure.getSize().y/2*/),
                         new Vector2f(structureSizeInBlocks.x * Block.get2DSize().x, structureSizeInBlocks.y * Block.get2DSize().y)),
                         new GeometryUtils.Rectangle(nextPosition, getPlayerSize()))) {
                     return false;

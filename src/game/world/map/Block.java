@@ -7,8 +7,8 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
-import static game.world.map.MapManger.blocksScale;
-import static game.world.map.MapManger.worldBlockZIndex;
+import static game.world.map.MapManager.blocksScale;
+import static game.world.map.MapManager.worldBlockZIndex;
 
 public class Block extends MapItem implements HasShape {
 
@@ -19,7 +19,7 @@ public class Block extends MapItem implements HasShape {
     public static final Vector3f BLOCK_MODEL_SIZE = new Vector3f(2f, 2f, 2f);
 
     public Block(Mesh[] mesh, boolean isEulerRotation, Vector2i posInMap, ShapeType mapItemType) {
-    super(mesh, isEulerRotation, BLOCK_MODEL_SIZE, posInMap);
+        super(mesh, isEulerRotation, BLOCK_MODEL_SIZE, posInMap);
         setScale(blocksScale);
         this.type = mapItemType;
     }
@@ -32,9 +32,8 @@ public class Block extends MapItem implements HasShape {
 
 
     @Override
-    public void setPosition(Vector2f startPos) {
-        setPosition(new Vector3f(startPos.x + getSize().x *mapPosition.x, startPos.y -  getSize().y * mapPosition.y, worldBlockZIndex - getScale()));
-
+    public void setPosition() {
+        setPosition(new Vector3f(MapManager.startPos.x + getSize().x *mapPosition.x, MapManager.startPos.y -  getSize().y * mapPosition.y, worldBlockZIndex - getScale()));
     }
 
     @Override
