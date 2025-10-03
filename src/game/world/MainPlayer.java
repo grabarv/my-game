@@ -40,7 +40,7 @@ public class MainPlayer extends GameItem {
     *     <li>spirit mode - same as flying but player can move throw blocks</li>
     * </ul>
     */
-    private MoveMode moveMode = MoveMode.FLYING;
+    private MoveMode moveMode = MoveMode.SPIRIT;
 
     private boolean isJumping = false;
 
@@ -98,43 +98,23 @@ public class MainPlayer extends GameItem {
             setPosition(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y + movement.y* MOVEMENT_STEP, getPosition().z );
             return movement;
         } else if(moveMode == MoveMode.FLYING) {
-            Vector2f nextXPosition = new Vector2f(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y) ;
-            Vector2f nextYPosition = new Vector2f(getPosition().x, getPosition().y + movement.y* MOVEMENT_STEP) ;
-            if(DEBUG_MODE && movement.x != 0) {
-                System.out.println("Next X pos: " + nextXPosition.x + ", " + nextXPosition.y);
-                System.out.println("Next Y pos: " + nextYPosition.x + ", " + nextYPosition.y);
-            }
-            if(isPlayerPositionPossible(map, new Vector2f(getPosition().x, getPosition().y)) && (!isPlayerPositionPossible(map, nextXPosition)
-                    || !isPlayerPositionPossible(map, nextYPosition))) {
-//                System.out.println("Player pos in block map: " + getPlayerPosInBlockMap(map).x + ", " + getPlayerPosInBlockMap(map).y);
-            }
-            if(movement.x != 0 && isPlayerPositionPossible(map, nextXPosition)) {
-
-                getPosition().x = nextXPosition.x;
-            } else  {
-                movement.x = 0f;
-            }
-            if(movement.y != 0 && isPlayerPositionPossible(map, nextYPosition)) {
-
-                getPosition().y = nextYPosition.y;
-            } else  {
-                movement.y = 0f;
-            }
-            return movement;
+            return movePlayer(movement);
         }
         if(moveMode == MoveMode.WALKING) {
 
-            if(movement.y != 1 && !isJumping && !canMove("down")) {
+            boolean canMoveDown = isPlayerPositionPossible(map, new Vector2f(getPosition().x, getPosition().y - MOVEMENT_STEP));
+
+            if(movement.y != 1 && !isJumping && !canMoveDown) {
                 isReadyForJump = true;
             }
 
-            if(canMove("down") && !isJumping) {
+            if(canMoveDown && !isJumping) {
                 movement.y = -1f;
             }
-            if(!canMove("down") && !isJumping && !isReadyForJump) {
+            if(!canMoveDown && !isJumping && !isReadyForJump) {
                 movement.y = 0f;
             }
-            if (!canMove("down") && !isJumping && movement.y == 1.0f && isReadyForJump) {
+            if (!canMoveDown && !isJumping && movement.y == 1.0f) {
                 isJumping = true;
                 jumpPower = 1.0f;
             }
@@ -146,12 +126,30 @@ public class MainPlayer extends GameItem {
                 isJumping = false;
                 isReadyForJump = false;
             }
-            setPosition(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y + movement.y*jumpSpeed, getPosition().z );
+            return movePlayer(movement);
 
         } else {
             setPosition(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y + movement.y* MOVEMENT_STEP, getPosition().z );
         }
         // Returns the real movement that the player made. Would be the same with the method input in flying mode
+        return movement;
+    }
+
+    private Vector2f movePlayer(Vector2f movement) {
+        Vector2f nextXPosition = new Vector2f(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y) ;
+        Vector2f nextYPosition = new Vector2f(getPosition().x, getPosition().y + movement.y* MOVEMENT_STEP) ;
+        if(movement.x != 0 && isPlayerPositionPossible(map, nextXPosition)) {
+
+            getPosition().x = nextXPosition.x;
+        } else  {
+            movement.x = 0f;
+        }
+        if(movement.y != 0 && isPlayerPositionPossible(map, nextYPosition)) {
+
+            getPosition().y = nextYPosition.y;
+        } else  {
+            movement.y = 0f;
+        }
         return movement;
     }
 

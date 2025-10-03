@@ -80,7 +80,6 @@ public class GameManager {
 //        System.out.println(camera.getPosition().x + " " + camera.getPosition().y + " " + camera.getPosition().z);
 
 
-        checkCameraInc(cameraInc);
 
         Vector2f realMovement = new Vector2f(0,0);
 
@@ -88,9 +87,9 @@ public class GameManager {
 
         while (movementLength < player.getSpeed()) {
             realMovement = player.move(new Vector2f(cameraInc.x, cameraInc.y));
-            if(realMovement.x == 0 && realMovement.y == 0) {
-                break;
-            }
+//            if(realMovement.x == 0 && realMovement.y == 0) {
+//                break;
+//            }
             movementLength += MainPlayer.MOVEMENT_STEP;
         }
 
