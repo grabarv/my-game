@@ -81,7 +81,7 @@ public class MainPlayer extends GameItem {
         playerMesh.setMaterial(material);
         setMesh(playerMesh);
         setPosition(0, 0, worldBlockZIndex + 0.01f);
-        setScale(0.1f);
+        setScale(0.09f);
         setRotation(new Quaternionf(0.0f, 0f, 0f, 0f));
     }
 
