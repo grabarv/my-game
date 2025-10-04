@@ -40,7 +40,7 @@ public class MainPlayer extends GameItem {
     *     <li>spirit mode - same as flying but player can move throw blocks</li>
     * </ul>
     */
-    private MoveMode moveMode = MoveMode.FLYING;
+    private MoveMode moveMode = MoveMode.WALKING;
 
     private boolean isJumping = false;
 
@@ -51,7 +51,7 @@ public class MainPlayer extends GameItem {
 
     private float jumpPower = 0.0f;
 
-    private float jumpPowerUsage = 0.05f;
+    private float jumpPowerUsage = 1f/1000f;
 
     private float jumpSpeed;
 
@@ -105,6 +105,7 @@ public class MainPlayer extends GameItem {
 
             boolean canMoveDown = isPlayerPositionPossible(map, new Vector2f(getPosition().x, getPosition().y - MOVEMENT_STEP));
 
+
             if(movement.y != 1 && !isJumping && !canMoveDown) {
                 isReadyForJump = true;
             }
@@ -120,7 +121,12 @@ public class MainPlayer extends GameItem {
                 jumpPower = 1.0f;
             }
             if(isJumping) {
-                movement.y = 1f;
+                if(movement.y != 1f) {
+                    movement.y = 0f;
+                    isJumping = false;
+                    isReadyForJump = false;
+                }
+//                movement.y = 1f;
                 jumpPower -= jumpPowerUsage;
             }
             if(jumpPower <= 0.0f && isJumping) {
@@ -128,20 +134,15 @@ public class MainPlayer extends GameItem {
                 isReadyForJump = false;
             }
             return moveToPossiblePosition(movement);
-
         } else {
             setPosition(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y + movement.y* MOVEMENT_STEP, getPosition().z );
+            return movement;
         }
-        // Returns the real movement that the player made. Would be the same with the method input in flying mode
-        return movement;
     }
 
     private Vector2f moveToPossiblePosition(Vector2f movement) {
         if(movement.x == 0 && movement.y == 0) {
             return movement;
-        }
-        if(DEBUG_MODE) {
-            System.out.println("Player pos before move: " + getPosition().x + " " + getPosition().y);
         }
         Vector2f realMovement = new Vector2f(movement.x, movement.y);
         if(movement.y != 0) {
@@ -347,9 +348,6 @@ public class MainPlayer extends GameItem {
                         return false;
                     }
                 } else if(block.getShapeType() == ShapeType.TRIANGLE) {
-                    if(DEBUG_MODE ) {
-                        System.out.println("");
-                    }
                     if(GeometryUtils.intersects(new GeometryUtils.Triangle(block.getShapeVertices().get(0), block.getShapeVertices().get(1), block.getShapeVertices().get(2)),
                             new GeometryUtils.Rectangle(nextPosition, getPlayerSize()))) {
                         return false;

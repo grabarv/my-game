@@ -80,7 +80,6 @@ public class GameManager {
 //        System.out.println(camera.getPosition().x + " " + camera.getPosition().y + " " + camera.getPosition().z);
 
 
-
         Vector2f realMovement = new Vector2f(0,0);
 
         float movementLength = 0f;
@@ -98,7 +97,6 @@ public class GameManager {
 //        camera.animateCameraRotation(cameraInc, 0.25f, 2.5f);
 
         camera.setPosition(player.getPosition().x, player.getPosition().y, camera.getPosition().z + cameraInc.z * 0.05f);
-
 //        if(sceneChanged) {
 //            checkCameraInc();
 //
