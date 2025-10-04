@@ -36,11 +36,11 @@ public class MainPlayer extends GameItem {
     * Player has 3 modes:
     * <ul>
     *     <li>walking - where gravity works and player can only jump instead of flying</li>
-    *     <li>flying - where gravity doesn't work and player can fly</li>
+    *     <li>flying - where gravity for player doesn't work and player can fly</li>
     *     <li>spirit mode - same as flying but player can move throw blocks</li>
     * </ul>
     */
-    private MoveMode moveMode = MoveMode.SPIRIT;
+    private MoveMode moveMode = MoveMode.FLYING;
 
     private boolean isJumping = false;
 
@@ -85,6 +85,7 @@ public class MainPlayer extends GameItem {
         setRotation(new Quaternionf(0.0f, 0f, 0f, 0f));
     }
 
+    // TODO: Fix bug with moving near trinagle block in house (player stucks now in it)
     public Vector2f move(Vector2f movement) {
 
         // rotating player depending on his direction
@@ -98,7 +99,7 @@ public class MainPlayer extends GameItem {
             setPosition(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y + movement.y* MOVEMENT_STEP, getPosition().z );
             return movement;
         } else if(moveMode == MoveMode.FLYING) {
-            return movePlayer(movement);
+            return moveToPossiblePosition(movement);
         }
         if(moveMode == MoveMode.WALKING) {
 
@@ -126,7 +127,7 @@ public class MainPlayer extends GameItem {
                 isJumping = false;
                 isReadyForJump = false;
             }
-            return movePlayer(movement);
+            return moveToPossiblePosition(movement);
 
         } else {
             setPosition(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y + movement.y* MOVEMENT_STEP, getPosition().z );
@@ -135,22 +136,48 @@ public class MainPlayer extends GameItem {
         return movement;
     }
 
-    private Vector2f movePlayer(Vector2f movement) {
-        Vector2f nextXPosition = new Vector2f(getPosition().x + movement.x* MOVEMENT_STEP, getPosition().y) ;
-        Vector2f nextYPosition = new Vector2f(getPosition().x, getPosition().y + movement.y* MOVEMENT_STEP) ;
-        if(movement.x != 0 && isPlayerPositionPossible(map, nextXPosition)) {
-
-            getPosition().x = nextXPosition.x;
-        } else  {
-            movement.x = 0f;
+    private Vector2f moveToPossiblePosition(Vector2f movement) {
+        if(movement.x == 0 && movement.y == 0) {
+            return movement;
         }
-        if(movement.y != 0 && isPlayerPositionPossible(map, nextYPosition)) {
-
-            getPosition().y = nextYPosition.y;
-        } else  {
-            movement.y = 0f;
+        if(DEBUG_MODE) {
+            System.out.println("Player pos before move: " + getPosition().x + " " + getPosition().y);
         }
-        return movement;
+        Vector2f realMovement = new Vector2f(movement.x, movement.y);
+        if(movement.y != 0) {
+            float nextYPos = getPosition().y + movement.y* MOVEMENT_STEP;
+
+            if(isPlayerPositionPossible(map, new Vector2f(getPosition().x, nextYPos))) {
+                realMovement.y = movement.y;
+            } else if(movement.x == 0f && isPlayerPositionPossible(map, new Vector2f(getPosition().x + MOVEMENT_STEP, nextYPos))) {
+                realMovement.y = movement.y;
+                realMovement.x = 1f;
+            } else if(movement.x == 0f && isPlayerPositionPossible(map, new Vector2f(getPosition().x - MOVEMENT_STEP, nextYPos))) {
+                realMovement.y = movement.y;
+                realMovement.x = -1f;
+            } else  {
+                realMovement.y = 0f;
+            }
+        }
+
+        if(movement.x != 0) {
+            float nextXPos = getPosition().x + movement.x* MOVEMENT_STEP;
+            if(isPlayerPositionPossible(map, new Vector2f(nextXPos, getPosition().y))) {
+                realMovement.x = movement.x;
+            } else if(movement.y == 0f && isPlayerPositionPossible(map, new Vector2f(nextXPos, getPosition().y + MOVEMENT_STEP))) {
+                realMovement.x = movement.x;
+                realMovement.y = 1f;
+            } else if(movement.y == 0f && isPlayerPositionPossible(map, new Vector2f(nextXPos, getPosition().y - MOVEMENT_STEP))) {
+                realMovement.x = movement.x;
+                realMovement.y = -1f;
+            } else  {
+                realMovement.x = 0f;
+            }
+        }
+
+        getPosition().x += realMovement.x * MOVEMENT_STEP;
+        getPosition().y += realMovement.y * MOVEMENT_STEP;
+        return realMovement;
     }
 
 

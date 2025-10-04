@@ -36,10 +36,10 @@ public class MapManager {
     private final int height;
 
     /** Scale factor for block models. */
-    public static final float blocksScale = 0.03333333f;
+    public static final float blocksScale = 0.03333333333f;
 
     /** Scale factor for wall models. */
-    public static final float wallScale = 0.06666666f;
+    public static final float wallScale = 0.06666666666f;
 
     /** Z-index (height offset) for blocks in world space. */
     public static float worldBlockZIndex = 1.5f;
@@ -187,14 +187,14 @@ public class MapManager {
                         blocks[i][j].setMeshes(meshMap.get("dirt"));
                         blocks[i][j].setShapeType(ShapeType.RECTANGLE);
                         blocks[i][j].setShapeVertices(GeometryUtils.createRectangleVertices(
-                               blocks[i][j].getTopLeftCorner2DPosition(), blocks[i][j].get2DSize()));
+                               blocks[i][j].getTopLeftCorner2DPosition(), Block.get2DSize()));
                     }
 
                 } else {
                     blocks[i][j].setMeshes(meshMap.get("dirt"));
                     blocks[i][j].setShapeType(ShapeType.RECTANGLE);
                     blocks[i][j].setShapeVertices(GeometryUtils.createRectangleVertices(
-                            blocks[i][j].getTopLeftCorner2DPosition(), blocks[i][j].get2DSize()));
+                            blocks[i][j].getTopLeftCorner2DPosition(), Block.get2DSize()));
                 }
             }
         }
