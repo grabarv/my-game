@@ -43,7 +43,7 @@ public class GameManager {
 
         // Setup  SkyBox
         float skyBoxScale = 500f;
-        SkyBox skyBox = new SkyBox("resources/models/examples/skybox.obj", "resources/textures/skybox.png");
+        SkyBox skyBox = new SkyBox("src/main/resources/models/examples/skybox.obj", "src/main/resources/textures/skybox.png");
         skyBox.setScale(skyBoxScale);
         scene.setSkyBox(skyBox);
 

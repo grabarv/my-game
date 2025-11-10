@@ -57,7 +57,7 @@ public class Hud {
             throw new Exception("Could not init nanovg");
         }
 
-        fontBuffer = Utils.ioResourceToByteBuffer("resources/fonts/OpenSans-Bold.ttf", 150 * 1024);
+        fontBuffer = Utils.ioResourceToByteBuffer("/fonts/OpenSans-Bold.ttf", 150 * 1024);
         int font = nvgCreateFontMem(vg, FONT_NAME, fontBuffer, 0);
         if (font == -1) {
             throw new Exception("Could not add font");
@@ -69,17 +69,17 @@ public class Hud {
 
         imageMap = new HashMap<>();
 
-        int backgroundImage = nvgCreateImage(vg, "resources/textures/map_objects/struct_grass.png", NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
+        int backgroundImage = nvgCreateImage(vg, "src/main/resources/textures/map_objects/struct_grass.png", NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
         if (backgroundImage == 0) {
             throw new Exception("Could not load image.");
         }
-        imageMap.put("background", new Image(Utils.getImageSize("resources/textures/map_objects/struct_grass.png"), backgroundImage));
+        imageMap.put("background", new Image(Utils.getImageSize("src/main/resources/textures/map_objects/struct_grass.png"), backgroundImage));
 
-        int settingsImage = nvgCreateImage(vg, "resources/textures/settings.png", NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
+        int settingsImage = nvgCreateImage(vg, "src/main/resources/textures/settings.png", NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY);
         if (settingsImage == 0) {
             throw new Exception("Could not load image.");
         }
-        imageMap.put("settings", new Image(Utils.getImageSize("resources/textures/settings.png"), settingsImage));
+        imageMap.put("settings", new Image(Utils.getImageSize("src/main/resources/textures/settings.png"), settingsImage));
 
         for(String item : items) {
             if(item == null || item.isEmpty()) {

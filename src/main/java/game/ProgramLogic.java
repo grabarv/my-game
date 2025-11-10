@@ -60,7 +60,7 @@ public class ProgramLogic implements IGameLogic {
 
     @Override
     public void init(Window window) throws Exception {
-        hud.init(window, new String[]{"resources/textures/map_objects/struct_grass.png", "", "", "", "", "","","", "", ""});
+        hud.init(window, new String[]{"src/main/resources/textures/map_objects/struct_grass.png", "", "", "", "", "","","", "", ""});
         renderer.init(window);
 
         scene = new Scene();

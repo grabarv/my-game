@@ -105,8 +105,8 @@ public class MapManager {
      * Uses the OBJLoader and assigns materials (including normal maps if available).
      */
     private void loadMeshesToMap() {
-        String dirPath = "resources/textures/map_objects/";
-        String dirtPathNormals = "resources/textures/normals/";
+        String dirPath = "src/main/resources/textures/map_objects/";
+        String dirtPathNormals = "src/main/resources/textures/normals/";
         Path dir = Paths.get(dirPath);
         try {
             for (Path path : (Iterable<Path>) Files.list(dir).filter(Files::isRegularFile)::iterator) {

@@ -63,14 +63,14 @@ public class MainPlayer extends GameItem {
         this.map = map;
         modelHeight = 2.0000f;
         modelWidth = 1.333333f;
-        final String modelPath = "resources/models/main_player.obj";
+        final String modelPath = "src/main/resources/models/main_player.obj";
         Mesh playerMesh = null;
         try {
             playerMesh = StaticMeshesLoader.load(modelPath, "", 0)[0];
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        final String texturePath = "resources/textures/player.png";
+        final String texturePath = "src/main/resources/textures/player.png";
         Texture texture = null;
         try {
             texture = new Texture(texturePath);
